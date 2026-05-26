@@ -1,0 +1,11 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/kalender"
+  to = "/kalender.html"
+  status = 200
+
+[functions]
+  node_bundler = "esbuild"

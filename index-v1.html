@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEEL THE WORLD — by David H. Dudek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Dancing+Script:wght@600&family=Raleway:wght@200;300;400&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:     #474747;
+  --bg2:    #3d3d3d;
+  --bg3:    #2e2e2e;
+  --green:  #5cb87a;
+  --green2: #4a9e66;
+  --text:   #f5f5f5;
+  --text2:  #b0b0b0;
+  --text3:  #707070;
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --script:  'Dancing Script', cursive;
+  --body:    'Raleway', 'Helvetica Neue', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+.t-brand  { font-family: var(--display); font-weight: 300; letter-spacing: .45em; text-transform: uppercase; }
+.t-script { font-family: var(--script); font-weight: 600; color: var(--green); }
+.t-section{ font-family: var(--display); font-weight: 300; letter-spacing: .3em; text-transform: uppercase; }
+.t-label  { font-size: 10px; letter-spacing: .45em; text-transform: uppercase; color: var(--green); }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 56px;
+  transition: background .4s;
+}
+nav.scrolled { background: rgba(46,46,46,.96); backdrop-filter: blur(14px); }
+.nav-logo { font-family: var(--display); font-size: 11px; letter-spacing: .38em; text-transform: uppercase; font-weight: 300; color: var(--text); text-decoration: none; }
+.nav-links { display: flex; gap: 36px; align-items: center; }
+.nav-link  { font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--text2); text-decoration: none; transition: color .2s; }
+.nav-link:hover { color: var(--green); }
+.nav-cta   { font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--bg3); background: var(--green); padding: 11px 26px; text-decoration: none; transition: background .2s; }
+.nav-cta:hover { background: var(--green2); }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 140px 48px 100px;
+  position: relative;
+  background: var(--bg3);
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover; object-position: center top;
+  opacity: .35;
+}
+.hero-inner { position: relative; z-index: 2; max-width: 760px; }
+.hero-title { font-size: clamp(32px, 5.5vw, 68px); line-height: 1; margin-bottom: 14px; letter-spacing: .5em; }
+.hero-by    { font-size: clamp(22px, 3vw, 38px); margin-bottom: 60px; }
+.hero-quote {
+  font-family: var(--display); font-style: italic; font-weight: 300;
+  font-size: clamp(16px, 2vw, 22px); color: var(--text2); line-height: 1.7;
+  margin-bottom: 64px; letter-spacing: .04em;
+}
+.hero-quote span { color: var(--green); font-style: normal; }
+.scroll-hint {
+  position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%);
+  z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  color: var(--text3); font-size: 9px; letter-spacing: .35em; text-transform: uppercase;
+}
+.scroll-hint::before {
+  content: ''; width: 1px; height: 44px;
+  background: linear-gradient(to bottom, var(--green), transparent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:.25} 50%{opacity:1} }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  display: inline-block; font-size: 11px; letter-spacing: .35em; text-transform: uppercase;
+  color: var(--bg3); background: var(--green); padding: 18px 52px;
+  text-decoration: none; transition: background .2s;
+}
+.btn-primary:hover { background: var(--green2); }
+.btn-outline {
+  display: inline-block; font-size: 11px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--green); border: 1px solid var(--green); padding: 14px 34px;
+  text-decoration: none; transition: all .2s;
+}
+.btn-outline:hover { background: var(--green); color: var(--bg3); }
+
+/* ── STATEMENT ── */
+#statement { padding: 130px 48px; max-width: 920px; margin: 0 auto; text-align: center; }
+.stmt-text {
+  font-family: var(--display); font-size: clamp(20px, 2.8vw, 34px);
+  font-weight: 300; line-height: 1.65; letter-spacing: .04em; margin-bottom: 36px;
+}
+.stmt-text em { color: var(--green); font-style: italic; }
+.stmt-rule { font-size: 10px; letter-spacing: .45em; text-transform: uppercase; color: var(--text3); }
+
+/* ── PRODUCT ── */
+#product { display: grid; grid-template-columns: 1fr 1fr; }
+.product-img-wrap { overflow: hidden; min-height: 600px; background: var(--bg2); }
+.product-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
+.product-img-wrap:hover img { transform: scale(1.03); }
+.product-body {
+  background: var(--bg3); display: flex; flex-direction: column;
+  justify-content: center; padding: 88px 72px;
+}
+.product-body .t-label { display: block; margin-bottom: 24px; }
+.product-title { font-size: clamp(26px, 3vw, 44px); line-height: 1.15; margin-bottom: 32px; }
+.product-desc  { font-size: 14px; line-height: 2; color: var(--text2); margin-bottom: 40px; }
+.product-price { font-family: var(--display); font-size: 32px; font-weight: 300; letter-spacing: .08em; margin-bottom: 6px; }
+.product-price-note { font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: var(--text3); margin-bottom: 44px; }
+
+/* ── GALLERY ── */
+#gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; background: var(--bg3); }
+.gallery-item { overflow: hidden; aspect-ratio: 3/4; background: var(--bg2); }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
+.gallery-item:hover img { transform: scale(1.05); }
+
+/* ── MATERIALS ── */
+#materials { padding: 120px 48px; background: var(--bg2); }
+.mat-header { text-align: center; margin-bottom: 80px; }
+.mat-header .t-label { display: block; margin-bottom: 16px; }
+.mat-header h2 { font-size: clamp(22px, 3vw, 40px); }
+.mat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; max-width: 1200px; margin: 0 auto; }
+.mat-card { background: var(--bg3); padding: 60px 44px; text-align: center; }
+.mat-word { font-size: 9px; letter-spacing: .5em; text-transform: uppercase; color: var(--text3); margin-bottom: 22px; }
+.mat-name { font-family: var(--display); font-size: 26px; font-weight: 300; font-style: italic; margin-bottom: 22px; }
+.mat-card.accent .mat-name { color: var(--green); }
+.mat-desc { font-size: 13px; line-height: 1.85; color: var(--text2); }
+
+/* ── FOUNDER ── */
+#founder { display: grid; grid-template-columns: 1fr 1fr; }
+.founder-img-wrap { overflow: hidden; min-height: 600px; background: var(--bg2); }
+.founder-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(80%) contrast(1.1); }
+.founder-body {
+  background: var(--bg); display: flex; flex-direction: column;
+  justify-content: center; padding: 88px 72px;
+}
+.founder-body .t-label { display: block; margin-bottom: 24px; }
+.founder-title { font-size: clamp(28px, 3vw, 46px); line-height: 1.1; margin-bottom: 36px; }
+.founder-text  { font-size: 14px; line-height: 2; color: var(--text2); margin-bottom: 40px; }
+.founder-sig   { font-size: 30px; }
+
+/* ── CRAFT IMAGE ── */
+#craft { position: relative; height: 500px; overflow: hidden; background: var(--bg2); }
+#craft img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .6; }
+.craft-overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 48px;
+}
+.craft-quote {
+  font-family: var(--display); font-style: italic; font-weight: 300;
+  font-size: clamp(22px, 3.5vw, 44px); color: var(--text); line-height: 1.4;
+  max-width: 700px;
+}
+.craft-quote em { color: var(--green); font-style: normal; }
+
+/* ── PROOF ── */
+#proof { padding: 110px 48px; background: var(--bg3); }
+.proof-hdr { text-align: center; margin-bottom: 64px; }
+.proof-hdr .t-label { display: block; margin-bottom: 14px; }
+.proof-hdr h2 { font-size: clamp(20px, 2.5vw, 32px); }
+.proof-names {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 12px; max-width: 900px; margin: 0 auto 72px;
+}
+.proof-chip {
+  font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--text3); padding: 10px 20px; border: 1px solid var(--bg2);
+  transition: border-color .2s, color .2s;
+}
+.proof-chip:hover { border-color: var(--green); color: var(--text); }
+.proof-award { text-align: center; border-top: 1px solid var(--bg2); padding-top: 64px; }
+.proof-num { font-family: var(--display); font-size: clamp(60px, 8vw, 96px); font-weight: 300; color: var(--green); line-height: 1; }
+.proof-award-label { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--text3); margin-top: 16px; }
+
+/* ── ORDER ── */
+#order { padding: 150px 48px; text-align: center; background: var(--bg2); }
+#order .t-label { display: block; margin-bottom: 22px; }
+.order-title { font-size: clamp(30px, 4.5vw, 58px); line-height: 1.15; margin-bottom: 28px; }
+.order-text { font-size: 15px; line-height: 1.95; color: var(--text2); max-width: 560px; margin: 0 auto 52px; }
+.order-deposit { display: block; margin-top: 18px; font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: var(--text3); }
+
+/* ── LABEL B2B ── */
+#label { padding: 130px 80px; background: var(--bg3); }
+.label-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 96px; align-items: start; max-width: 1240px; margin: 0 auto; }
+.label-copy .t-label { display: block; margin-bottom: 22px; }
+.label-title { font-size: clamp(28px, 3.2vw, 48px); line-height: 1.1; margin-bottom: 32px; }
+.label-text  { font-size: 14px; line-height: 2; color: var(--text2); margin-bottom: 44px; }
+.label-list  { list-style: none; margin-bottom: 48px; }
+.label-list li { display: flex; align-items: center; gap: 18px; font-size: 13px; letter-spacing: .08em; color: var(--text2); padding: 12px 0; border-bottom: 1px solid var(--bg2); }
+.label-list li::before { content: '—'; color: var(--green); font-family: var(--display); flex-shrink: 0; }
+.label-steps { display: flex; flex-direction: column; gap: 3px; }
+.step { background: var(--bg2); padding: 36px 44px; display: flex; gap: 28px; align-items: flex-start; }
+.step-num { font-family: var(--display); font-size: 40px; font-weight: 300; color: var(--text3); line-height: 1; flex-shrink: 0; min-width: 44px; }
+.step-title { font-size: 11px; letter-spacing: .28em; text-transform: uppercase; color: var(--text); margin-bottom: 7px; }
+.step-desc  { font-size: 13px; color: var(--text3); line-height: 1.75; }
+
+/* ── FOOTER ── */
+footer { background: var(--bg3); border-top: 1px solid var(--bg2); padding: 72px 48px; text-align: center; }
+.foot-brand { font-family: var(--display); font-size: 12px; font-weight: 300; letter-spacing: .4em; text-transform: uppercase; margin-bottom: 8px; }
+.foot-by    { font-size: 24px; margin-bottom: 44px; }
+.foot-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 28px; margin-bottom: 44px; }
+.foot-link  { font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--text3); text-decoration: none; transition: color .2s; }
+.foot-link:hover { color: var(--green); }
+.foot-copy  { font-size: 11px; color: var(--text3); letter-spacing: .1em; }
+
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  nav { padding: 20px 28px; }
+  .nav-links .nav-link { display: none; }
+  #hero { padding: 120px 28px 100px; }
+  #statement { padding: 88px 28px; }
+  #product, #founder { grid-template-columns: 1fr; }
+  .product-img-wrap, .founder-img-wrap { min-height: 340px; order: 0 !important; }
+  .product-body, .founder-body { padding: 56px 32px; order: 1 !important; }
+  #gallery { grid-template-columns: 1fr 1fr; }
+  #materials { padding: 88px 28px; }
+  .mat-grid { grid-template-columns: 1fr; }
+  #proof { padding: 88px 28px; }
+  #order { padding: 100px 28px; }
+  #label { padding: 88px 28px; }
+  .label-inner { grid-template-columns: 1fr; gap: 56px; }
+  footer { padding: 56px 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Heel the World</a>
+  <div class="nav-links">
+    <a href="#product" class="nav-link">Kollektion</a>
+    <a href="#founder" class="nav-link">Über David</a>
+    <a href="#label" class="nav-link">Dein Label</a>
+    <a href="#order" class="nav-cta">Bestellen</a>
+  </div>
+</nav>
+
+
+<!-- HERO -->
+<section id="hero">
+  <img class="hero-bg" src="images/water-shooting.jpg" alt="" aria-hidden="true">
+  <div class="hero-inner">
+    <h1 class="hero-title t-brand">Heel&nbsp;the&nbsp;World</h1>
+    <p class="hero-by t-script">by David H. Dudek</p>
+    <p class="hero-quote">
+      Entweder liegen wir im Bett —<br>
+      oder wir haben <span>Schuhe an.</span>
+    </p>
+    <a href="#order" class="btn-primary">Dein Unikat bestellen</a>
+  </div>
+  <div class="scroll-hint">Entdecken</div>
+</section>
+
+
+<!-- STATEMENT -->
+<section id="statement">
+  <p class="stmt-text">
+    Luxury High Heels aus <em>organischen Exotikledern</em> —
+    Lachs, Tilapia, Waran, Strauß, Rochen.
+    Handgefertigt. Auf Bestellung. Für Frauen die wissen was sie wollen.
+  </p>
+  <p class="stmt-rule">Kein Fast Fashion &nbsp;·&nbsp; Kein Massenprodukt &nbsp;·&nbsp; Kein Kompromiss</p>
+</section>
+
+
+<!-- PRODUCT -->
+<section id="product">
+  <div class="product-img-wrap" style="order:1;">
+    <img src="images/water-shooting-2.jpg" alt="HEEL THE WORLD Luxury High Heel — Exotikleder Unikat">
+  </div>
+  <div class="product-body" style="order:2;">
+    <span class="t-label">Das Unikat</span>
+    <h2 class="product-title t-section">
+      Genau so.<br>Wie du es dir<br>vorgestellt hast.
+    </h2>
+    <p class="product-desc">
+      Jeder Schuh entsteht für eine einzige Trägerin — nach ihrem Anlass, ihrer Emotion,
+      ihrem Wohlbefinden. Kein Modell zweimal. Naturkautschuk-Plateau,
+      das sich durch Körperwärme dem Fußbett anpasst. Kalbsleder innen.
+      Exotikleder außen. Kein Plastik. Nirgends.
+    </p>
+    <p class="product-price">CHF 4.000+</p>
+    <p class="product-price-note">80 % Anzahlung bei Bestellung &nbsp;·&nbsp; Handarbeit in D / CH / IT</p>
+    <a href="#order" class="btn-outline">Jetzt anfragen</a>
+  </div>
+</section>
+
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="gallery-item">
+    <img src="images/water-1.jpg" alt="HEEL THE WORLD — Platform Brogues am Wildbach">
+  </div>
+  <div class="gallery-item">
+    <img src="images/custom-25.jpg" alt="HEEL THE WORLD — Schwarzer Spitzenstiletto, Handarbeit">
+  </div>
+  <div class="gallery-item">
+    <img src="images/custom-28.jpg" alt="HEEL THE WORLD — Silberner Metallic-Bootie mit Reißverschluss">
+  </div>
+</section>
+
+
+<!-- MATERIALS -->
+<section id="materials">
+  <div class="mat-header">
+    <span class="t-label">Das Material</span>
+    <h2 class="t-section">Aus Abfall wird High Fashion</h2>
+  </div>
+  <div class="mat-grid">
+    <div class="mat-card">
+      <p class="mat-word">Exquisiteness</p>
+      <p class="mat-name">Lachsleder</p>
+      <p class="mat-desc">
+        Abfallprodukt irischer Bio-Lachsfarmen. Weltweit einziger Hersteller mit
+        100 % chromfreier Gerbung. Leichter als Rindsleder —
+        oft für Schlangenleder gehalten.
+      </p>
+    </div>
+    <div class="mat-card">
+      <p class="mat-word">Transformation</p>
+      <p class="mat-name">Tilapia · Waran · Strauß · Rochen</p>
+      <p class="mat-desc">
+        Organische Exotikleder aus bekannter, ethischer Herkunft.
+        Was anderswo Abfall ist, wird hier zur Außenhaut des Schuhs —
+        edel, robust, unverwechselbar.
+      </p>
+    </div>
+    <div class="mat-card accent">
+      <p class="mat-word">Green Glamour</p>
+      <p class="mat-name">Grüner Glamour</p>
+      <p class="mat-desc">
+        Nachhaltigkeit muss nicht Beige sein. Die Farben der Natur
+        sind kühn, sinnlich, lebendig —
+        genau wie die Frauen, die diese Schuhe tragen.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- CRAFT QUOTE -->
+<section id="craft">
+  <img src="images/craft.jpg" alt="Handwerk">
+  <div class="craft-overlay">
+    <p class="craft-quote">
+      Durability instead of fast food fashion for the trash.<br>
+      <em>Timeless creations that outlast trends.</em>
+    </p>
+  </div>
+</section>
+
+
+<!-- FOUNDER -->
+<section id="founder">
+  <div class="founder-img-wrap">
+    <img src="images/founder.jpg" alt="David H. Dudek — Gründer HEEL THE WORLD">
+  </div>
+  <div class="founder-body">
+    <span class="t-label">Der Gründer</span>
+    <h2 class="founder-title t-section">
+      I Heel<br>the World
+    </h2>
+    <p class="founder-text">
+      1976 in Schlesien geboren. 1987 geflüchtet. Zwei Handwerkslehren,
+      neun Jahre Militär, ein Jahr durch die Schuhfabriken Osteuropas.
+      2008 wurde das Hobby zur Überzeugung.
+      <br><br>
+      David H. Dudek macht keine Schuhe für den Markt.
+      Er macht Schuhe gegen die Wegwerfmentalität einer Welt,
+      die eine Ananas im Dezember für normal hält.
+      Qualität statt Quantität. Handwerk statt Hype.
+    </p>
+    <span class="founder-sig t-script">by David H. Dudek</span>
+  </div>
+</section>
+
+
+<!-- SOCIAL PROOF -->
+<section id="proof">
+  <div class="proof-hdr">
+    <span class="t-label">Gesehen. Gehört. Bestätigt.</span>
+    <h2 class="t-section">Substanz statt Versprechen</h2>
+  </div>
+  <div class="proof-names">
+    <span class="proof-chip">Wolfgang Joop</span>
+    <span class="proof-chip">Guido Maria Kretschmer</span>
+    <span class="proof-chip">Mousse T</span>
+    <span class="proof-chip">IN SHOES Magazin</span>
+    <span class="proof-chip">Superior Magazine</span>
+    <span class="proof-chip">Pro7 taff</span>
+    <span class="proof-chip">Mercedes Benz Fashion Week Berlin</span>
+    <span class="proof-chip">TU Berlin</span>
+    <span class="proof-chip">Hotel Adlon Kempinski</span>
+    <span class="proof-chip">House of Melody Berlin</span>
+  </div>
+  <div class="proof-award">
+    <p class="proof-num">5</p>
+    <p class="proof-award-label">
+      Green Product Award &nbsp;·&nbsp; Platz 5 von 12.000 Einreichungen &nbsp;·&nbsp; 64 Länder
+    </p>
+  </div>
+</section>
+
+
+<!-- ORDER / CTA MAIN -->
+<section id="order">
+  <span class="t-label">Dein Unikat</span>
+  <h2 class="order-title t-section">
+    Ein Schuh.<br>Für dich gemacht.
+  </h2>
+  <p class="order-text">
+    Kein Lager. Keine Serie. Jedes Paar entsteht auf konkrete Bestellung —
+    für deinen Anlass, deine Größe, deine Vorstellung.
+    Du wählst das Material. Wir fertigen den Rest.
+  </p>
+  <a href="mailto:david@heeltheworld.ch" class="btn-primary">Jetzt anfragen</a>
+  <span class="order-deposit">CHF 4.000+ &nbsp;·&nbsp; 80 % Anzahlung &nbsp;·&nbsp; Handarbeit in D / CH / IT</span>
+</section>
+
+
+<!-- LABEL / B2B -->
+<section id="label">
+  <div class="label-inner">
+    <div class="label-copy">
+      <span class="t-label">Für Visionäre</span>
+      <h2 class="label-title t-section">
+        Du träumst.<br>Wir bauen.<br>Du trägst die Krone.
+      </h2>
+      <p class="label-text">
+        Du hast eine Idee für ein eigenes Schuhlabel.
+        Eine Ästhetik. Einen Namen. Vielleicht schon eine Geschichte.
+        Was fehlt: das Handwerk, die Manufaktur, die Erfahrung.
+        <br><br>
+        HEEL THE WORLD hat 18 Jahre Schuhbau-Kompetenz,
+        ein Manufaktur-Netzwerk in Deutschland, der Schweiz und Italien —
+        und David H. Dudek entwickelt das Design mit dir.
+        Dein Name steht drauf. Dein Ruhm. Unsere Hände.
+      </p>
+      <ul class="label-list">
+        <li>Konzept &amp; Design</li>
+        <li>Materialauswahl &amp; Musterbau</li>
+        <li>Manufaktur-Koordination</li>
+        <li>Erste Kollektion — fertig zum Launch</li>
+      </ul>
+      <a href="mailto:david@heeltheworld.ch?subject=Label-Anfrage" class="btn-outline">
+        Gespräch anfragen
+      </a>
+    </div>
+    <div class="label-steps">
+      <div class="step">
+        <span class="step-num">01</span>
+        <div>
+          <p class="step-title">Deine Vision</p>
+          <p class="step-desc">Wir hören zu. Du beschreibst. Kein Pitch-Deck nötig.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">02</span>
+        <div>
+          <p class="step-title">Design &amp; Skizze</p>
+          <p class="step-desc">David H. Dudek entwickelt dein erstes Modell. Von Hand.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">03</span>
+        <div>
+          <p class="step-title">Muster &amp; Manufaktur</p>
+          <p class="step-desc">Handgefertigte Musterschuhe. Feedback. Fertig.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">04</span>
+        <div>
+          <p class="step-title">Dein Ruhm</p>
+          <p class="step-desc">Dein Name. Dein Label. Unsere Hände.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <p class="foot-brand">Heel the World</p>
+  <p class="foot-by t-script">by David H. Dudek</p>
+  <div class="foot-links">
+    <a href="#product" class="foot-link">Kollektion</a>
+    <a href="#materials" class="foot-link">Materialien</a>
+    <a href="#founder" class="foot-link">Über David</a>
+    <a href="#label" class="foot-link">Dein Label</a>
+    <a href="mailto:david@heeltheworld.ch" class="foot-link">Kontakt</a>
+  </div>
+  <p class="foot-copy">© 2026 HEEL THE WORLD by David H. Dudek &nbsp;·&nbsp; Luxury Unikat High Heels</p>
+</footer>
+
+
+<script>
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+</script>
+</body>
+</html>

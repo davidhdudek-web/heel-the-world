@@ -1,0 +1,19 @@
+# Large originals — not in repo
+images/founder-hires.png
+images/garden-shooting.jpg
+images/garden-shooting-2.jpg
+images/water-1.jpg
+images/water-2.jpg
+images/water-shooting.jpg
+images/water-shooting-2.jpg
+images/shoe-hero.jpg
+images/muse-1.jpg
+images/muse-2.jpg
+images/muse-3.jpg
+images/grok-video1.mov
+
+# System
+.DS_Store
+Thumbs.db
+node_modules/
+*.log

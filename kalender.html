@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HTW">
+<meta name="theme-color" content="#111111">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>HTW Kalender</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root {
+  --bg: #111; --bg2: #1a1a1a; --bg3: #252525;
+  --green: #6bc99b; --blue: #7b9fe8; --amber: #e8a87b; --red: #e87b7b;
+  --text: #f0f0f0; --text2: #888; --text3: #444;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+  --topbar-h: calc(var(--safe-top) + 62px);
+  --filters-h: 52px;
+  --header-h: calc(var(--topbar-h) + var(--filters-h) + 8px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system,'Helvetica Neue',sans-serif; height: 100%; overflow-x: hidden; }
+
+/* ── PIN ── */
+.pin-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; }
+.pin-logo { font-size: 11px; letter-spacing: .28em; color: var(--green); text-transform: uppercase; }
+.pin-dots { display: flex; gap: 14px; margin: 0 0 4px; }
+.pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(107,201,155,.5); transition: all .12s; }
+.pin-dot.filled { background: var(--green); border-color: var(--green); }
+.pin-grid { display: grid; grid-template-columns: repeat(3, 76px); gap: 12px; }
+.pin-btn { height: 76px; font-size: 26px; font-weight: 300; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); border-radius: 16px; color: #fff; cursor: pointer; -webkit-appearance: none; transition: background .1s; }
+.pin-btn:active { background: rgba(255,255,255,.22); }
+.pin-error { font-size: 10px; color: var(--red); letter-spacing: .12em; text-transform: uppercase; min-height: 14px; opacity: 0; transition: opacity .2s; }
+
+/* ── TOPBAR ── */
+.topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(17,17,17,.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: calc(var(--safe-top) + 12px) 20px 12px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.topbar-inner { display: flex; align-items: center; justify-content: space-between; }
+.topbar-brand { font-size: 12px; letter-spacing: .28em; text-transform: uppercase; font-weight: 300; }
+.topbar-brand span { color: var(--green); }
+.topbar-stats { display: flex; gap: 7px; align-items: center; }
+.stat-pill { background: rgba(107,201,155,.1); border: 1px solid rgba(107,201,155,.2); border-radius: 20px; padding: 4px 10px; font-size: 11px; color: var(--green); letter-spacing: .08em; white-space: nowrap; }
+.stat-pill.wm { background: rgba(232,168,123,.1); border-color: rgba(232,168,123,.2); color: var(--amber); }
+.settings-btn { background: transparent; border: none; color: var(--text3); font-size: 16px; cursor: pointer; padding: 4px 2px; -webkit-appearance: none; line-height: 1; }
+
+/* ── PROGRESS ── */
+.progress { height: 2px; background: rgba(255,255,255,.05); margin-top: 10px; }
+.progress-fill { height: 100%; background: var(--green); transition: width .5s; }
+
+/* ── FILTERS ── */
+.filters { position: fixed; top: var(--topbar-h); left: 0; right: 0; z-index: 40; background: rgba(17,17,17,.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; border-bottom: 1px solid rgba(255,255,255,.04); }
+.filters::-webkit-scrollbar { display: none; }
+.filters-inner { display: flex; gap: 6px; padding: 10px 16px; width: max-content; }
+.fbtn { padding: 7px 14px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; border: 1px solid rgba(255,255,255,.1); background: transparent; color: var(--text2); border-radius: 20px; cursor: pointer; white-space: nowrap; transition: all .15s; -webkit-appearance: none; }
+.fbtn.active { background: var(--green); color: #0a0a0a; border-color: var(--green); font-weight: 700; }
+.fbtn.sA.active { background: var(--green); border-color: var(--green); color: #0a0a0a; }
+.fbtn.sB.active { background: var(--blue);  border-color: var(--blue);  color: #0a0a0a; }
+.fbtn.sC.active { background: var(--amber); border-color: var(--amber); color: #0a0a0a; }
+
+/* ── TODAY BANNER ── */
+.today-banner { margin: calc(var(--header-h) + 4px) 16px 0; background: rgba(107,201,155,.07); border: 1px solid rgba(107,201,155,.18); border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.today-label { font-size: 9px; letter-spacing: .3em; color: var(--green); text-transform: uppercase; margin-bottom: 4px; }
+.today-text { font-size: 14px; font-weight: 300; }
+.today-time { font-size: 22px; font-weight: 200; color: var(--green); letter-spacing: .04em; }
+.today-type { font-size: 9px; color: var(--text2); letter-spacing: .18em; text-transform: uppercase; margin-top: 2px; }
+
+/* ── NOTIF BTN ── */
+.notif-btn { display: block; margin: 12px 16px 0; }
+.notif-btn.first-visible { margin-top: calc(var(--header-h) + 4px); background: rgba(107,201,155,.08); border: 1px solid rgba(107,201,155,.2); border-radius: 12px; padding: 14px 20px; text-align: center; font-size: 12px; color: var(--green); letter-spacing: .1em; cursor: pointer; -webkit-appearance: none; width: calc(100% - 32px); }
+.notif-btn.enabled { color: var(--text2); border-color: rgba(255,255,255,.08); background: transparent; }
+
+/* ── INSTALL HINT ── */
+.install-hint { margin: 12px 16px 0; background: rgba(123,159,232,.07); border: 1px solid rgba(123,159,232,.18); border-radius: 12px; padding: 14px 16px; font-size: 12px; color: #9ab5f0; line-height: 1.7; letter-spacing: .02em; }
+.install-hint strong { font-weight: 600; }
+
+/* ── CARDS ── */
+.cards { padding: 12px 16px calc(var(--safe-bot) + 20px); display: flex; flex-direction: column; gap: 1px; }
+.day-label { font-size: 9px; letter-spacing: .4em; color: var(--text3); text-transform: uppercase; padding: 20px 4px 8px; }
+.card { background: var(--bg2); border-radius: 14px; overflow: hidden; margin-bottom: 10px; border-left: 3px solid transparent; transition: opacity .2s; }
+.card.done { opacity: .35; }
+.card[data-type="Detail"]    { border-left-color: var(--green); }
+.card[data-type="Editorial"] { border-left-color: var(--blue); }
+.card[data-type="Story"]     { border-left-color: var(--amber); }
+
+.card-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 0; }
+.card-time { font-size: 24px; font-weight: 200; letter-spacing: .02em; }
+.card-date { font-size: 10px; color: var(--text2); letter-spacing: .1em; margin-top: 1px; }
+.card-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.card-type-badge { font-size: 9px; letter-spacing: .2em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; }
+.card[data-type="Detail"]    .card-type-badge { background: rgba(107,201,155,.12); color: var(--green); }
+.card[data-type="Editorial"] .card-type-badge { background: rgba(123,159,232,.12); color: var(--blue); }
+.card[data-type="Story"]     .card-type-badge { background: rgba(232,168,123,.12); color: var(--amber); }
+.saeule-badge { font-size: 8px; letter-spacing: .16em; text-transform: uppercase; padding: 4px 8px; border-radius: 12px; }
+.sA { background: rgba(107,201,155,.08); color: var(--green); }
+.sB { background: rgba(123,159,232,.08); color: var(--blue); }
+.sC { background: rgba(232,168,123,.08); color: var(--amber); }
+
+.card-col { font-size: 9px; letter-spacing: .22em; color: var(--text3); text-transform: uppercase; padding: 10px 16px 0; }
+.card-location { padding: 8px 16px 0; display: flex; gap: 8px; align-items: center; }
+.card-city { font-size: 10px; color: var(--text2); letter-spacing: .15em; text-transform: uppercase; }
+.card-lang-badge { background: rgba(123,159,232,.1); border: 1px solid rgba(123,159,232,.2); color: var(--blue); border-radius: 12px; padding: 2px 8px; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
+.card-photo-tag { font-size: 10px; color: var(--green); background: rgba(107,201,155,.07); padding: 5px 10px; border-radius: 6px; margin: 6px 16px 0; display: inline-block; word-break: break-all; }
+.card-photo-preview { margin: 10px 16px 0; border-radius: 8px; overflow: hidden; background: var(--bg3); display: block; text-decoration: none; }
+.card-photo-preview img { width: 100%; height: 160px; object-fit: cover; display: block; transition: opacity .2s; }
+.card.done .card-photo-preview img { opacity: .4; }
+.card-caption { font-size: 15px; line-height: 1.6; padding: 14px 16px 0; font-style: italic; color: var(--text); }
+.card-tags { font-size: 11px; color: var(--green); opacity: .6; padding: 8px 16px 0; line-height: 1.6; }
+
+.card-grok-wrap { margin: 12px 16px 0; background: rgba(255,255,255,.03); border-radius: 8px; padding: 12px; }
+.card-grok-label { font-size: 8px; letter-spacing: .28em; color: var(--text3); text-transform: uppercase; margin-bottom: 6px; }
+.card-grok { font-size: 11px; color: var(--text2); line-height: 1.7; }
+
+.card-music-wrap { margin: 8px 16px 0; background: rgba(123,159,232,.05); border-radius: 8px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.card-music-info { flex: 1; min-width: 0; }
+.card-music-label { font-size: 8px; letter-spacing: .26em; color: var(--text3); text-transform: uppercase; margin-bottom: 3px; }
+.card-music-style { font-size: 11px; color: var(--blue); font-weight: 500; margin-bottom: 2px; }
+.card-music-search { font-size: 10px; color: var(--text2); font-style: italic; }
+.card-music-note { font-size: 9px; color: var(--text3); margin-top: 2px; }
+.card-music-copy { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); background: rgba(123,159,232,.1); border: 1px solid rgba(123,159,232,.2); border-radius: 8px; padding: 7px 10px; cursor: pointer; -webkit-appearance: none; flex-shrink: 0; }
+
+.card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 14px 16px 16px; }
+.btn-check { grid-column: 1 / -1; }
+.abtn { padding: 12px 8px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; border: 1px solid rgba(255,255,255,.1); background: transparent; color: var(--text2); border-radius: 10px; cursor: pointer; text-align: center; transition: all .15s; -webkit-appearance: none; }
+.abtn:active { transform: scale(.97); }
+.abtn.green { border-color: rgba(107,201,155,.3); color: var(--green); background: rgba(107,201,155,.07); }
+.abtn.blue  { border-color: rgba(123,159,232,.3); color: var(--blue);  background: rgba(123,159,232,.07); }
+.abtn.amber { border-color: rgba(232,168,123,.3); color: var(--amber); background: rgba(232,168,123,.07); }
+.abtn.check { background: var(--green); color: #0a0a0a; border-color: var(--green); font-weight: 700; }
+.card.done .abtn.check { background: var(--bg3); color: var(--text3); border-color: transparent; }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: calc(var(--safe-bot) + 24px); left: 50%; transform: translateX(-50%); background: var(--green); color: #0a0a0a; padding: 12px 28px; font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; border-radius: 24px; pointer-events: none; opacity: 0; transition: opacity .25s; z-index: 199; white-space: nowrap; }
+.toast.show { opacity: 1; }
+
+/* ── LEAD FAB ── */
+.lead-fab { position: fixed; bottom: calc(var(--safe-bot) + 24px); right: 20px; z-index: 60; width: 52px; height: 52px; border-radius: 50%; background: var(--amber); color: #0a0a0a; border: none; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(232,168,123,.4); -webkit-appearance: none; transition: transform .15s; }
+.lead-fab:active { transform: scale(.93); }
+
+/* ── SHARED SHEET ── */
+.sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(6px); z-index: 70; display: none; align-items: flex-end; justify-content: center; }
+.sheet-overlay.open { display: flex; }
+.sheet { background: #1a1a1a; border-radius: 20px 20px 0 0; padding: 24px 20px calc(var(--safe-bot) + 28px); width: 100%; max-width: 480px; }
+.sheet-title { font-size: 11px; letter-spacing: .28em; text-transform: uppercase; margin-bottom: 16px; }
+.sheet-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+.sheet-input { width: 100%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 14px 16px; font-size: 15px; color: var(--text); margin-bottom: 12px; -webkit-appearance: none; outline: none; font-family: inherit; }
+.sheet-input:focus { border-color: var(--amber); }
+.sheet-input::placeholder { color: var(--text3); }
+.sheet-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-top: 8px; }
+.btn-cancel { padding: 14px; background: transparent; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; color: var(--text2); font-size: 13px; cursor: pointer; -webkit-appearance: none; font-family: inherit; }
+.btn-primary { padding: 14px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; -webkit-appearance: none; font-family: inherit; transition: opacity .15s; }
+.btn-primary:disabled { opacity: .45; }
+.btn-amber { background: var(--amber); color: #0a0a0a; }
+.btn-blue  { background: var(--blue);  color: #0a0a0a; }
+.lead-context { font-size: 10px; color: var(--text3); letter-spacing: .1em; margin-bottom: 16px; text-transform: uppercase; }
+
+/* ── SWAP SHEET ── */
+.swap-sheet { max-height: 88vh; overflow-y: auto; }
+.swap-section { margin-bottom: 16px; }
+.swap-section-lbl { font-size: 8px; letter-spacing: .22em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+.swap-opt { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; padding: 10px 12px 10px 12px; font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 8px; cursor: pointer; }
+.swap-opt:active { border-color: var(--green); }
+.swap-opt-lbl { font-size: 8px; color: var(--blue); letter-spacing: .15em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.swap-text { background: rgba(255,255,255,.04); border-radius: 8px; padding: 10px 12px; font-size: 11px; color: var(--text2); line-height: 1.7; }
+.swap-copy { display: block; margin-top: 8px; text-align: right; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); background: rgba(123,159,232,.1); border: 1px solid rgba(123,159,232,.25); border-radius: 6px; padding: 5px 10px; cursor: pointer; -webkit-appearance: none; float: right; }
+.swap-loading-wrap { text-align: center; padding: 40px 0; }
+.swap-spinner { display: inline-block; width: 28px; height: 28px; border: 2px solid rgba(123,159,232,.2); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 12px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.swap-loading-text { font-size: 12px; color: var(--text2); letter-spacing: .1em; }
+
+/* ── WORTMARK CONFIRM ── */
+.wm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.78); z-index: 90; display: none; align-items: center; justify-content: center; padding: 20px; }
+.wm-overlay.open { display: flex; }
+.wm-box { background: #1a1a1a; border-radius: 16px; padding: 28px 20px; width: 100%; max-width: 340px; text-align: center; }
+.wm-icon { font-size: 26px; margin-bottom: 10px; }
+.wm-title { font-size: 15px; color: var(--text); margin-bottom: 8px; font-weight: 500; }
+.wm-sub { font-size: 12px; color: var(--text2); line-height: 1.7; margin-bottom: 22px; }
+.wm-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.wm-btn { padding: 14px; border-radius: 10px; font-size: 12px; letter-spacing: .04em; cursor: pointer; -webkit-appearance: none; font-family: inherit; border: none; }
+.wm-yes { background: var(--green); color: #0a0a0a; font-weight: 700; }
+.wm-no  { background: rgba(255,255,255,.06); color: var(--text2); border: 1px solid rgba(255,255,255,.12) !important; }
+
+/* ── SETTINGS ── */
+.settings-section { margin-bottom: 20px; }
+.settings-lbl { font-size: 9px; letter-spacing: .26em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.settings-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.05); font-size: 13px; }
+.settings-key { color: var(--text2); }
+</style>
+</head>
+<body>
+
+<!-- PIN OVERLAY -->
+<div id="pinOverlay" class="pin-overlay">
+  <div class="pin-logo">HEEL THE WORLD <span style="color:var(--green);margin:0 6px">·</span> Geschützt</div>
+  <div class="pin-dots" id="pinDots">
+    <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-btn" onclick="pinPress('1')">1</button>
+    <button class="pin-btn" onclick="pinPress('2')">2</button>
+    <button class="pin-btn" onclick="pinPress('3')">3</button>
+    <button class="pin-btn" onclick="pinPress('4')">4</button>
+    <button class="pin-btn" onclick="pinPress('5')">5</button>
+    <button class="pin-btn" onclick="pinPress('6')">6</button>
+    <button class="pin-btn" onclick="pinPress('7')">7</button>
+    <button class="pin-btn" onclick="pinPress('8')">8</button>
+    <button class="pin-btn" onclick="pinPress('9')">9</button>
+    <div></div>
+    <button class="pin-btn" onclick="pinPress('0')">0</button>
+    <button class="pin-btn" onclick="pinDel()" style="font-size:16px">⌫</button>
+  </div>
+  <div class="pin-error" id="pinError">Falscher PIN</div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-brand">HTW <span>·</span> Kalender</div>
+    <div class="topbar-stats">
+      <div class="stat-pill" id="statPill">0 / 90</div>
+      <div class="stat-pill wm" id="wmPill">0 WM</div>
+      <button class="settings-btn" onclick="openSettings()" title="Einstellungen">⚙</button>
+    </div>
+  </div>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters">
+  <div class="filters-inner">
+    <button class="fbtn active" onclick="setFilter('all',this)">Alle</button>
+    <button class="fbtn" onclick="setFilter('today',this)">Heute</button>
+    <button class="fbtn sA" onclick="setFilter('A',this)">Säule A</button>
+    <button class="fbtn sB" onclick="setFilter('B',this)">Säule B</button>
+    <button class="fbtn sC" onclick="setFilter('C',this)">Säule C</button>
+    <button class="fbtn" onclick="setFilter('open',this)">Offen</button>
+    <button class="fbtn" onclick="setFilter('done',this)">Erledigt</button>
+  </div>
+</div>
+
+<!-- TODAY BANNER -->
+<div id="todayBanner" class="today-banner" style="display:none">
+  <div>
+    <div class="today-label">Nächster Post</div>
+    <div class="today-text" id="todayText">—</div>
+  </div>
+  <div style="text-align:right;flex-shrink:0">
+    <div class="today-time" id="todayTime">—</div>
+    <div class="today-type" id="todayType">—</div>
+  </div>
+</div>
+
+<button class="notif-btn" id="notifBtn" onclick="requestNotifications()">Benachrichtigungen aktivieren</button>
+
+<div id="installHint" class="install-hint" style="display:none">
+  <strong>iPhone-Setup in 3 Schritten:</strong><br>
+  1. Safari → Teilen-Symbol (unten mittig)<br>
+  2. „Zum Home-Bildschirm" tippen<br>
+  3. App öffnen → „Benachrichtigungen aktivieren" tippen<br>
+  <span style="opacity:.6;font-size:11px;">Danach täglich Erinnerungen um 07:45, 12:45, 18:45</span>
+</div>
+
+<div class="cards" id="cards"></div>
+<div class="toast" id="toast"></div>
+
+<button class="lead-fab" onclick="openLead()" title="Commission Lead erfassen">✦</button>
+
+<!-- hidden file input for photo swap -->
+<input type="file" id="photoSwapInput" accept="image/*" style="display:none" onchange="handlePhotoSwap(this)">
+
+<!-- LEAD MODAL -->
+<div class="sheet-overlay" id="leadOverlay" onclick="closeLead(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-title" style="color:var(--amber)">Commission Lead</div>
+    <div class="sheet-sub">Interessentin erfassen — Brevo sendet automatisch die Welcome-Sequenz.</div>
+    <div class="lead-context" id="leadContext"></div>
+    <input class="sheet-input" type="text" id="leadName" placeholder="Name (optional)" autocomplete="name">
+    <input class="sheet-input" type="email" id="leadEmail" placeholder="E-Mail *" autocomplete="email" inputmode="email">
+    <div class="sheet-actions">
+      <button class="btn-cancel" onclick="closeLead()">Abbrechen</button>
+      <button class="btn-primary btn-amber" id="leadSendBtn" onclick="submitLead()">Sequenz starten →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SWAP MODAL -->
+<div class="sheet-overlay" id="swapOverlay" onclick="closeSwap(event)">
+  <div class="sheet swap-sheet" onclick="event.stopPropagation()">
+    <div class="sheet-title" style="color:var(--blue)">Bild getauscht — Claude Haiku analysiert</div>
+    <div id="swapContent">
+      <div class="swap-loading-wrap">
+        <div class="swap-spinner"></div>
+        <div class="swap-loading-text">Analysiere dein Foto…</div>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn-cancel" style="width:100%" onclick="closeSwap()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<!-- WORTMARK CONFIRM -->
+<div class="wm-overlay" id="wmOverlay">
+  <div class="wm-box">
+    <div class="wm-icon">🏷</div>
+    <div class="wm-title">Wortmarke im Clip?</div>
+    <div class="wm-sub">Ist <strong>HEEL THE WORLD</strong><br>in deinem Reel sichtbar?<br><span style="opacity:.5;font-size:10px">Ziel: 80% · Outro letzte 3 Sek empfohlen</span></div>
+    <div class="wm-btns">
+      <button class="wm-btn wm-no"  onclick="confirmWortmark(false)">Fehlt — nochmal</button>
+      <button class="wm-btn wm-yes" onclick="confirmWortmark(true)">✓ Ja, enthalten</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="sheet-overlay" id="settingsOverlay" onclick="closeSettings(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-title" style="color:var(--text2)">Einstellungen</div>
+
+    <div class="settings-section">
+      <div class="settings-lbl">Sicherheit</div>
+      <div class="settings-row"><span class="settings-key">Auto-Logout</span><span style="color:var(--green)">15 Min</span></div>
+      <div class="settings-row"><span class="settings-key">Aktueller PIN</span><span style="color:var(--text3)">••••</span></div>
+      <div style="margin-top:12px">
+        <input class="sheet-input" type="number" id="newPin" placeholder="Neuer 4-stelliger PIN" inputmode="numeric" style="margin-bottom:8px">
+        <button class="btn-primary btn-blue" style="width:100%" onclick="changePin()">PIN ändern</button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-lbl">Storytelling — 30 Tage</div>
+      <div class="settings-row"><span class="settings-key" style="color:var(--green)">Säule A — Kunstwerk</span><span style="color:var(--text3)">08:00 · Detail</span></div>
+      <div class="settings-row"><span class="settings-key" style="color:var(--blue)">Säule B — Emotion</span><span style="color:var(--text3)">13:00 · Editorial</span></div>
+      <div class="settings-row"><span class="settings-key" style="color:var(--amber)">Säule C — Atelier</span><span style="color:var(--text3)">19:00 · Story</span></div>
+      <div class="settings-row"><span class="settings-key">Wortmarken-Ziel</span><span style="color:var(--amber)" id="settingsWmStat">0 / 0</span></div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-lbl">Musik · Epidemic Sound</div>
+      <div class="settings-row"><span class="settings-key" style="color:var(--green)">Säule A</span><span style="color:var(--text3);font-size:11px">Cinematic Piano</span></div>
+      <div class="settings-row"><span class="settings-key" style="color:var(--blue)">Säule B</span><span style="color:var(--text3);font-size:11px">Warm Soul / Jazz</span></div>
+      <div class="settings-row"><span class="settings-key" style="color:var(--amber)">Säule C</span><span style="color:var(--text3);font-size:11px">Ambient Pad</span></div>
+      <div class="settings-row"><span class="settings-key">Stille Posts</span><span style="color:var(--text3)">20% · Hermès-Logik</span></div>
+    </div>
+
+    <button class="btn-cancel" style="width:100%;margin-top:4px" onclick="closeSettings()">Schließen</button>
+  </div>
+</div>
+
+<script src="posts.js"></script>
+<script>
+// ── MUSIC MAP ──
+const MUSIC_MAP = {
+  A: { style: 'Cinematic Piano', search: 'cinematic piano minimal slow ambient', note: 'Sparse · no beat · emotional' },
+  B: { style: 'Warm Soul / Jazz', search: 'warm soul jazz minimal atmospheric', note: 'Subtle warmth · lifestyle feel' },
+  C: { style: 'Ambient Pad', search: 'ambient atmospheric slow cinematic pad', note: 'Textural · immersive · background' }
+};
+
+function getSaeule(type) {
+  if (type === 'Detail')    return 'A';
+  if (type === 'Editorial') return 'B';
+  return 'C';
+}
+
+// ── PIN ──
+const PIN_KEY = 'htw_pin';
+let storedPin = localStorage.getItem(PIN_KEY) || '1722';
+let pinBuf = '';
+let lastActivity = Date.now();
+let wmPending = -1;
+
+function pinPress(d) {
+  if (pinBuf.length >= 4) return;
+  pinBuf += d;
+  renderPinDots();
+  if (pinBuf.length === 4) {
+    if (pinBuf === storedPin) {
+      document.getElementById('pinOverlay').style.display = 'none';
+      resetActivity();
+    } else {
+      document.getElementById('pinError').style.opacity = '1';
+      setTimeout(() => {
+        pinBuf = '';
+        renderPinDots();
+        document.getElementById('pinError').style.opacity = '0';
+      }, 900);
+    }
+  }
+}
+
+function pinDel() { pinBuf = pinBuf.slice(0,-1); renderPinDots(); }
+
+function renderPinDots() {
+  document.querySelectorAll('.pin-dot').forEach((d,i) => d.classList.toggle('filled', i < pinBuf.length));
+}
+
+function showPin() { pinBuf = ''; renderPinDots(); document.getElementById('pinOverlay').style.display = 'flex'; }
+
+function resetActivity() { lastActivity = Date.now(); }
+document.addEventListener('touchstart', resetActivity, { passive: true });
+document.addEventListener('click', resetActivity);
+setInterval(() => {
+  if (document.getElementById('pinOverlay').style.display !== 'flex' && Date.now() - lastActivity > 15 * 60 * 1000) showPin();
+}, 30000);
+
+function changePin() {
+  const val = document.getElementById('newPin').value.replace(/\D/g,'');
+  if (val.length !== 4) { showToast('4-stelliger PIN erforderlich'); return; }
+  storedPin = val;
+  localStorage.setItem(PIN_KEY, val);
+  document.getElementById('newPin').value = '';
+  showToast('PIN geändert ✓');
+  closeSettings();
+}
+
+// ── SUPABASE ──
+const SB_URL = 'https://jzhujovdjrgrgdjupesi.supabase.co';
+const SB_KEY = 'sb_publishable_rUueAw5BJqCvLFXJgpTL-A_tmxGQtQV';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+function getDeviceId() {
+  let id = localStorage.getItem('htw_device');
+  if (!id) { id = 'dev_' + Math.random().toString(36).slice(2,10); localStorage.setItem('htw_device', id); }
+  return id;
+}
+const DEVICE_ID = getDeviceId();
+
+// ── STATE ──
+let doneSet = new Set(JSON.parse(localStorage.getItem('htw_done2') || '[]'));
+let wmSet   = new Set(JSON.parse(localStorage.getItem('htw_wm')    || '[]'));
+let currentFilter = 'all';
+const TODAY = new Date().toISOString().split('T')[0];
+
+async function saveDone() {
+  localStorage.setItem('htw_done2', JSON.stringify([...doneSet]));
+  try {
+    const rows = [...doneSet].map(idx => ({ device_id: DEVICE_ID, post_index: idx }));
+    await sb.from('htw_done').upsert(rows, { onConflict: 'device_id,post_index' });
+  } catch(e) {}
+}
+
+function saveWm() { localStorage.setItem('htw_wm', JSON.stringify([...wmSet])); }
+
+async function loadDoneFromSupabase() {
+  try {
+    const { data, error } = await sb.from('htw_done').select('post_index').eq('device_id', DEVICE_ID);
+    if (!error && data && data.length) {
+      data.forEach(r => doneSet.add(r.post_index));
+      localStorage.setItem('htw_done2', JSON.stringify([...doneSet]));
+    }
+  } catch(e) {}
+}
+
+// ── STATS ──
+function updateStats() {
+  document.getElementById('statPill').textContent = doneSet.size + ' / 90';
+  document.getElementById('progressFill').style.width = Math.round(doneSet.size / 90 * 100) + '%';
+  document.getElementById('wmPill').textContent = wmSet.size + ' WM';
+  const wmGoal = Math.round(doneSet.size * 0.8);
+  if (document.getElementById('settingsWmStat')) {
+    document.getElementById('settingsWmStat').textContent = wmSet.size + ' / ' + wmGoal + ' Ziel';
+  }
+}
+
+function updateTodayBanner() {
+  const now = new Date();
+  const slots = posts.filter(p => p.day === TODAY && !doneSet.has(posts.indexOf(p)));
+  const upcoming = slots.find(p => { const [h,m] = p.time.split(':').map(Number); const t = new Date(); t.setHours(h,m,0,0); return t > now; }) || slots[0];
+  const banner = document.getElementById('todayBanner');
+  const notifBtn = document.getElementById('notifBtn');
+  if (upcoming) {
+    banner.style.display = 'flex';
+    document.getElementById('todayText').textContent = (upcoming.city ? upcoming.city + ' · ' : '') + upcoming.col;
+    document.getElementById('todayTime').textContent = upcoming.time;
+    document.getElementById('todayType').textContent = 'Säule ' + getSaeule(upcoming.type) + ' · ' + upcoming.type;
+    notifBtn.classList.remove('first-visible');
+  } else {
+    banner.style.display = 'none';
+    notifBtn.classList.add('first-visible');
+  }
+}
+
+// ── FILTER ──
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+// ── RENDER ──
+function render() {
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+  let lastDate = '';
+
+  if (typeof posts === 'undefined' || !posts.length) {
+    container.innerHTML = '<div style="padding:80px 20px;text-align:center;color:var(--text2);font-size:13px">posts.js lädt nicht — Seite neu laden</div>';
+    return;
+  }
+
+  posts.forEach((p, i) => {
+    const isDone  = doneSet.has(i);
+    const isToday = p.day === TODAY;
+    const saeule  = getSaeule(p.type);
+    const music   = MUSIC_MAP[saeule];
+
+    if (currentFilter === 'today' && !isToday) return;
+    if (currentFilter === 'A'     && saeule !== 'A') return;
+    if (currentFilter === 'B'     && saeule !== 'B') return;
+    if (currentFilter === 'C'     && saeule !== 'C') return;
+    if (currentFilter === 'open'  && isDone) return;
+    if (currentFilter === 'done'  && !isDone) return;
+
+    if (p.date !== lastDate && currentFilter === 'all') {
+      const dl = document.createElement('div');
+      dl.className = 'day-label';
+      dl.textContent = p.date + (isToday ? '  ← Heute' : '');
+      container.appendChild(dl);
+      lastDate = p.date;
+    }
+
+    const card = document.createElement('div');
+    card.className = 'card' + (isDone ? ' done' : '');
+    card.dataset.type = p.type;
+    card.innerHTML = `
+      <div class="card-top">
+        <div>
+          <div class="card-time">${p.time}</div>
+          <div class="card-date">${p.date}</div>
+        </div>
+        <div class="card-badges">
+          <span class="saeule-badge s${saeule}">S.${saeule}</span>
+          <span class="card-type-badge">${p.type}</span>
+        </div>
+      </div>
+      ${p.photo ? `<a class="card-photo-preview" href="${p.photo}" target="_blank"><img src="${p.photo}" loading="lazy" alt="${p.col}" onerror="this.parentElement.style.display='none'"></a>` : ''}
+      <div class="card-col">${p.col}</div>
+      ${(p.city || p.lang) ? `<div class="card-location">${p.city ? `<span class="card-city">${p.city}</span>` : ''}${p.lang ? `<span class="card-lang-badge">${p.lang}</span>` : ''}</div>` : ''}
+      <div class="card-photo-tag">${p.photo}</div>
+      <div class="card-caption">"${p.caption}"</div>
+      <div class="card-tags">${p.tags}</div>
+      <div class="card-grok-wrap">
+        <div class="card-grok-label">Grok Video Prompt</div>
+        <div class="card-grok">${p.grok}</div>
+      </div>
+      <div class="card-music-wrap">
+        <div class="card-music-info">
+          <div class="card-music-label">Musik · Epidemic Sound</div>
+          <div class="card-music-style">${music.style}</div>
+          <div class="card-music-search">"${music.search}"</div>
+          <div class="card-music-note">${music.note}</div>
+        </div>
+        <button class="card-music-copy" onclick="copyMusic(${i})">Kopieren</button>
+      </div>
+      <div class="card-actions">
+        <button class="abtn green" onclick="copyCaption(${i})">Caption</button>
+        <button class="abtn green" onclick="copyGrok(${i})">Grok Prompt</button>
+        <button class="abtn blue"  onclick="openSwap(${i})">⇄ Bild tauschen</button>
+        <button class="abtn amber" onclick="openLead(${i})">✦ Lead</button>
+        <button class="abtn check btn-check" onclick="requestDone(${i})">${isDone ? '✓ Erledigt — rückgängig' : 'Als erledigt markieren'}</button>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+// ── WORTMARK FLOW ──
+function requestDone(i) {
+  if (doneSet.has(i)) {
+    doneSet.delete(i);
+    wmSet.delete(i);
+    saveDone(); saveWm(); updateStats(); updateTodayBanner(); render();
+    return;
+  }
+  wmPending = i;
+  document.getElementById('wmOverlay').classList.add('open');
+}
+
+function confirmWortmark(hasWm) {
+  document.getElementById('wmOverlay').classList.remove('open');
+  if (wmPending < 0) return;
+  const i = wmPending;
+  wmPending = -1;
+  doneSet.add(i);
+  if (hasWm) wmSet.add(i);
+  saveDone(); saveWm(); updateStats(); updateTodayBanner(); render();
+  showToast(hasWm ? '✓ Erledigt · Wortmarke ✓' : '✓ Erledigt · Wortmarke fehlt');
+}
+
+// ── PHOTO SWAP ──
+let swapCardIndex = -1;
+
+function openSwap(i) {
+  swapCardIndex = i;
+  document.getElementById('photoSwapInput').value = '';
+  document.getElementById('photoSwapInput').click();
+}
+
+function closeSwap(e) {
+  if (!e || e.target === document.getElementById('swapOverlay')) {
+    document.getElementById('swapOverlay').classList.remove('open');
+  }
+}
+
+function handlePhotoSwap(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const i = swapCardIndex;
+  const p = posts[i];
+  const saeule = getSaeule(p.type);
+
+  document.getElementById('swapContent').innerHTML = `
+    <div class="swap-loading-wrap">
+      <div class="swap-spinner"></div>
+      <div class="swap-loading-text">Claude Haiku analysiert dein Foto…</div>
+    </div>`;
+  document.getElementById('swapOverlay').classList.add('open');
+
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    const dataUrl = ev.target.result;
+    const base64 = dataUrl.split(',')[1];
+    const mediaType = file.type || 'image/jpeg';
+    try {
+      const res = await fetch('/.netlify/functions/swap', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photoBase64: base64, mediaType, col: p.col, type: p.type, city: p.city || '', lang: p.lang || 'EN', saeule })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        document.getElementById('swapContent').innerHTML = `<div style="color:var(--red);padding:20px;font-size:12px;line-height:1.7">${escHtml(err.error || 'Fehler — ANTHROPIC_API_KEY in Netlify setzen')}</div>`;
+        return;
+      }
+      renderSwapResults(await res.json());
+    } catch(e) {
+      document.getElementById('swapContent').innerHTML = `<div style="color:var(--red);padding:20px;font-size:12px">Netzwerkfehler</div>`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderSwapResults(data) {
+  const { captions, grok, hook, firstComment } = data;
+  const labels = ['A — Material', 'B — Frau', 'C — Handwerk'];
+  let html = '';
+  if (captions && captions.length) {
+    html += `<div class="swap-section"><div class="swap-section-lbl">3 Captions — tippen zum kopieren</div>`;
+    captions.forEach((c, idx) => {
+      html += `<div class="swap-opt" onclick="copyText(${JSON.stringify(c)},'Caption ${idx+1} kopiert')"><span class="swap-opt-lbl">${labels[idx]||'Variante '+(idx+1)}</span>${escHtml(c)}</div>`;
+    });
+    html += `</div>`;
+  }
+  if (grok) {
+    html += `<div class="swap-section"><div class="swap-section-lbl">Neuer Grok Prompt</div><div class="swap-text">${escHtml(grok)}<button class="swap-copy" onclick="copyText(${JSON.stringify(grok)},'Grok kopiert')">Kopieren</button><div style="clear:both"></div></div></div>`;
+  }
+  if (hook) {
+    html += `<div class="swap-section"><div class="swap-section-lbl">Hook — Text Overlay</div><div class="swap-text" style="font-size:16px;font-weight:500;color:var(--text)">${escHtml(hook)}<button class="swap-copy" onclick="copyText(${JSON.stringify(hook)},'Hook kopiert')">Kopieren</button><div style="clear:both"></div></div></div>`;
+  }
+  if (firstComment) {
+    html += `<div class="swap-section"><div class="swap-section-lbl">First Comment — Hashtags</div><div class="swap-text">${escHtml(firstComment)}<button class="swap-copy" onclick="copyText(${JSON.stringify(firstComment)},'Hashtags kopiert')">Kopieren</button><div style="clear:both"></div></div></div>`;
+  }
+  document.getElementById('swapContent').innerHTML = html || '<div style="color:var(--text2);padding:20px">Keine Ergebnisse</div>';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── LEAD ──
+let leadPostContext = null;
+function openLead(postIndex) {
+  leadPostContext = postIndex != null ? posts[postIndex] : null;
+  document.getElementById('leadContext').textContent = leadPostContext ? `Kontext: ${leadPostContext.city} · ${leadPostContext.col} · ${leadPostContext.time}` : '';
+  document.getElementById('leadName').value = '';
+  document.getElementById('leadEmail').value = '';
+  document.getElementById('leadSendBtn').disabled = false;
+  document.getElementById('leadSendBtn').textContent = 'Sequenz starten →';
+  document.getElementById('leadOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('leadEmail').focus(), 200);
+}
+function closeLead(e) {
+  if (!e || e.target === document.getElementById('leadOverlay')) document.getElementById('leadOverlay').classList.remove('open');
+}
+async function submitLead() {
+  const email = document.getElementById('leadEmail').value.trim();
+  const name  = document.getElementById('leadName').value.trim();
+  if (!email || !email.includes('@')) { showToast('E-Mail eingeben'); return; }
+  const btn = document.getElementById('leadSendBtn');
+  btn.disabled = true; btn.textContent = 'Sende…';
+  const payload = { name, email, lang: leadPostContext?.lang||'EN', city: leadPostContext?.city||'', material: leadPostContext?.col||'' };
+  try {
+    await sb.from('htw_leads').insert({ name: name||null, email, lang: payload.lang, city: payload.city, material: payload.material });
+    const res = await fetch('/.netlify/functions/lead', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    showToast(res.ok ? 'Lead gespeichert · E-Mail gesendet' : 'Lead gespeichert · E-Mail prüfen');
+    document.getElementById('leadOverlay').classList.remove('open');
+  } catch(err) {
+    showToast('Netzwerkfehler — prüfe Verbindung');
+    btn.disabled = false; btn.textContent = 'Sequenz starten →';
+  }
+}
+
+// ── SETTINGS ──
+function openSettings() {
+  updateStats();
+  document.getElementById('settingsOverlay').classList.add('open');
+}
+function closeSettings(e) {
+  if (!e || e.target === document.getElementById('settingsOverlay')) document.getElementById('settingsOverlay').classList.remove('open');
+}
+
+// ── COPY ──
+function copyText(text, msg) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => copyFallback(text, msg));
+  } else { copyFallback(text, msg); }
+}
+function copyFallback(text, msg) {
+  const el = document.createElement('textarea');
+  el.value = text; el.setAttribute('readonly',''); el.style.cssText = 'position:fixed;left:-9999px;top:-9999px;';
+  document.body.appendChild(el); el.focus(); el.select();
+  try { document.execCommand('copy'); showToast(msg); } catch(e) { showToast('Manuell kopieren'); }
+  document.body.removeChild(el);
+}
+function copyCaption(i) { copyText(posts[i].caption + '\n\n' + posts[i].tags, 'Caption kopiert'); }
+function copyGrok(i) { copyText(posts[i].grok, 'Grok Prompt kopiert'); }
+function copyMusic(i) { copyText(MUSIC_MAP[getSaeule(posts[i].type)].search, 'Musik-Suche kopiert'); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── PWA & NOTIFICATIONS ──
+function registerSW() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      if (navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: 'SCHEDULE_NOTIFICATIONS' });
+    });
+  }
+}
+function requestNotifications() {
+  const btn = document.getElementById('notifBtn');
+  const isStandalone = window.navigator.standalone;
+  if (!isStandalone && /iPhone|iPad|iPod/.test(navigator.userAgent)) { document.getElementById('installHint').style.display='block'; showToast('Erst zum Home-Bildschirm hinzufügen'); return; }
+  if (!('Notification' in window)) { showToast('Gerät unterstützt keine Benachrichtigungen'); return; }
+  Notification.requestPermission().then(perm => {
+    if (perm === 'granted') { btn.textContent = '✓ Benachrichtigungen aktiv — 07:45 · 12:45 · 18:45'; btn.classList.add('enabled'); localStorage.setItem('htw_notif','1'); registerSW(); showToast('Benachrichtigungen aktiviert'); }
+    else { showToast('Einstellungen → Safari → Benachrichtigungen erlauben'); }
+  });
+}
+function checkInstall() {
+  const isStandalone = window.navigator.standalone;
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if (isSafari && !isStandalone) document.getElementById('installHint').style.display = 'block';
+}
+
+// ── INIT ──
+window.addEventListener('load', async () => {
+  updateStats(); updateTodayBanner(); render(); checkInstall();
+  await loadDoneFromSupabase();
+  updateStats(); updateTodayBanner(); render();
+  if (localStorage.getItem('htw_notif') === '1' && Notification.permission === 'granted') {
+    const btn = document.getElementById('notifBtn');
+    btn.textContent = '✓ Benachrichtigungen aktiv — täglich 07:45, 12:45, 18:45';
+    btn.classList.add('enabled');
+    registerSW();
+  }
+});
+</script>
+</body>
+</html>
