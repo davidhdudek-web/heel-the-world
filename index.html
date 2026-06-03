@@ -3,1254 +3,864 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HEEL THE WORLD by David H. Dudek</title>
+<title>HEEL THE WORLD — by David H. Dudek</title>
+<meta name="description" content="Bespoke high heels. One woman. One shoe. One life.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --black: #000000;
-    --mint: #4ADE80;
-    --white: #ffffff;
-    --off-white: #f5f0eb;
-    --gray: #888;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 200;
-    cursor: none;
-    overflow-x: hidden;
-  }
-
-  /* Custom Cursor */
-  .cursor {
-    position: fixed;
-    width: 12px;
-    height: 12px;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-  }
-  .cursor::before,
-  .cursor::after {
-    content: '';
-    position: absolute;
-    background: var(--mint);
-  }
-  .cursor::before {
-    width: 1px;
-    height: 12px;
-    left: 50%;
-    top: 0;
-  }
-  .cursor::after {
-    width: 12px;
-    height: 1px;
-    top: 50%;
-    left: 0;
-  }
-
-  /* HERO */
-  .hero {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .hero-video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.85;
-  }
-
-  .hero-fallback {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 50%, #000 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.7) 100%);
-  }
-
-  .hero-text {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding: 0 2rem;
-    opacity: 0;
-    animation: heroFade 1s ease 3.5s forwards;
-  }
-
-  .hero-tagline {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 300;
-    font-size: clamp(1.2rem, 3vw, 2rem);
-    letter-spacing: 0.05em;
-    margin-bottom: 1rem;
-    color: var(--off-white);
-  }
-
-  .hero-brand {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 100;
-    font-size: clamp(0.6rem, 1.2vw, 0.85rem);
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--mint);
-  }
-
-  .scroll-hint {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    opacity: 0;
-    animation: heroFade 1s ease 4.5s forwards;
-  }
-
-  .scroll-hint span {
-    font-size: 0.5rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--gray);
-  }
-
-  .scroll-line {
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, var(--mint), transparent);
-    animation: scrollPulse 2s ease infinite;
-  }
-
-  @keyframes heroFade {
-    to { opacity: 1; }
-  }
-
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 1; }
-  }
-
-  /* STATEMENT SECTION */
-  .statement {
-    padding: 15vh 8vw;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .statement-word {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3rem, 10vw, 9rem);
-    font-weight: 300;
-    line-height: 0.9;
-    display: block;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-    letter-spacing: -0.02em;
-  }
-
-  .statement-word.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .statement-word.mint { color: var(--mint); }
-  .statement-word.italic { font-style: italic; }
-  .statement-word.small {
-    font-size: clamp(1rem, 2.5vw, 1.8rem);
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 100;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gray);
-    padding-top: 2rem;
-  }
-
-  /* COLLECTION */
-  .collection {
-    padding: 10vh 0;
-  }
-
-  .collection-header {
-    padding: 0 8vw 8vh;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 1s ease;
-  }
-
-  .collection-header.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .section-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: var(--mint);
-    margin-bottom: 1rem;
-    display: block;
-  }
-
-  .section-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2rem, 6vw, 5rem);
-    font-weight: 300;
-    font-style: italic;
-    line-height: 1;
-  }
-
-  .model-slide {
-    width: 100%;
-    min-height: 90vh;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    padding: 5vh 8vw;
-    gap: 8vw;
-    border-top: 1px solid #111;
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .model-slide.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .model-slide:nth-child(even) {
-    direction: rtl;
-  }
-
-  .model-slide:nth-child(even) > * {
-    direction: ltr;
-  }
-
-  .model-image {
-    aspect-ratio: 3/4;
-    background: #0d0d0d;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .model-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(20%);
-    transition: filter 0.8s ease, transform 0.8s ease;
-  }
-
-  .model-slide:hover .model-image img {
-    filter: grayscale(0%);
-    transform: scale(1.02);
-  }
-
-  .model-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #0a0a0a;
-    border: 1px solid #1a1a1a;
-  }
-
-  .model-placeholder span {
-    font-size: 0.5rem;
-    letter-spacing: 0.4em;
-    color: #333;
-    text-transform: uppercase;
-  }
-
-  .model-info {
-    padding: 2rem 0;
-  }
-
-  .model-number {
-    font-size: 0.5rem;
-    letter-spacing: 0.4em;
-    color: var(--mint);
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-    display: block;
-  }
-
-  .model-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3rem, 6vw, 6rem);
-    font-weight: 300;
-    font-style: italic;
-    line-height: 1;
-    margin-bottom: 1.5rem;
-  }
-
-  .model-material {
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gray);
-    margin-bottom: 3rem;
-    line-height: 2;
-  }
-
-  .model-price {
-    font-size: 0.6rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--white);
-    border-top: 1px solid #222;
-    padding-top: 1.5rem;
-  }
-
-  /* MATERIAL */
-  .materials {
-    padding: 15vh 8vw;
-    border-top: 1px solid #111;
-  }
-
-  .materials-header {
-    margin-bottom: 8vh;
-    opacity: 0;
-    transition: all 1s ease;
-    transform: translateY(20px);
-  }
-
-  .materials-header.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .material-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 2px;
-  }
-
-  .material-item {
-    aspect-ratio: 1;
-    background: #0a0a0a;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    transition: all 0.8s ease;
-  }
-
-  .material-item.visible {
-    opacity: 1;
-  }
-
-  .material-item:hover .material-overlay {
-    opacity: 1;
-  }
-
-  .material-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    padding: 1rem;
-    text-align: center;
-  }
-
-  .material-name-overlay {
-    font-size: 0.6rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--mint);
-    margin-bottom: 0.5rem;
-  }
-
-  .material-desc {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 0.85rem;
-    color: var(--off-white);
-    line-height: 1.6;
-  }
-
-  .material-label {
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
-    font-size: 0.5rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gray);
-  }
-
-  .material-placeholder {
-    width: 100%;
-    height: 100%;
-    background: #0d0d0d;
-    min-height: 200px;
-  }
-
-  /* MANIFEST */
-  .manifest {
-    padding: 15vh 8vw;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8vw;
-    align-items: center;
-    border-top: 1px solid #111;
-  }
-
-  .founder-portrait {
-    aspect-ratio: 3/4;
-    background: #0a0a0a;
-    position: relative;
-    overflow: hidden;
-    filter: grayscale(100%);
-  }
-
-  .founder-portrait img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .founder-placeholder {
-    width: 100%;
-    height: 100%;
-    min-height: 500px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #0a0a0a;
-    border: 1px solid #1a1a1a;
-  }
-
-  .manifest-text {
-    padding: 2rem 0;
-  }
-
-  .manifest-line {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
-    font-weight: 300;
-    line-height: 2.2;
-    color: var(--off-white);
-    display: block;
-    opacity: 0;
-    transform: translateX(-10px);
-    transition: all 0.8s ease;
-  }
-
-  .manifest-line.visible {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  .manifest-line.accent {
-    color: var(--mint);
-    font-style: normal;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 100;
-    font-size: clamp(0.55rem, 1vw, 0.75rem);
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    margin-top: 3rem;
-  }
-
-  .manifest-line.brand {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 100;
-    font-size: clamp(0.55rem, 0.9vw, 0.7rem);
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: var(--white);
-    margin-top: 0.5rem;
-    font-style: normal;
-  }
-
-  /* CONFIGURATOR */
-  .configurator {
-    padding: 15vh 8vw;
-    border-top: 1px solid #111;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .configurator-header {
-    text-align: center;
-    margin-bottom: 8vh;
-    opacity: 0;
-    transition: all 1s ease;
-    transform: translateY(20px);
-  }
-
-  .configurator-header.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .config-question {
-    margin-bottom: 4vh;
-    opacity: 0;
-    transition: all 0.8s ease;
-    transform: translateY(15px);
-  }
-
-  .config-question.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .config-label {
-    font-size: 0.55rem;
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: var(--mint);
-    margin-bottom: 1.5rem;
-    display: block;
-  }
-
-  .config-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .config-btn {
-    background: transparent;
-    border: 1px solid #333;
-    color: var(--gray);
-    padding: 0.8rem 1.5rem;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 200;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    cursor: none;
-    transition: all 0.3s ease;
-  }
-
-  .config-btn:hover,
-  .config-btn.active {
-    border-color: var(--mint);
-    color: var(--white);
-    background: rgba(74, 222, 128, 0.05);
-  }
-
-  .config-cta {
-    margin-top: 5vh;
-    text-align: center;
-    opacity: 0;
-    transition: all 1s ease 0.5s;
-  }
-
-  .config-cta.visible {
-    opacity: 1;
-  }
-
-  .btn-primary {
-    display: inline-block;
-    background: var(--mint);
-    color: var(--black);
-    padding: 1rem 3rem;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 300;
-    font-size: 0.65rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    text-decoration: none;
-    cursor: none;
-    transition: all 0.3s ease;
-  }
-
-  .btn-primary:hover {
-    background: var(--white);
-  }
-
-  /* SOCIAL PROOF */
-  .social-proof {
-    padding: 10vh 8vw;
-    border-top: 1px solid #111;
-    text-align: center;
-  }
-
-  .proof-label {
-    font-size: 0.5rem;
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: #333;
-    margin-bottom: 5vh;
-    display: block;
-  }
-
-  .proof-names {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 3rem;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .proof-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(0.9rem, 2vw, 1.3rem);
-    font-weight: 300;
-    color: #555;
-    transition: color 0.3s ease;
-    opacity: 0;
-    transition: all 0.6s ease;
-  }
-
-  .proof-name.visible {
-    opacity: 1;
-    color: var(--off-white);
-  }
-
-  /* LABEL SECTION */
-  .label-section {
-    padding: 15vh 8vw;
-    border-top: 1px solid #111;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .label-steps {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 3vw;
-    margin-top: 6vh;
-  }
-
-  .label-step {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.8s ease;
-  }
-
-  .label-step.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .step-num {
-    font-size: 0.5rem;
-    letter-spacing: 0.4em;
-    color: var(--mint);
-    display: block;
-    margin-bottom: 1rem;
-  }
-
-  .step-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(1.2rem, 2.5vw, 2rem);
-    font-style: italic;
-    font-weight: 300;
-    margin-bottom: 0.5rem;
-  }
-
-  .step-desc {
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    color: var(--gray);
-    line-height: 1.8;
-  }
-
-  /* CONTACT */
-  .contact {
-    padding: 15vh 8vw;
-    border-top: 1px solid #111;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    margin-top: 6vh;
-  }
-
-  .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .form-field label {
-    font-size: 0.5rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--mint);
-  }
-
-  .form-field input,
-  .form-field textarea,
-  .form-field select {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid #222;
-    color: var(--white);
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 200;
-    font-size: 0.8rem;
-    padding: 0.8rem 0;
-    outline: none;
-    transition: border-color 0.3s ease;
-    cursor: none;
-  }
-
-  .form-field input:focus,
-  .form-field textarea:focus {
-    border-bottom-color: var(--mint);
-  }
-
-  .form-field textarea {
-    resize: none;
-    min-height: 80px;
-  }
-
-  .form-field select option {
-    background: var(--black);
-  }
-
-  /* FOOTER */
-  footer {
-    padding: 4vh 8vw;
-    border-top: 1px solid #111;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .footer-brand {
-    font-size: 0.5rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--mint);
-  }
-
-  .footer-info {
-    display: flex;
-    gap: 3rem;
-    align-items: center;
-  }
-
-  .footer-info a,
-  .footer-info span {
-    font-size: 0.5rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: #444;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  .footer-info a:hover {
-    color: var(--white);
-  }
-
-  /* INSTAGRAM FEED */
-  .ig-feed {
-    padding: 10vh 8vw;
-    border-top: 1px solid #111;
-  }
-
-  .ig-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    margin-top: 4vh;
-  }
-
-  .ig-item {
-    aspect-ratio: 1;
-    background: #0a0a0a;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    transition: all 0.6s ease;
-  }
-
-  .ig-item.visible {
-    opacity: 1;
-  }
-
-  .ig-item:hover::after {
-    opacity: 1;
-  }
-
-  .ig-item::after {
-    content: 'View on Instagram';
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.5rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--white);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .ig-placeholder {
-    width: 100%;
-    height: 100%;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #060606;
-  }
-
-  .ig-placeholder span {
-    font-size: 0.45rem;
-    letter-spacing: 0.3em;
-    color: #222;
-    text-transform: uppercase;
-  }
-
-  /* MOBILE */
-  @media (max-width: 768px) {
-    .model-slide {
-      grid-template-columns: 1fr;
-      min-height: auto;
-      padding: 5vh 6vw;
-    }
-
-    .model-slide:nth-child(even) {
-      direction: ltr;
-    }
-
-    .manifest {
-      grid-template-columns: 1fr;
-    }
-
-    .founder-portrait {
-      aspect-ratio: 4/3;
-    }
-
-    .material-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .label-steps {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .proof-names {
-      gap: 2rem;
-    }
-
-    .ig-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .footer-info {
-      gap: 1.5rem;
-    }
-  }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+:root {
+  --mint: #00e5b0;
+  --mint-hover: #00b88d;
+  --dark: #0a0a0a;
+  --dark-2: #111111;
+  --dark-3: #161616;
+  --cream: #e8e0d4;
+  --warm: #c4b5a0;
+  --text: #f5f0eb;
+  --text-muted: #8a8278;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Syne', sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--serif);
+  background: var(--dark);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAVIGATION ─── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(20px);
+  background: rgba(10,10,10,0.6);
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.nav-brand {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover { color: var(--text); }
+
+.nav-cta {
+  font-family: var(--sans) !important;
+  font-size: 0.6rem !important;
+  letter-spacing: 0.15em !important;
+  padding: 0.6rem 1.6rem !important;
+  border: 1px solid var(--mint) !important;
+  color: var(--mint) !important;
+  transition: all 0.3s !important;
+}
+
+.nav-cta:hover {
+  background: var(--mint) !important;
+  color: var(--dark) !important;
+}
+
+/* ─── HERO ─── */
+.hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  opacity: 0.7;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10,10,10,0.3) 0%,
+    rgba(10,10,10,0.1) 40%,
+    rgba(10,10,10,0.5) 100%
+  );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.hero-greeting {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 1.5s ease 0.5s forwards;
+}
+
+.hero-brand {
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--warm);
+  opacity: 0;
+  animation: fadeUp 1.5s ease 1.2s forwards;
+}
+
+.hero-brand span {
+  color: var(--mint);
+}
+
+/* ─── HERITAGE ─── */
+.heritage {
+  padding: 8rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.heritage-intro {
+  max-width: 700px;
+  margin: 0 auto 6rem;
+  text-align: center;
+}
+
+.section-label {
+  font-family: var(--sans);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--mint);
+  margin-bottom: 2rem;
+  display: block;
+}
+
+.heritage-intro p {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1.9;
+  color: var(--warm);
+}
+
+.heritage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.03);
+}
+
+.heritage-item {
+  background: var(--dark);
+  padding: 3rem 2.5rem;
+  transition: background 0.4s;
+}
+
+.heritage-item:hover {
+  background: var(--dark-2);
+}
+
+.heritage-year {
+  font-family: var(--sans);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: var(--mint);
+  margin-bottom: 1rem;
+}
+
+.heritage-title {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 0.6rem;
+  line-height: 1.4;
+}
+
+.heritage-desc {
+  font-family: var(--serif);
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ─── PATHS ─── */
+.paths {
+  padding: 8rem 3rem;
+  background: var(--dark-2);
+}
+
+.paths-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.paths-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.paths-header h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+}
+
+.paths-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(255,255,255,0.05);
+}
+
+.path-card {
+  background: var(--dark);
+  padding: 5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 400px;
+  transition: background 0.4s;
+  cursor: pointer;
+}
+
+.path-card:hover { background: var(--dark-3); }
+
+.path-number {
+  font-family: var(--sans);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  color: var(--mint);
+  margin-bottom: 2rem;
+}
+
+.path-title {
+  font-family: var(--serif);
+  font-size: 1.8rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
+}
+
+.path-desc {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--warm);
+  line-height: 1.8;
+  margin-bottom: 3rem;
+  max-width: 380px;
+}
+
+.path-cta {
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--mint);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0,229,176,0.3);
+  padding-bottom: 0.4rem;
+  align-self: flex-start;
+  transition: border-color 0.3s;
+}
+
+.path-cta:hover { border-color: var(--mint); }
+
+/* ─── COLLECTION ─── */
+.collection {
+  padding: 8rem 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.collection-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.collection-header h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+}
+
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.collection-card {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.collection-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease, filter 0.8s ease;
+  filter: brightness(0.8);
+}
+
+.collection-card:hover img {
+  transform: scale(1.05);
+  filter: brightness(1);
+}
+
+.collection-card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  background: linear-gradient(to top, rgba(10,10,10,0.9) 0%, transparent 100%);
+}
+
+.collection-card-name {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+
+.collection-card-material {
+  font-family: var(--sans);
+  font-size: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ─── COMMISSION ─── */
+.commission {
+  padding: 8rem 3rem;
+  background: var(--dark-2);
+}
+
+.commission-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.commission h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.commission-sub {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--warm);
+  margin-bottom: 3rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  font-family: var(--sans);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--mint);
+}
+
+.form-group textarea { resize: vertical; min-height: 120px; }
+
+.form-group select { cursor: pointer; }
+.form-group select option { background: var(--dark); }
+
+.form-submit {
+  width: 100%;
+  padding: 1.2rem;
+  background: transparent;
+  border: 1px solid var(--mint);
+  color: var(--mint);
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 1rem;
+}
+
+.form-submit:hover {
+  background: var(--mint);
+  color: var(--dark);
+}
+
+.form-success {
+  display: none;
+  padding: 2rem;
+  text-align: center;
+}
+
+.form-success p {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--mint);
+}
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 4rem 3rem;
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-brand {
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.footer-contact {
+  text-align: right;
+}
+
+.footer-contact a {
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  color: var(--warm);
+  text-decoration: none;
+  transition: color 0.3s;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.footer-contact a:hover { color: var(--mint); }
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  
+  .heritage-grid { grid-template-columns: 1fr; }
+  .paths-grid { grid-template-columns: 1fr; }
+  .collection-grid { grid-template-columns: 1fr 1fr; }
+  
+  .hero-greeting { font-size: 2rem; }
+  .heritage { padding: 5rem 1.5rem; }
+  .paths { padding: 5rem 1.5rem; }
+  .collection { padding: 5rem 1.5rem; }
+  .commission { padding: 5rem 1.5rem; }
+  .path-card { padding: 3rem 2rem; min-height: auto; }
+  
+  .footer-inner { flex-direction: column; gap: 2rem; text-align: center; }
+  .footer-contact { text-align: center; }
+}
+
+@media (max-width: 600px) {
+  .collection-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-brand">HEEL · THE · WORLD</a>
+  <ul class="nav-links">
+    <li><a href="#heritage">Heritage</a></li>
+    <li><a href="#collection">Collection</a></li>
+    <li><a href="#commission" class="nav-cta">Commission</a></li>
+  </ul>
+</nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-fallback">
-    <!-- Replace src with actual video from Drive: "Htw Girl hero header" -->
-    <!-- <video class="hero-video" autoplay muted loop playsinline src="YOUR_DRIVE_VIDEO_URL"></video> -->
-    <div style="text-align:center; opacity:0.15;">
-      <div style="font-family:'Cormorant Garamond',serif; font-size:8vw; font-style:italic; letter-spacing:-0.02em; color:#fff; line-height:1;">HTW</div>
-    </div>
-  </div>
+  <video autoplay muted loop playsinline poster="https://drive.google.com/uc?export=view&id=1-i9B6K5qjaaKeuqRUZSeBQeUwOqLRYcy">
+    <source src="https://drive.google.com/uc?export=download&id=1OGzDuW-iNJyB5IG1_2t3xI4WX2g_ZOJ9" type="video/mp4">
+  </video>
   <div class="hero-overlay"></div>
-  <div class="hero-text">
-    <p class="hero-tagline">She does not buy shoes.</p>
-    <p class="hero-tagline" style="margin-bottom:2rem;">She commissions them.</p>
-    <span class="hero-brand">HEEL THE WORLD &nbsp;·&nbsp; David H. Dudek</span>
-  </div>
-  <div class="scroll-hint">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
+  <div class="hero-content">
+    <h1 class="hero-greeting">Well. There you are.</h1>
+    <p class="hero-brand">HEEL THE WORLD <span>·</span> by David H. Dudek</p>
   </div>
 </section>
 
-<!-- STATEMENT -->
-<section class="statement">
-  <span class="statement-word" style="transition-delay:0s">She does not</span>
-  <span class="statement-word italic mint" style="transition-delay:0.15s">perform.</span>
-  <span class="statement-word" style="transition-delay:0.3s">She does not</span>
-  <span class="statement-word italic" style="transition-delay:0.45s">explain.</span>
-  <span class="statement-word" style="transition-delay:0.6s">She simply</span>
-  <span class="statement-word italic mint" style="transition-delay:0.75s">wears it —</span>
-  <span class="statement-word" style="transition-delay:0.9s; font-size: clamp(1.5rem, 4vw, 3.5rem); color: #555;">and knows.</span>
-  <span class="statement-word small" style="transition-delay:1.2s">Made for one foot. Yours.</span>
+<!-- HERITAGE -->
+<section class="heritage" id="heritage">
+  <div class="heritage-intro reveal">
+    <span class="section-label">Since 2014</span>
+    <p>Bespoke high heels from exotic leathers. Each pair made once, for one woman. No collection. No season. No compromise.</p>
+  </div>
+
+  <div class="heritage-grid">
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">BERLIN</div>
+      <div class="heritage-title">Fashion Week</div>
+      <div class="heritage-desc">Pre Fashion Week Show. 24 one-of-one pairs. One runway. One night.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">BERLIN</div>
+      <div class="heritage-title">Hotel Adlon · Green Showroom</div>
+      <div class="heritage-desc">2nd Green Product Award. Co-opened by Renate Künast. First sustainability showcase parallel to Fashion Week.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">BERLIN</div>
+      <div class="heritage-title">Cinema for Peace</div>
+      <div class="heritage-desc">24-carat gold sole heels as the winner's trophy.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">TELEVISION</div>
+      <div class="heritage-title">ProSieben · taff</div>
+      <div class="heritage-desc">Featured on national television. Shooting with Lena Gercke.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">PRESS</div>
+      <div class="heritage-title">IN SHOES Magazine</div>
+      <div class="heritage-desc">Cover feature. Four-page editorial.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">NEW YORK</div>
+      <div class="heritage-title">Superior Magazine</div>
+      <div class="heritage-desc">International publication.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">AUGSBURG</div>
+      <div class="heritage-title">Staatstheater</div>
+      <div class="heritage-desc">Full bespoke collection for a Shakespeare production. Male cast only.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">BERLIN · NEW YORK</div>
+      <div class="heritage-title">Voguing Out</div>
+      <div class="heritage-desc">Georgina Leo Melody. Cesar Valentino. Archie Burnett. HTW heels as competition trophies.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">MÜNCHEN</div>
+      <div class="heritage-title">Christian Louboutin</div>
+      <div class="heritage-desc">SS2020 showroom build.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">NL · BE · DE</div>
+      <div class="heritage-title">Karl Lagerfeld</div>
+      <div class="heritage-desc">Three showroom assemblies.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">TOKYO</div>
+      <div class="heritage-title">Nintendo</div>
+      <div class="heritage-desc">Heels manufactured from comic artwork for an Asian campaign film.</div>
+    </div>
+
+    <div class="heritage-item reveal">
+      <div class="heritage-year">PERSONAL</div>
+      <div class="heritage-title">Wolfgang Joop · Guido Maria Kretschmer · Mousse T</div>
+      <div class="heritage-desc">Personal relationships. Earned through craft.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TWO PATHS -->
+<section class="paths" id="paths">
+  <div class="paths-inner">
+    <div class="paths-header reveal">
+      <span class="section-label">Two ways to begin</span>
+      <h2>Your shoe. Your rules.</h2>
+    </div>
+
+    <div class="paths-grid">
+      <div class="path-card reveal">
+        <div>
+          <div class="path-number">PATH 01</div>
+          <div class="path-title">Individual Creation</div>
+          <div class="path-desc">You come with an idea. Or you give free rein. We create your shoe from zero. Your leather. Your heel height. Your sole. A piece that has never existed and never will again.</div>
+        </div>
+        <a href="#commission" class="path-cta">Begin your commission</a>
+      </div>
+
+      <div class="path-card reveal">
+        <div>
+          <div class="path-number">PATH 02</div>
+          <div class="path-title">From Existing Models</div>
+          <div class="path-desc">Choose from our established silhouettes. Select your exotic leather. We build it to your measurements. Same craft. Same uniqueness. A guided starting point.</div>
+        </div>
+        <a href="#collection" class="path-cta">View the collection</a>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- COLLECTION -->
-<section class="collection">
-  <div class="collection-header">
-    <span class="section-label">The Collection</span>
-    <h2 class="section-title">Each pair exists once.</h2>
+<section class="collection" id="collection">
+  <div class="collection-header reveal">
+    <span class="section-label">Silhouettes</span>
+    <h2>The collection.</h2>
   </div>
 
-  <!-- EVE -->
-  <div class="model-slide" style="transition-delay:0s">
-    <div class="model-image">
-      <div class="model-placeholder"><span>Eve — Image from Drive</span></div>
-    </div>
-    <div class="model-info">
-      <span class="model-number">01 / 06</span>
-      <h3 class="model-name">Eve</h3>
-      <p class="model-material">
-        Neon mint-green salmon leather<br>
-        Raw white salmon counter<br>
-        Stiletto · Chrome-free tanning<br>
-        Natural rubber plateau
-      </p>
-      <p class="model-price">Commission from CHF 4,000</p>
-    </div>
-  </div>
-
-  <!-- OLLA -->
-  <div class="model-slide" style="transition-delay:0.1s">
-    <div class="model-image">
-      <div class="model-placeholder"><span>Olla — Image from Drive</span></div>
-    </div>
-    <div class="model-info">
-      <span class="model-number">02 / 06</span>
-      <h3 class="model-name">Olla</h3>
-      <p class="model-material">
-        Matte black nappa leather<br>
-        Red leather welt · Purple suede lining<br>
-        Stiletto · Black sole<br>
-        Hand-cut in European manufactory
-      </p>
-      <p class="model-price">Commission from CHF 4,000</p>
-    </div>
-  </div>
-
-  <!-- BADOO -->
-  <div class="model-slide" style="transition-delay:0.2s">
-    <div class="model-image">
-      <div class="model-placeholder"><span>Badoo — Image from Drive</span></div>
-    </div>
-    <div class="model-info">
-      <span class="model-number">03 / 06</span>
-      <h3 class="model-name">Badoo</h3>
-      <p class="model-material">
-        Oxblood-red iridescent salmon leather<br>
-        Arabesque cut-out pattern<br>
-        Black natural rubber platform<br>
-        Raw blonde wood block heel
-      </p>
-      <p class="model-price">Commission from CHF 4,000</p>
-    </div>
-  </div>
-
-  <!-- TYRA -->
-  <div class="model-slide" style="transition-delay:0.3s">
-    <div class="model-image">
-      <div class="model-placeholder"><span>Tyra — Image from Drive</span></div>
-    </div>
-    <div class="model-info">
-      <span class="model-number">04 / 06</span>
-      <h3 class="model-name">Tyra</h3>
-      <p class="model-material">
-        Sunflower yellow salmon leather<br>
-        Open toe · Natural rubber plateau<br>
-        10.5cm heel + 2cm platform<br>
-        Chrome-free · Hand-cut
-      </p>
-      <p class="model-price">Commission from CHF 4,000</p>
-    </div>
-  </div>
-</section>
-
-<!-- MATERIAL -->
-<section class="materials">
-  <div class="materials-header">
-    <span class="section-label">The Material</span>
-    <h2 class="section-title">No animal dies for<br><em>HEEL THE WORLD.</em></h2>
-  </div>
-  <div class="material-grid">
-    <div class="material-item" style="transition-delay:0s">
-      <div class="material-placeholder"></div>
-      <div class="material-overlay">
-        <span class="material-name-overlay">Salmon</span>
-        <p class="material-desc">A food industry byproduct. The most extraordinary leather in the world.</p>
+  <div class="collection-grid">
+    <div class="collection-card reveal">
+      <img src="https://drive.google.com/uc?export=view&id=1QODV9qfD3utwqhajTEL7S4I8g6hcYTLK" alt="Eve" loading="lazy">
+      <div class="collection-card-info">
+        <div class="collection-card-name">Eve</div>
+        <div class="collection-card-material">Salmon Leather</div>
       </div>
-      <span class="material-label">Salmon</span>
     </div>
-    <div class="material-item" style="transition-delay:0.1s">
-      <div class="material-placeholder"></div>
-      <div class="material-overlay">
-        <span class="material-name-overlay">Tilapia</span>
-        <p class="material-desc">Freshwater fish leather. Unexpected. Unforgettable.</p>
+
+    <div class="collection-card reveal">
+      <img src="https://drive.google.com/uc?export=view&id=1Lk4jE1eS3wUxPMzH1KRvaOJ91RhEiuhK" alt="Black Gold" loading="lazy">
+      <div class="collection-card-info">
+        <div class="collection-card-name">Black Gold</div>
+        <div class="collection-card-material">Stingray · Gold</div>
       </div>
-      <span class="material-label">Tilapia</span>
     </div>
-    <div class="material-item" style="transition-delay:0.2s">
-      <div class="material-placeholder"></div>
-      <div class="material-overlay">
-        <span class="material-name-overlay">Monitor Lizard</span>
-        <p class="material-desc">Farmed ethically. Scales that catch every light differently.</p>
+
+    <div class="collection-card reveal">
+      <img src="https://drive.google.com/uc?export=view&id=1O7nCIWgtCB0iIj99AHr4cDBDj-MyKe8_" alt="Bridal" loading="lazy">
+      <div class="collection-card-info">
+        <div class="collection-card-name">Bridal</div>
+        <div class="collection-card-material">White Leather · Lace</div>
       </div>
-      <span class="material-label">Monitor Lizard</span>
     </div>
-    <div class="material-item" style="transition-delay:0.3s">
-      <div class="material-placeholder"></div>
-      <div class="material-overlay">
-        <span class="material-name-overlay">Ostrich</span>
-        <p class="material-desc">The feather without the bird. Strength and softness in one.</p>
+
+    <div class="collection-card reveal">
+      <img src="https://drive.google.com/uc?export=view&id=1RNHbw2o4P3oh--Y_9I-QWW_LQZohUj7L" alt="Eve Bordeaux" loading="lazy">
+      <div class="collection-card-info">
+        <div class="collection-card-name">Badoo</div>
+        <div class="collection-card-material">Bordeaux · Monitor Lizard</div>
       </div>
-      <span class="material-label">Ostrich</span>
     </div>
-    <div class="material-item" style="transition-delay:0.4s">
-      <div class="material-placeholder"></div>
-      <div class="material-overlay">
-        <span class="material-name-overlay">Stingray</span>
-        <p class="material-desc">The deepest material. Ancient texture, modern purpose.</p>
+
+    <div class="collection-card reveal">
+      <img src="https://drive.google.com/uc?export=view&id=1if5CofEIyxaTlZuis9zWTqQI37GRmwKk" alt="Peacock" loading="lazy">
+      <div class="collection-card-info">
+        <div class="collection-card-name">Peacock</div>
+        <div class="collection-card-material">Ostrich · Emerald</div>
       </div>
-      <span class="material-label">Stingray</span>
+    </div>
+
+    <div class="collection-card reveal">
+      <img src="https://drive.google.com/uc?export=view&id=1cwmzZJvkdFsZ59r_0fEMfzQ3J8dx0K0E" alt="Olymp" loading="lazy">
+      <div class="collection-card-info">
+        <div class="collection-card-name">Olymp</div>
+        <div class="collection-card-material">Salmon · Gold</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- INSTAGRAM FEED -->
-<section class="ig-feed">
-  <span class="section-label">Latest from the atelier</span>
-  <div class="ig-grid">
-    <div class="ig-item"><div class="ig-placeholder"><span>@heeltheworld</span></div></div>
-    <div class="ig-item"><div class="ig-placeholder"><span>@heeltheworld</span></div></div>
-    <div class="ig-item"><div class="ig-placeholder"><span>@heeltheworld</span></div></div>
-  </div>
-</section>
+<!-- COMMISSION -->
+<section class="commission" id="commission">
+  <div class="commission-inner">
+    <span class="section-label reveal">Begin</span>
+    <h2 class="reveal">Begin your pair.</h2>
+    <p class="commission-sub reveal">Eight weeks from conversation to completion. We begin when you are ready.</p>
 
-<!-- SOCIAL PROOF -->
-<section class="social-proof">
-  <span class="proof-label">Trusted by</span>
-  <div class="proof-names">
-    <span class="proof-name">Wolfgang Joop</span>
-    <span class="proof-name">Guido Maria Kretschmer</span>
-    <span class="proof-name">Mousse T</span>
-    <span class="proof-name">Mercedes Benz Fashion Week Berlin</span>
-    <span class="proof-name">Green Product Award · Top 5 of 12,000</span>
-    <span class="proof-name">Pro7</span>
-    <span class="proof-name">TU Berlin</span>
-    <span class="proof-name">Hotel Adlon Kempinski</span>
-  </div>
-</section>
+    <form id="commissionForm" class="reveal">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" required placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" name="phone" placeholder="+41 ...">
+      </div>
+      <div class="form-group">
+        <label>Path</label>
+        <select name="path">
+          <option value="individual">Individual Creation</option>
+          <option value="collection">From Existing Model</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Your vision</label>
+        <textarea name="message" placeholder="Tell us about the shoe you have in mind."></textarea>
+      </div>
+      <button type="submit" class="form-submit">Send Inquiry</button>
+    </form>
 
-<!-- MANIFEST / FOUNDER -->
-<section class="manifest">
-  <div class="founder-portrait">
-    <div class="founder-placeholder">
-      <span style="font-size:0.5rem; letter-spacing:0.3em; color:#222; text-transform:uppercase;">David H. Dudek</span>
+    <div class="form-success" id="formSuccess">
+      <p>We received your inquiry. We will be in touch.</p>
     </div>
   </div>
-  <div class="manifest-text">
-    <span class="manifest-line" style="transition-delay:0s">Few walls. Always both sides.</span>
-    <span class="manifest-line" style="transition-delay:0.2s">That's how he learned.</span>
-    <span class="manifest-line" style="transition-delay:0.5s; padding-top:1rem; color:#444;">&nbsp;</span>
-    <span class="manifest-line" style="transition-delay:0.6s">The cold front. The warm front.</span>
-    <span class="manifest-line" style="transition-delay:0.8s">The factory floor. The flagship store.</span>
-    <span class="manifest-line" style="transition-delay:1s">Silesia. Paris. Zürich.</span>
-    <span class="manifest-line" style="transition-delay:1.2s">He saw the lie between them.</span>
-    <span class="manifest-line" style="transition-delay:1.4s">He could no longer look away.</span>
-    <span class="manifest-line" style="transition-delay:1.8s; padding-top:1rem; color:#444;">&nbsp;</span>
-    <span class="manifest-line" style="transition-delay:1.9s">So he made the truth into a shoe.</span>
-    <span class="manifest-line accent" style="transition-delay:2.4s">A real heart selects its witness.</span>
-    <span class="manifest-line brand" style="transition-delay:2.7s">HEEL THE WORLD by David H. Dudek</span>
-  </div>
-</section>
-
-<!-- CONFIGURATOR -->
-<section class="configurator">
-  <div class="configurator-header">
-    <span class="section-label">Begin your pair</span>
-    <h2 class="section-title" style="font-size: clamp(2rem, 5vw, 4rem);">Your shoe.<br><em>Your decision.</em></h2>
-  </div>
-
-  <div class="config-question" style="transition-delay:0.1s">
-    <span class="config-label">For whom?</span>
-    <div class="config-options">
-      <button class="config-btn" onclick="this.classList.toggle('active')">For me</button>
-      <button class="config-btn" onclick="this.classList.toggle('active')">For my label</button>
-      <button class="config-btn" onclick="this.classList.toggle('active')">For my agency</button>
-    </div>
-  </div>
-
-  <div class="config-question" style="transition-delay:0.2s">
-    <span class="config-label">What occasion?</span>
-    <div class="config-options">
-      <button class="config-btn" onclick="this.classList.toggle('active')">Business</button>
-      <button class="config-btn" onclick="this.classList.toggle('active')">Gala</button>
-      <button class="config-btn" onclick="this.classList.toggle('active')">Every day</button>
-      <button class="config-btn" onclick="this.classList.toggle('active')">Bridal</button>
-    </div>
-  </div>
-
-  <div class="config-question" style="transition-delay:0.3s">
-    <span class="config-label">Which material?</span>
-    <div class="config-options">
-      <button class="config-btn" onclick="this.classList.toggle('active')">Salmon</button>
-      <button class="config-btn" onclick="this.classList.toggle('active')">Ostrich</button>
-      <button class="config-btn" onclick="this.classList.toggle('active')">Stingray</button>
-      <button class="config-btn" onclick="this.classList.toggle('active')">Monitor Lizard</button>
-    </div>
-  </div>
-
-  <div class="config-cta">
-    <a href="mailto:david@heeltheworld.ch" class="btn-primary">Request your commission</a>
-  </div>
-</section>
-
-<!-- LABEL SECTION -->
-<section class="label-section">
-  <span class="section-label">For the label founder</span>
-  <h2 class="section-title" style="font-size: clamp(2rem, 5vw, 4rem);">You dream it.<br><em>We build it.</em><br>You wear the crown.</h2>
-  <div class="label-steps">
-    <div class="label-step" style="transition-delay:0.1s">
-      <span class="step-num">01</span>
-      <h4 class="step-title">Vision</h4>
-      <p class="step-desc">Your idea. Your aesthetic. Your name.</p>
-    </div>
-    <div class="label-step" style="transition-delay:0.2s">
-      <span class="step-num">02</span>
-      <h4 class="step-title">Sketch</h4>
-      <p class="step-desc">David draws it the night you describe it.</p>
-    </div>
-    <div class="label-step" style="transition-delay:0.3s">
-      <span class="step-num">03</span>
-      <h4 class="step-title">Sample</h4>
-      <p class="step-desc">European manufactory. Your approval.</p>
-    </div>
-    <div class="label-step" style="transition-delay:0.4s">
-      <span class="step-num">04</span>
-      <h4 class="step-title">Launch</h4>
-      <p class="step-desc">Your label. Your collection. Your world.</p>
-    </div>
-  </div>
-  <div style="margin-top:6vh; text-align:center;">
-    <a href="mailto:david@heeltheworld.ch" class="btn-primary">Book a discovery call</a>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="contact">
-  <span class="section-label">Begin the conversation</span>
-  <h2 class="section-title" style="font-size: clamp(2rem, 5vw, 4rem);">One conversation.<br><em>One sketch.</em></h2>
-  <form class="contact-form" action="mailto:david@heeltheworld.ch" method="post">
-    <div class="form-field">
-      <label>Your name</label>
-      <input type="text" placeholder="">
-    </div>
-    <div class="form-field">
-      <label>Occasion</label>
-      <select>
-        <option value="">Select</option>
-        <option>Business</option>
-        <option>Gala</option>
-        <option>Every day</option>
-        <option>Bridal</option>
-        <option>My own label</option>
-      </select>
-    </div>
-    <div class="form-field">
-      <label>Your vision</label>
-      <textarea placeholder="Describe your dream shoe..."></textarea>
-    </div>
-    <div class="form-field">
-      <label>Shoe size (EU)</label>
-      <input type="text" placeholder="">
-    </div>
-    <button type="submit" class="btn-primary" style="align-self:flex-start; border:none;">Send</button>
-  </form>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <span class="footer-brand">HEEL THE WORLD by David H. Dudek</span>
-  <div class="footer-info">
-    <span>Zürich</span>
-    <span>Commission from CHF 4,000</span>
-    <a href="mailto:david@heeltheworld.ch">david@heeltheworld.ch</a>
-    <a href="https://instagram.com/heeltheworld" target="_blank">@heeltheworld</a>
+  <div class="footer-inner">
+    <div class="footer-brand">HEEL · THE · WORLD</div>
+    <div class="footer-contact">
+      <a href="mailto:david@heel-the-world.ch">david@heel-the-world.ch</a>
+      <a href="https://instagram.com/heeltheworld" target="_blank">@heeltheworld</a>
+    </div>
   </div>
 </footer>
 
 <script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
   });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
 
-  // Scroll animations
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
+// Form handler
+document.getElementById('commissionForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const data = Object.fromEntries(new FormData(form));
+  
+  try {
+    await fetch('/.netlify/functions/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
-  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+  } catch(err) {
+    console.log('Lead handler not configured');
+  }
 
-  const animElements = document.querySelectorAll(
-    '.statement-word, .collection-header, .model-slide, .materials-header, ' +
-    '.material-item, .manifest-line, .configurator-header, .config-question, ' +
-    '.config-cta, .proof-name, .label-step, .ig-item'
-  );
-
-  animElements.forEach(el => observer.observe(el));
-
-  // Stagger proof names
-  document.querySelectorAll('.proof-name').forEach((el, i) => {
-    el.style.transitionDelay = (i * 0.1) + 's';
-  });
+  form.style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+});
 </script>
+
 </body>
 </html>
