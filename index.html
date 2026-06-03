@@ -1,1718 +1,1256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="HEEL THE WORLD by David H. Dudek — One-of-one luxury high heels in exotic leathers. Commission from CHF 4,000.">
-  <meta name="theme-color" content="#000000">
-  <title>HEEL THE WORLD by David H. Dudek</title>
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Raleway:wght@200;300;400&display=swap" rel="stylesheet">
-
-  <style>
-    /* ═══════════════════════════════════════════
-       RESET & BASE
-    ═══════════════════════════════════════════ */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cline x1='10' y1='0' x2='10' y2='20' stroke='%234ADE80' stroke-width='1.2'/%3E%3Cline x1='0' y1='10' x2='20' y2='10' stroke='%234ADE80' stroke-width='1.2'/%3E%3C/svg%3E") 10 10, crosshair;
-    }
-
-    :root {
-      --black: #000000;
-      --off-black: #0a0a0a;
-      --mint: #4ADE80;
-      --white: #ffffff;
-      --white-dim: rgba(255,255,255,0.55);
-      --white-faint: rgba(255,255,255,0.12);
-      --font-display: 'Cormorant Garamond', Georgia, serif;
-      --font-body: 'Raleway', sans-serif;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body {
-      background: var(--black);
-      color: var(--white);
-      font-family: var(--font-body);
-      font-weight: 300;
-      overflow-x: hidden;
-    }
-
-    img {
-      display: block;
-      max-width: 100%;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* ═══════════════════════════════════════════
-       NAV
-    ═══════════════════════════════════════════ */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px 40px;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%);
-      transition: background 0.4s;
-    }
-
-    nav.scrolled {
-      background: rgba(0,0,0,0.92);
-      backdrop-filter: blur(10px);
-      padding: 16px 40px;
-    }
-
-    .nav-logo {
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-weight: 300;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--white);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 36px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--white-dim);
-      transition: color 0.3s;
-    }
-
-    .nav-links a:hover { color: var(--white); }
-
-    .nav-cta {
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--mint) !important;
-      border: 1px solid var(--mint);
-      padding: 8px 20px;
-      transition: all 0.3s !important;
-    }
-
-    .nav-cta:hover {
-      background: var(--mint) !important;
-      color: var(--black) !important;
-    }
-
-    .nav-hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      background: none;
-      border: none;
-      padding: 4px;
-    }
-
-    .nav-hamburger span {
-      display: block;
-      width: 22px;
-      height: 1px;
-      background: var(--white);
-      transition: all 0.3s;
-    }
-
-    /* ═══════════════════════════════════════════
-       1. HERO
-    ═══════════════════════════════════════════ */
-    #hero {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hero-video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 30%;
-    }
-
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(0,0,0,0.25) 0%,
-        rgba(0,0,0,0.15) 35%,
-        rgba(0,0,0,0.55) 75%,
-        rgba(0,0,0,0.92) 100%
-      );
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding: 0 24px;
-      opacity: 0;
-      animation: heroFadeIn 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      animation-delay: 3s;
-    }
-
-    @keyframes heroFadeIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .hero-headline {
-      font-family: var(--font-display);
-      font-size: clamp(32px, 5.5vw, 64px);
-      font-weight: 300;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--white);
-      line-height: 1.1;
-      margin-bottom: 20px;
-    }
-
-    .hero-byline {
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.38em;
-      text-transform: uppercase;
-      color: var(--white-dim);
-      margin-top: 16px;
-    }
-
-    .hero-scroll {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      opacity: 0;
-      animation: heroFadeIn 1s ease forwards;
-      animation-delay: 4.2s;
-    }
-
-    .hero-scroll-line {
-      width: 1px;
-      height: 40px;
-      background: linear-gradient(to bottom, var(--mint), transparent);
-      animation: scrollPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; }
-    }
-
-    /* ═══════════════════════════════════════════
-       2. CONFIGURATOR
-    ═══════════════════════════════════════════ */
-    #configurator {
-      padding: 120px 40px;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .cfg-headline {
-      font-family: var(--font-display);
-      font-size: clamp(28px, 4vw, 52px);
-      font-weight: 300;
-      letter-spacing: 0.12em;
-      margin-bottom: 12px;
-    }
-
-    .cfg-sub {
-      font-size: 12px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--white-dim);
-      margin-bottom: 64px;
-    }
-
-    .cfg-step {
-      display: none;
-      animation: stepIn 0.5s ease forwards;
-    }
-
-    .cfg-step.active { display: block; }
-
-    @keyframes stepIn {
-      from { opacity: 0; transform: translateX(20px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-
-    .cfg-step-label {
-      font-size: 10px;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: var(--mint);
-      margin-bottom: 28px;
-    }
-
-    .cfg-step-question {
-      font-family: var(--font-display);
-      font-size: clamp(22px, 3.5vw, 38px);
-      font-weight: 300;
-      margin-bottom: 48px;
-      line-height: 1.3;
-    }
-
-    .cfg-options {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-    }
-
-    .cfg-option {
-      border: 1px solid var(--white-faint);
-      padding: 28px 24px;
-      text-align: center;
-      transition: all 0.3s;
-      background: none;
-      color: var(--white);
-      font-family: var(--font-body);
-      font-size: 12px;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cfg-option::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--mint);
-      transform: scaleY(0);
-      transform-origin: bottom;
-      transition: transform 0.3s ease;
-      z-index: 0;
-    }
-
-    .cfg-option:hover::before,
-    .cfg-option.selected::before {
-      transform: scaleY(1);
-    }
-
-    .cfg-option:hover,
-    .cfg-option.selected {
-      color: var(--black);
-      border-color: var(--mint);
-    }
-
-    .cfg-option span {
-      position: relative;
-      z-index: 1;
-    }
-
-    .cfg-option-icon {
-      display: block;
-      font-size: 20px;
-      margin-bottom: 12px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .cfg-option-img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      display: block;
-      margin-bottom: 16px;
-      filter: grayscale(40%);
-      transition: filter 0.3s;
-      position: relative;
-      z-index: 1;
-    }
-
-    .cfg-option:hover .cfg-option-img,
-    .cfg-option.selected .cfg-option-img {
-      filter: grayscale(0%);
-    }
-
-    .cfg-result {
-      padding: 60px 0;
-      border-top: 1px solid var(--white-faint);
-    }
-
-    .cfg-result-label {
-      font-size: 10px;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: var(--mint);
-      margin-bottom: 20px;
-    }
-
-    .cfg-result-text {
-      font-family: var(--font-display);
-      font-size: clamp(20px, 3vw, 34px);
-      font-weight: 300;
-      line-height: 1.5;
-      margin-bottom: 40px;
-    }
-
-    .cfg-result-text em {
-      font-style: italic;
-      color: var(--mint);
-    }
-
-    .btn-primary {
-      display: inline-block;
-      padding: 16px 40px;
-      background: var(--mint);
-      color: var(--black);
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: 400;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      border: none;
-      transition: all 0.3s;
-    }
-
-    .btn-primary:hover {
-      background: var(--white);
-      transform: translateY(-1px);
-    }
-
-    .btn-ghost {
-      display: inline-block;
-      padding: 14px 36px;
-      background: transparent;
-      color: var(--white);
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      border: 1px solid var(--white-faint);
-      transition: all 0.3s;
-      margin-left: 16px;
-    }
-
-    .btn-ghost:hover {
-      border-color: var(--white);
-    }
-
-    .cfg-progress {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 48px;
-    }
-
-    .cfg-dot {
-      width: 24px;
-      height: 1px;
-      background: var(--white-faint);
-      transition: background 0.3s;
-    }
-
-    .cfg-dot.done { background: var(--mint); }
-    .cfg-dot.active { background: var(--white); }
-
-    /* ═══════════════════════════════════════════
-       3. COLLECTION
-    ═══════════════════════════════════════════ */
-    #collection {
-      padding: 0 0 120px;
-    }
-
-    .section-header {
-      padding: 80px 40px 64px;
-    }
-
-    .section-label {
-      font-size: 10px;
-      letter-spacing: 0.38em;
-      text-transform: uppercase;
-      color: var(--mint);
-      margin-bottom: 16px;
-    }
-
-    .section-title {
-      font-family: var(--font-display);
-      font-size: clamp(28px, 4.5vw, 56px);
-      font-weight: 300;
-      letter-spacing: 0.12em;
-      line-height: 1.1;
-    }
-
-    .section-sub {
-      font-size: 12px;
-      letter-spacing: 0.2em;
-      color: var(--white-dim);
-      margin-top: 12px;
-    }
-
-    .collection-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 2px;
-    }
-
-    .col-item {
-      position: relative;
-      overflow: hidden;
-      aspect-ratio: 3/4;
-      background: #0f0f0f;
-    }
-
-    .col-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s;
-      filter: grayscale(15%);
-    }
-
-    .col-item:hover img {
-      transform: scale(1.04);
-      filter: grayscale(0%);
-    }
-
-    .col-item-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
-      opacity: 0;
-      transition: opacity 0.4s;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 24px;
-    }
-
-    .col-item:hover .col-item-overlay { opacity: 1; }
-
-    .col-name {
-      font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      margin-bottom: 4px;
-    }
-
-    .col-material {
-      font-size: 10px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--mint);
-      margin-bottom: 12px;
-    }
-
-    .col-price {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      color: var(--white-dim);
-    }
-
-    /* static labels (visible without hover on mobile) */
-    .col-item-label {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-      padding: 32px 20px 16px;
-    }
-
-    .col-name-sm {
-      font-family: var(--font-display);
-      font-size: 16px;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-    }
-
-    .col-mat-sm {
-      font-size: 9px;
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
-      color: var(--mint);
-      margin-top: 4px;
-    }
-
-    /* ═══════════════════════════════════════════
-       4. MATERIAL
-    ═══════════════════════════════════════════ */
-    #material {
-      padding: 120px 0;
-      background: var(--off-black);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .material-bg-parallax {
-      position: absolute;
-      inset: -20%;
-      background: url('images/craft.jpg') center / cover no-repeat;
-      opacity: 0.06;
-      will-change: transform;
-    }
-
-    .material-inner {
-      position: relative;
-      z-index: 1;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 40px;
-    }
-
-    .material-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 48px;
-      margin-top: 64px;
-    }
-
-    .mat-item {}
-
-    .mat-num {
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      color: var(--mint);
-      margin-bottom: 16px;
-    }
-
-    .mat-name {
-      font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 300;
-      letter-spacing: 0.08em;
-      margin-bottom: 12px;
-    }
-
-    .mat-divider {
-      width: 24px;
-      height: 1px;
-      background: var(--white-faint);
-      margin-bottom: 16px;
-    }
-
-    .mat-desc {
-      font-size: 12px;
-      line-height: 1.8;
-      color: var(--white-dim);
-      font-style: italic;
-    }
-
-    /* ═══════════════════════════════════════════
-       5. INSTAGRAM
-    ═══════════════════════════════════════════ */
-    #instagram {
-      padding: 120px 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .ig-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      margin-top: 64px;
-    }
-
-    .ig-item {
-      aspect-ratio: 1;
-      background: #111;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .ig-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .ig-item:hover img { transform: scale(1.05); }
-
-    .ig-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      color: var(--white-faint);
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      aspect-ratio: 1;
-      background: #0c0c0c;
-      border: 1px solid #1a1a1a;
-    }
-
-    .ig-placeholder svg {
-      opacity: 0.3;
-    }
-
-    .ig-handle {
-      text-align: center;
-      margin-top: 32px;
-    }
-
-    .ig-handle a {
-      font-size: 11px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--mint);
-      transition: opacity 0.3s;
-    }
-
-    .ig-handle a:hover { opacity: 0.7; }
-
-    /* ═══════════════════════════════════════════
-       6. SOCIAL PROOF
-    ═══════════════════════════════════════════ */
-    #proof {
-      padding: 140px 40px;
-      border-top: 1px solid var(--white-faint);
-      border-bottom: 1px solid var(--white-faint);
-    }
-
-    .proof-inner {
-      max-width: 800px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .proof-names {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0;
-    }
-
-    .proof-name {
-      font-family: var(--font-display);
-      font-size: clamp(18px, 2.8vw, 34px);
-      font-weight: 300;
-      letter-spacing: 0.08em;
-      color: var(--white);
-      padding: 12px 32px;
-      opacity: 0.7;
-      transition: opacity 0.3s;
-    }
-
-    .proof-name:hover { opacity: 1; }
-
-    .proof-separator {
-      display: inline-flex;
-      align-items: center;
-      padding: 12px 0;
-      color: var(--white-faint);
-      font-size: 10px;
-    }
-
-    .proof-awards {
-      margin-top: 56px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .proof-award {
-      font-size: 11px;
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
-      color: var(--white-dim);
-    }
-
-    .proof-award strong {
-      color: var(--white);
-      font-weight: 300;
-    }
-
-    /* ═══════════════════════════════════════════
-       7. FOUNDER
-    ═══════════════════════════════════════════ */
-    #founder {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      min-height: 80vh;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEEL THE WORLD by David H. Dudek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #000000;
+    --mint: #4ADE80;
+    --white: #ffffff;
+    --off-white: #f5f0eb;
+    --gray: #888;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 200;
+    cursor: none;
+    overflow-x: hidden;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+  }
+  .cursor::before,
+  .cursor::after {
+    content: '';
+    position: absolute;
+    background: var(--mint);
+  }
+  .cursor::before {
+    width: 1px;
+    height: 12px;
+    left: 50%;
+    top: 0;
+  }
+  .cursor::after {
+    width: 12px;
+    height: 1px;
+    top: 50%;
+    left: 0;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+  }
+
+  .hero-fallback {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 50%, #000 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.7) 100%);
+  }
+
+  .hero-text {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 2rem;
+    opacity: 0;
+    animation: heroFade 1s ease 3.5s forwards;
+  }
+
+  .hero-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    color: var(--off-white);
+  }
+
+  .hero-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 100;
+    font-size: clamp(0.6rem, 1.2vw, 0.85rem);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--mint);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: heroFade 1s ease 4.5s forwards;
+  }
+
+  .scroll-hint span {
+    font-size: 0.5rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--mint), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  @keyframes heroFade {
+    to { opacity: 1; }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* STATEMENT SECTION */
+  .statement {
+    padding: 15vh 8vw;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .statement-word {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 10vw, 9rem);
+    font-weight: 300;
+    line-height: 0.9;
+    display: block;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: -0.02em;
+  }
+
+  .statement-word.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .statement-word.mint { color: var(--mint); }
+  .statement-word.italic { font-style: italic; }
+  .statement-word.small {
+    font-size: clamp(1rem, 2.5vw, 1.8rem);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 100;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gray);
+    padding-top: 2rem;
+  }
+
+  /* COLLECTION */
+  .collection {
+    padding: 10vh 0;
+  }
+
+  .collection-header {
+    padding: 0 8vw 8vh;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s ease;
+  }
+
+  .collection-header.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1;
+  }
+
+  .model-slide {
+    width: 100%;
+    min-height: 90vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 5vh 8vw;
+    gap: 8vw;
+    border-top: 1px solid #111;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .model-slide.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .model-slide:nth-child(even) {
+    direction: rtl;
+  }
+
+  .model-slide:nth-child(even) > * {
+    direction: ltr;
+  }
+
+  .model-image {
+    aspect-ratio: 3/4;
+    background: #0d0d0d;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .model-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(20%);
+    transition: filter 0.8s ease, transform 0.8s ease;
+  }
+
+  .model-slide:hover .model-image img {
+    filter: grayscale(0%);
+    transform: scale(1.02);
+  }
+
+  .model-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+  }
+
+  .model-placeholder span {
+    font-size: 0.5rem;
+    letter-spacing: 0.4em;
+    color: #333;
+    text-transform: uppercase;
+  }
+
+  .model-info {
+    padding: 2rem 0;
+  }
+
+  .model-number {
+    font-size: 0.5rem;
+    letter-spacing: 0.4em;
+    color: var(--mint);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    display: block;
+  }
+
+  .model-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 6vw, 6rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+  }
+
+  .model-material {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 3rem;
+    line-height: 2;
+  }
+
+  .model-price {
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--white);
+    border-top: 1px solid #222;
+    padding-top: 1.5rem;
+  }
+
+  /* MATERIAL */
+  .materials {
+    padding: 15vh 8vw;
+    border-top: 1px solid #111;
+  }
+
+  .materials-header {
+    margin-bottom: 8vh;
+    opacity: 0;
+    transition: all 1s ease;
+    transform: translateY(20px);
+  }
+
+  .materials-header.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .material-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+  }
+
+  .material-item {
+    aspect-ratio: 1;
+    background: #0a0a0a;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.8s ease;
+  }
+
+  .material-item.visible {
+    opacity: 1;
+  }
+
+  .material-item:hover .material-overlay {
+    opacity: 1;
+  }
+
+  .material-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .material-name-overlay {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-bottom: 0.5rem;
+  }
+
+  .material-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--off-white);
+    line-height: 1.6;
+  }
+
+  .material-label {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  .material-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #0d0d0d;
+    min-height: 200px;
+  }
+
+  /* MANIFEST */
+  .manifest {
+    padding: 15vh 8vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8vw;
+    align-items: center;
+    border-top: 1px solid #111;
+  }
+
+  .founder-portrait {
+    aspect-ratio: 3/4;
+    background: #0a0a0a;
+    position: relative;
+    overflow: hidden;
+    filter: grayscale(100%);
+  }
+
+  .founder-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .founder-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+  }
+
+  .manifest-text {
+    padding: 2rem 0;
+  }
+
+  .manifest-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+    font-weight: 300;
+    line-height: 2.2;
+    color: var(--off-white);
+    display: block;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.8s ease;
+  }
+
+  .manifest-line.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .manifest-line.accent {
+    color: var(--mint);
+    font-style: normal;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 100;
+    font-size: clamp(0.55rem, 1vw, 0.75rem);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    margin-top: 3rem;
+  }
+
+  .manifest-line.brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 100;
+    font-size: clamp(0.55rem, 0.9vw, 0.7rem);
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-top: 0.5rem;
+    font-style: normal;
+  }
+
+  /* CONFIGURATOR */
+  .configurator {
+    padding: 15vh 8vw;
+    border-top: 1px solid #111;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .configurator-header {
+    text-align: center;
+    margin-bottom: 8vh;
+    opacity: 0;
+    transition: all 1s ease;
+    transform: translateY(20px);
+  }
+
+  .configurator-header.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .config-question {
+    margin-bottom: 4vh;
+    opacity: 0;
+    transition: all 0.8s ease;
+    transform: translateY(15px);
+  }
+
+  .config-question.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .config-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .config-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .config-btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: var(--gray);
+    padding: 0.8rem 1.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 200;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.3s ease;
+  }
+
+  .config-btn:hover,
+  .config-btn.active {
+    border-color: var(--mint);
+    color: var(--white);
+    background: rgba(74, 222, 128, 0.05);
+  }
+
+  .config-cta {
+    margin-top: 5vh;
+    text-align: center;
+    opacity: 0;
+    transition: all 1s ease 0.5s;
+  }
+
+  .config-cta.visible {
+    opacity: 1;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--mint);
+    color: var(--black);
+    padding: 1rem 3rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background: var(--white);
+  }
+
+  /* SOCIAL PROOF */
+  .social-proof {
+    padding: 10vh 8vw;
+    border-top: 1px solid #111;
+    text-align: center;
+  }
+
+  .proof-label {
+    font-size: 0.5rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: #333;
+    margin-bottom: 5vh;
+    display: block;
+  }
+
+  .proof-names {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .proof-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.9rem, 2vw, 1.3rem);
+    font-weight: 300;
+    color: #555;
+    transition: color 0.3s ease;
+    opacity: 0;
+    transition: all 0.6s ease;
+  }
+
+  .proof-name.visible {
+    opacity: 1;
+    color: var(--off-white);
+  }
+
+  /* LABEL SECTION */
+  .label-section {
+    padding: 15vh 8vw;
+    border-top: 1px solid #111;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .label-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3vw;
+    margin-top: 6vh;
+  }
+
+  .label-step {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease;
+  }
+
+  .label-step.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .step-num {
+    font-size: 0.5rem;
+    letter-spacing: 0.4em;
+    color: var(--mint);
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    font-style: italic;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+  }
+
+  .step-desc {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--gray);
+    line-height: 1.8;
+  }
+
+  /* CONTACT */
+  .contact {
+    padding: 15vh 8vw;
+    border-top: 1px solid #111;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 6vh;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-field label {
+    font-size: 0.5rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--mint);
+  }
+
+  .form-field input,
+  .form-field textarea,
+  .form-field select {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #222;
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 200;
+    font-size: 0.8rem;
+    padding: 0.8rem 0;
+    outline: none;
+    transition: border-color 0.3s ease;
+    cursor: none;
+  }
+
+  .form-field input:focus,
+  .form-field textarea:focus {
+    border-bottom-color: var(--mint);
+  }
+
+  .form-field textarea {
+    resize: none;
+    min-height: 80px;
+  }
+
+  .form-field select option {
+    background: var(--black);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 4vh 8vw;
+    border-top: 1px solid #111;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-brand {
+    font-size: 0.5rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--mint);
+  }
+
+  .footer-info {
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .footer-info a,
+  .footer-info span {
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #444;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-info a:hover {
+    color: var(--white);
+  }
+
+  /* INSTAGRAM FEED */
+  .ig-feed {
+    padding: 10vh 8vw;
+    border-top: 1px solid #111;
+  }
+
+  .ig-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 4vh;
+  }
+
+  .ig-item {
+    aspect-ratio: 1;
+    background: #0a0a0a;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.6s ease;
+  }
+
+  .ig-item.visible {
+    opacity: 1;
+  }
+
+  .ig-item:hover::after {
+    opacity: 1;
+  }
+
+  .ig-item::after {
+    content: 'View on Instagram';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--white);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ig-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #060606;
+  }
+
+  .ig-placeholder span {
+    font-size: 0.45rem;
+    letter-spacing: 0.3em;
+    color: #222;
+    text-transform: uppercase;
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    .model-slide {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      padding: 5vh 6vw;
+    }
+
+    .model-slide:nth-child(even) {
+      direction: ltr;
+    }
+
+    .manifest {
+      grid-template-columns: 1fr;
     }
 
     .founder-portrait {
-      position: relative;
-      overflow: hidden;
+      aspect-ratio: 4/3;
     }
 
-    .founder-portrait img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-      filter: grayscale(100%) contrast(1.05);
-    }
-
-    .founder-manifest {
-      background: var(--off-black);
-      display: flex;
-      align-items: center;
-      padding: 80px 72px;
-    }
-
-    .manifest-inner {}
-
-    .manifest-label {
-      font-size: 10px;
-      letter-spacing: 0.38em;
-      text-transform: uppercase;
-      color: var(--mint);
-      margin-bottom: 48px;
-    }
-
-    .manifest-text {
-      font-family: var(--font-display);
-      font-size: clamp(15px, 1.6vw, 20px);
-      font-weight: 300;
-      font-style: italic;
-      line-height: 2.0;
-      color: var(--white);
-      letter-spacing: 0.02em;
-    }
-
-    .manifest-text p {
-      margin-bottom: 1.4em;
-    }
-
-    .manifest-text p:last-child {
-      margin-bottom: 0;
-      font-style: normal;
-      font-size: 0.85em;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--white-dim);
-      margin-top: 32px;
-    }
-
-    /* ═══════════════════════════════════════════
-       8. LABEL FOUNDER
-    ═══════════════════════════════════════════ */
-    #label {
-      padding: 140px 40px;
-      background: var(--black);
-    }
-
-    .label-inner {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .label-headline {
-      font-family: var(--font-display);
-      font-size: clamp(24px, 3.8vw, 48px);
-      font-weight: 300;
-      letter-spacing: 0.08em;
-      line-height: 1.3;
-      margin-bottom: 72px;
+    .material-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
 
     .label-steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 48px;
+      grid-template-columns: repeat(2, 1fr);
     }
 
-    .label-step-num {
-      font-size: 11px;
-      letter-spacing: 0.3em;
-      color: var(--mint);
-      margin-bottom: 20px;
+    .proof-names {
+      gap: 2rem;
     }
 
-    .label-step-divider {
-      width: 32px;
-      height: 1px;
-      background: var(--white-faint);
-      margin-bottom: 20px;
+    .ig-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
 
-    .label-step-title {
-      font-family: var(--font-display);
-      font-size: 20px;
-      font-weight: 300;
-      letter-spacing: 0.08em;
-      margin-bottom: 12px;
+    .footer-info {
+      gap: 1.5rem;
     }
+  }
 
-    .label-step-desc {
-      font-size: 12px;
-      line-height: 1.8;
-      color: var(--white-dim);
-    }
-
-    .label-cta {
-      margin-top: 72px;
-    }
-
-    /* ═══════════════════════════════════════════
-       9. CONTACT FORM
-    ═══════════════════════════════════════════ */
-    #contact {
-      padding: 120px 40px;
-      background: var(--off-black);
-    }
-
-    .contact-inner {
-      max-width: 680px;
-      margin: 0 auto;
-    }
-
-    .contact-headline {
-      font-family: var(--font-display);
-      font-size: clamp(28px, 4vw, 52px);
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      margin-bottom: 16px;
-    }
-
-    .contact-sub {
-      font-size: 12px;
-      letter-spacing: 0.2em;
-      color: var(--white-dim);
-      margin-bottom: 64px;
-    }
-
-    .form-group {
-      margin-bottom: 32px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--white-dim);
-      margin-bottom: 10px;
-    }
-
-    .form-input,
-    .form-select,
-    .form-textarea {
-      width: 100%;
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid var(--white-faint);
-      color: var(--white);
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 300;
-      padding: 12px 0;
-      outline: none;
-      transition: border-color 0.3s;
-      appearance: none;
-    }
-
-    .form-input:focus,
-    .form-select:focus,
-    .form-textarea:focus {
-      border-bottom-color: var(--mint);
-    }
-
-    .form-select option {
-      background: #111;
-      color: var(--white);
-    }
-
-    .form-textarea {
-      resize: none;
-      height: 80px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-    }
-
-    .form-submit-row {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      margin-top: 48px;
-    }
-
-    .form-note {
-      font-size: 11px;
-      color: var(--white-faint);
-      letter-spacing: 0.1em;
-    }
-
-    .form-success {
-      display: none;
-      padding: 32px;
-      border: 1px solid var(--mint);
-      text-align: center;
-      margin-top: 32px;
-    }
-
-    .form-success p {
-      font-family: var(--font-display);
-      font-size: 20px;
-      font-weight: 300;
-      margin-bottom: 8px;
-    }
-
-    .form-success small {
-      font-size: 12px;
-      color: var(--white-dim);
-      letter-spacing: 0.15em;
-    }
-
-    /* ═══════════════════════════════════════════
-       10. FOOTER
-    ═══════════════════════════════════════════ */
-    footer {
-      padding: 32px 40px;
-      background: var(--black);
-      border-top: 1px solid var(--white-faint);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .footer-line {
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--white-faint);
-      text-align: center;
-    }
-
-    .footer-line a {
-      color: var(--white-dim);
-      transition: color 0.3s;
-    }
-
-    .footer-line a:hover { color: var(--mint); }
-
-    .footer-dot {
-      margin: 0 16px;
-      opacity: 0.3;
-    }
-
-    /* ═══════════════════════════════════════════
-       SCROLL REVEAL
-    ═══════════════════════════════════════════ */
-    .reveal {
-      opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ═══════════════════════════════════════════
-       VERSION BADGE
-    ═══════════════════════════════════════════ */
-    .version-badge {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 999;
-      background: var(--mint);
-      color: var(--black);
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      padding: 8px 16px;
-      font-family: var(--font-body);
-      font-weight: 400;
-      transition: opacity 0.3s;
-    }
-
-    .version-badge:hover { opacity: 0.8; }
-
-    /* ═══════════════════════════════════════════
-       RESPONSIVE
-    ═══════════════════════════════════════════ */
-    @media (max-width: 900px) {
-      nav { padding: 20px 24px; }
-      nav.scrolled { padding: 14px 24px; }
-      .nav-links { display: none; }
-      .nav-hamburger { display: flex; }
-
-      #configurator { padding: 80px 24px; }
-
-      .collection-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2px;
-      }
-
-      .col-item:last-child {
-        grid-column: span 2;
-        aspect-ratio: 16/7;
-      }
-
-      .material-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 40px;
-      }
-
-      .ig-grid { grid-template-columns: repeat(3, 1fr); }
-
-      #founder {
-        grid-template-columns: 1fr;
-      }
-
-      .founder-portrait {
-        height: 60vw;
-      }
-
-      .founder-manifest {
-        padding: 60px 32px;
-      }
-
-      .label-steps {
-        grid-template-columns: 1fr 1fr;
-        gap: 40px;
-      }
-
-      .form-row { grid-template-columns: 1fr; gap: 0; }
-
-      .section-header { padding: 60px 24px 48px; }
-      #proof { padding: 80px 24px; }
-      #label { padding: 80px 24px; }
-      #contact { padding: 80px 24px; }
-      footer { padding: 24px; }
-    }
-
-    @media (max-width: 600px) {
-      .collection-grid { grid-template-columns: 1fr; }
-      .col-item:last-child { grid-column: auto; aspect-ratio: 3/4; }
-      .material-grid { grid-template-columns: 1fr; }
-      .label-steps { grid-template-columns: 1fr; }
-      .cfg-options { grid-template-columns: 1fr; }
-      .proof-name { font-size: 18px; padding: 8px 20px; }
-    }
-  </style>
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav id="nav">
-    <span class="nav-logo">Heel the World</span>
-    <ul class="nav-links">
-      <li><a href="#collection">Collection</a></li>
-      <li><a href="#material">Material</a></li>
-      <li><a href="#founder">Atelier</a></li>
-      <li><a href="#label">Label</a></li>
-      <li><a href="#contact" class="nav-cta">Commission</a></li>
-    </ul>
-    <button class="nav-hamburger" aria-label="Menu" onclick="toggleMobileNav()">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
+<div class="cursor" id="cursor"></div>
 
-  <!-- MOBILE NAV -->
-  <div id="mobile-nav" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.97); z-index:99; padding:80px 40px; flex-direction:column; gap:32px;">
-    <a href="#collection" onclick="toggleMobileNav()" style="font-family:var(--font-display); font-size:36px; font-weight:300; letter-spacing:0.1em; color:var(--white);">Collection</a>
-    <a href="#material" onclick="toggleMobileNav()" style="font-family:var(--font-display); font-size:36px; font-weight:300; letter-spacing:0.1em; color:var(--white);">Material</a>
-    <a href="#founder" onclick="toggleMobileNav()" style="font-family:var(--font-display); font-size:36px; font-weight:300; letter-spacing:0.1em; color:var(--white);">Atelier</a>
-    <a href="#label" onclick="toggleMobileNav()" style="font-family:var(--font-display); font-size:36px; font-weight:300; letter-spacing:0.1em; color:var(--white);">Label</a>
-    <a href="#contact" onclick="toggleMobileNav()" style="font-family:var(--font-display); font-size:36px; font-weight:300; letter-spacing:0.1em; color:var(--mint);">Commission</a>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-fallback">
+    <!-- Replace src with actual video from Drive: "Htw Girl hero header" -->
+    <!-- <video class="hero-video" autoplay muted loop playsinline src="YOUR_DRIVE_VIDEO_URL"></video> -->
+    <div style="text-align:center; opacity:0.15;">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:8vw; font-style:italic; letter-spacing:-0.02em; color:#fff; line-height:1;">HTW</div>
+    </div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-text">
+    <p class="hero-tagline">She does not buy shoes.</p>
+    <p class="hero-tagline" style="margin-bottom:2rem;">She commissions them.</p>
+    <span class="hero-brand">HEEL THE WORLD &nbsp;·&nbsp; David H. Dudek</span>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATEMENT -->
+<section class="statement">
+  <span class="statement-word" style="transition-delay:0s">She does not</span>
+  <span class="statement-word italic mint" style="transition-delay:0.15s">perform.</span>
+  <span class="statement-word" style="transition-delay:0.3s">She does not</span>
+  <span class="statement-word italic" style="transition-delay:0.45s">explain.</span>
+  <span class="statement-word" style="transition-delay:0.6s">She simply</span>
+  <span class="statement-word italic mint" style="transition-delay:0.75s">wears it —</span>
+  <span class="statement-word" style="transition-delay:0.9s; font-size: clamp(1.5rem, 4vw, 3.5rem); color: #555;">and knows.</span>
+  <span class="statement-word small" style="transition-delay:1.2s">Made for one foot. Yours.</span>
+</section>
+
+<!-- COLLECTION -->
+<section class="collection">
+  <div class="collection-header">
+    <span class="section-label">The Collection</span>
+    <h2 class="section-title">Each pair exists once.</h2>
   </div>
 
-  <!-- ═══ 1. HERO ═══ -->
-  <section id="hero">
-    <video class="hero-video" autoplay muted loop playsinline preload="auto"
-           poster="images/fav-muzi1.jpg">
-      <source src="images/hero-video.mp4" type="video/mp4">
-      <img src="images/fav-muzi1.jpg" alt="HEEL THE WORLD">
-    </video>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1 class="hero-headline">She does not buy shoes.<br>She commissions them.</h1>
-      <p class="hero-byline">HEEL THE WORLD &nbsp;·&nbsp; by David H. Dudek</p>
+  <!-- EVE -->
+  <div class="model-slide" style="transition-delay:0s">
+    <div class="model-image">
+      <div class="model-placeholder"><span>Eve — Image from Drive</span></div>
     </div>
-    <div class="hero-scroll">
-      <div class="hero-scroll-line"></div>
+    <div class="model-info">
+      <span class="model-number">01 / 06</span>
+      <h3 class="model-name">Eve</h3>
+      <p class="model-material">
+        Neon mint-green salmon leather<br>
+        Raw white salmon counter<br>
+        Stiletto · Chrome-free tanning<br>
+        Natural rubber plateau
+      </p>
+      <p class="model-price">Commission from CHF 4,000</p>
     </div>
-  </section>
+  </div>
 
-  <!-- ═══ 2. CONFIGURATOR ═══ -->
-  <section id="configurator">
-    <div class="reveal">
-      <h2 class="cfg-headline">Begin your pair.</h2>
-      <p class="cfg-sub">Three questions. One commission.</p>
+  <!-- OLLA -->
+  <div class="model-slide" style="transition-delay:0.1s">
+    <div class="model-image">
+      <div class="model-placeholder"><span>Olla — Image from Drive</span></div>
     </div>
-
-    <div class="cfg-progress reveal">
-      <div class="cfg-dot active" id="dot-1"></div>
-      <div class="cfg-dot" id="dot-2"></div>
-      <div class="cfg-dot" id="dot-3"></div>
+    <div class="model-info">
+      <span class="model-number">02 / 06</span>
+      <h3 class="model-name">Olla</h3>
+      <p class="model-material">
+        Matte black nappa leather<br>
+        Red leather welt · Purple suede lining<br>
+        Stiletto · Black sole<br>
+        Hand-cut in European manufactory
+      </p>
+      <p class="model-price">Commission from CHF 4,000</p>
     </div>
+  </div>
 
-    <!-- Step 1 -->
-    <div class="cfg-step active" id="step-1">
-      <p class="cfg-step-label">Step 01 of 03</p>
-      <h3 class="cfg-step-question">For whom?</h3>
-      <div class="cfg-options">
-        <button class="cfg-option" onclick="selectOption(1, 'me', this)">
-          <span class="cfg-option-icon">👠</span>
-          <span>For me</span>
-        </button>
-        <button class="cfg-option" onclick="selectOption(1, 'label', this)">
-          <span class="cfg-option-icon">🌿</span>
-          <span>For my label</span>
-        </button>
-        <button class="cfg-option" onclick="selectOption(1, 'agency', this)">
-          <span class="cfg-option-icon">✦</span>
-          <span>For my agency</span>
-        </button>
+  <!-- BADOO -->
+  <div class="model-slide" style="transition-delay:0.2s">
+    <div class="model-image">
+      <div class="model-placeholder"><span>Badoo — Image from Drive</span></div>
+    </div>
+    <div class="model-info">
+      <span class="model-number">03 / 06</span>
+      <h3 class="model-name">Badoo</h3>
+      <p class="model-material">
+        Oxblood-red iridescent salmon leather<br>
+        Arabesque cut-out pattern<br>
+        Black natural rubber platform<br>
+        Raw blonde wood block heel
+      </p>
+      <p class="model-price">Commission from CHF 4,000</p>
+    </div>
+  </div>
+
+  <!-- TYRA -->
+  <div class="model-slide" style="transition-delay:0.3s">
+    <div class="model-image">
+      <div class="model-placeholder"><span>Tyra — Image from Drive</span></div>
+    </div>
+    <div class="model-info">
+      <span class="model-number">04 / 06</span>
+      <h3 class="model-name">Tyra</h3>
+      <p class="model-material">
+        Sunflower yellow salmon leather<br>
+        Open toe · Natural rubber plateau<br>
+        10.5cm heel + 2cm platform<br>
+        Chrome-free · Hand-cut
+      </p>
+      <p class="model-price">Commission from CHF 4,000</p>
+    </div>
+  </div>
+</section>
+
+<!-- MATERIAL -->
+<section class="materials">
+  <div class="materials-header">
+    <span class="section-label">The Material</span>
+    <h2 class="section-title">No animal dies for<br><em>HEEL THE WORLD.</em></h2>
+  </div>
+  <div class="material-grid">
+    <div class="material-item" style="transition-delay:0s">
+      <div class="material-placeholder"></div>
+      <div class="material-overlay">
+        <span class="material-name-overlay">Salmon</span>
+        <p class="material-desc">A food industry byproduct. The most extraordinary leather in the world.</p>
       </div>
+      <span class="material-label">Salmon</span>
     </div>
-
-    <!-- Step 2 -->
-    <div class="cfg-step" id="step-2">
-      <p class="cfg-step-label">Step 02 of 03</p>
-      <h3 class="cfg-step-question">What occasion?</h3>
-      <div class="cfg-options">
-        <button class="cfg-option" onclick="selectOption(2, 'Business', this)"><span>Business</span></button>
-        <button class="cfg-option" onclick="selectOption(2, 'Gala', this)"><span>Gala</span></button>
-        <button class="cfg-option" onclick="selectOption(2, 'Every day', this)"><span>Every day</span></button>
-        <button class="cfg-option" onclick="selectOption(2, 'Bridal', this)"><span>Bridal</span></button>
+    <div class="material-item" style="transition-delay:0.1s">
+      <div class="material-placeholder"></div>
+      <div class="material-overlay">
+        <span class="material-name-overlay">Tilapia</span>
+        <p class="material-desc">Freshwater fish leather. Unexpected. Unforgettable.</p>
       </div>
+      <span class="material-label">Tilapia</span>
     </div>
-
-    <!-- Step 3 -->
-    <div class="cfg-step" id="step-3">
-      <p class="cfg-step-label">Step 03 of 03</p>
-      <h3 class="cfg-step-question">Which material?</h3>
-      <div class="cfg-options">
-        <button class="cfg-option" onclick="selectOption(3, 'Salmon', this)">
-          <img class="cfg-option-img" src="images/fav-zou1.jpg" alt="Salmon leather" loading="lazy">
-          <span>Salmon</span>
-        </button>
-        <button class="cfg-option" onclick="selectOption(3, 'Ostrich', this)">
-          <img class="cfg-option-img" src="images/fav-muzi1.jpg" alt="Ostrich leather" loading="lazy">
-          <span>Ostrich</span>
-        </button>
-        <button class="cfg-option" onclick="selectOption(3, 'Stingray', this)">
-          <img class="cfg-option-img" src="images/fav-xhigh1.jpg" alt="Stingray leather" loading="lazy">
-          <span>Stingray</span>
-        </button>
-        <button class="cfg-option" onclick="selectOption(3, 'Monitor lizard', this)">
-          <img class="cfg-option-img" src="images/fav-q38.jpg" alt="Monitor lizard" loading="lazy">
-          <span>Monitor lizard</span>
-        </button>
+    <div class="material-item" style="transition-delay:0.2s">
+      <div class="material-placeholder"></div>
+      <div class="material-overlay">
+        <span class="material-name-overlay">Monitor Lizard</span>
+        <p class="material-desc">Farmed ethically. Scales that catch every light differently.</p>
       </div>
+      <span class="material-label">Monitor Lizard</span>
     </div>
-
-    <!-- Result -->
-    <div class="cfg-step" id="step-result">
-      <div class="cfg-result">
-        <p class="cfg-result-label">Your commission</p>
-        <p class="cfg-result-text" id="cfg-result-text">
-          Your pair sounds like this: <em id="cfg-material-out"></em>, <em id="cfg-occasion-out"></em>.<br>
-          David sketches it this week.
-        </p>
-        <a href="#contact" class="btn-primary" id="cfg-commission-btn">Request your commission</a>
-        <button class="btn-ghost" onclick="resetConfigurator()">Start over</button>
+    <div class="material-item" style="transition-delay:0.3s">
+      <div class="material-placeholder"></div>
+      <div class="material-overlay">
+        <span class="material-name-overlay">Ostrich</span>
+        <p class="material-desc">The feather without the bird. Strength and softness in one.</p>
       </div>
+      <span class="material-label">Ostrich</span>
     </div>
-  </section>
-
-  <!-- ═══ 3. COLLECTION ═══ -->
-  <section id="collection">
-    <div class="section-header reveal">
-      <p class="section-label">The collection</p>
-      <h2 class="section-title">Each pair<br>exists once.</h2>
-      <p class="section-sub">Commission from CHF 4,000 · Handcrafted · One-of-one</p>
+    <div class="material-item" style="transition-delay:0.4s">
+      <div class="material-placeholder"></div>
+      <div class="material-overlay">
+        <span class="material-name-overlay">Stingray</span>
+        <p class="material-desc">The deepest material. Ancient texture, modern purpose.</p>
+      </div>
+      <span class="material-label">Stingray</span>
     </div>
+  </div>
+</section>
 
-    <div class="collection-grid">
-      <!-- Eve -->
-      <div class="col-item">
-        <img src="images/fav-peacock15.jpg" alt="Eve — HEEL THE WORLD" loading="lazy">
-        <div class="col-item-overlay">
-          <span class="col-material">Salmon leather</span>
-          <span class="col-name">Eve</span>
-          <span class="col-price">Commission from CHF 4,000</span>
-        </div>
-        <div class="col-item-label">
-          <div class="col-name-sm">Eve</div>
-          <div class="col-mat-sm">Salmon</div>
-        </div>
-      </div>
-      <!-- Olla -->
-      <div class="col-item">
-        <img src="images/fav-q38.jpg" alt="Olla — HEEL THE WORLD" loading="lazy">
-        <div class="col-item-overlay">
-          <span class="col-material">Monitor lizard</span>
-          <span class="col-name">Olla</span>
-          <span class="col-price">Commission from CHF 4,000</span>
-        </div>
-        <div class="col-item-label">
-          <div class="col-name-sm">Olla</div>
-          <div class="col-mat-sm">Monitor lizard</div>
-        </div>
-      </div>
-      <!-- Badoo -->
-      <div class="col-item">
-        <img src="images/fav-muzi1.jpg" alt="Badoo — HEEL THE WORLD" loading="lazy">
-        <div class="col-item-overlay">
-          <span class="col-material">Ostrich</span>
-          <span class="col-name">Badoo</span>
-          <span class="col-price">Commission from CHF 4,000</span>
-        </div>
-        <div class="col-item-label">
-          <div class="col-name-sm">Badoo</div>
-          <div class="col-mat-sm">Ostrich</div>
-        </div>
-      </div>
-      <!-- Tyra -->
-      <div class="col-item">
-        <img src="images/fav-xhigh1.jpg" alt="Tyra — HEEL THE WORLD" loading="lazy">
-        <div class="col-item-overlay">
-          <span class="col-material">Stingray</span>
-          <span class="col-name">Tyra</span>
-          <span class="col-price">Commission from CHF 4,000</span>
-        </div>
-        <div class="col-item-label">
-          <div class="col-name-sm">Tyra</div>
-          <div class="col-mat-sm">Stingray</div>
-        </div>
-      </div>
-      <!-- Boo -->
-      <div class="col-item">
-        <img src="images/fav-zou1.jpg" alt="Boo — HEEL THE WORLD" loading="lazy">
-        <div class="col-item-overlay">
-          <span class="col-material">Tilapia</span>
-          <span class="col-name">Boo</span>
-          <span class="col-price">Commission from CHF 4,000</span>
-        </div>
-        <div class="col-item-label">
-          <div class="col-name-sm">Boo</div>
-          <div class="col-mat-sm">Tilapia</div>
-        </div>
-      </div>
+<!-- INSTAGRAM FEED -->
+<section class="ig-feed">
+  <span class="section-label">Latest from the atelier</span>
+  <div class="ig-grid">
+    <div class="ig-item"><div class="ig-placeholder"><span>@heeltheworld</span></div></div>
+    <div class="ig-item"><div class="ig-placeholder"><span>@heeltheworld</span></div></div>
+    <div class="ig-item"><div class="ig-placeholder"><span>@heeltheworld</span></div></div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="social-proof">
+  <span class="proof-label">Trusted by</span>
+  <div class="proof-names">
+    <span class="proof-name">Wolfgang Joop</span>
+    <span class="proof-name">Guido Maria Kretschmer</span>
+    <span class="proof-name">Mousse T</span>
+    <span class="proof-name">Mercedes Benz Fashion Week Berlin</span>
+    <span class="proof-name">Green Product Award · Top 5 of 12,000</span>
+    <span class="proof-name">Pro7</span>
+    <span class="proof-name">TU Berlin</span>
+    <span class="proof-name">Hotel Adlon Kempinski</span>
+  </div>
+</section>
+
+<!-- MANIFEST / FOUNDER -->
+<section class="manifest">
+  <div class="founder-portrait">
+    <div class="founder-placeholder">
+      <span style="font-size:0.5rem; letter-spacing:0.3em; color:#222; text-transform:uppercase;">David H. Dudek</span>
     </div>
-  </section>
+  </div>
+  <div class="manifest-text">
+    <span class="manifest-line" style="transition-delay:0s">Few walls. Always both sides.</span>
+    <span class="manifest-line" style="transition-delay:0.2s">That's how he learned.</span>
+    <span class="manifest-line" style="transition-delay:0.5s; padding-top:1rem; color:#444;">&nbsp;</span>
+    <span class="manifest-line" style="transition-delay:0.6s">The cold front. The warm front.</span>
+    <span class="manifest-line" style="transition-delay:0.8s">The factory floor. The flagship store.</span>
+    <span class="manifest-line" style="transition-delay:1s">Silesia. Paris. Zürich.</span>
+    <span class="manifest-line" style="transition-delay:1.2s">He saw the lie between them.</span>
+    <span class="manifest-line" style="transition-delay:1.4s">He could no longer look away.</span>
+    <span class="manifest-line" style="transition-delay:1.8s; padding-top:1rem; color:#444;">&nbsp;</span>
+    <span class="manifest-line" style="transition-delay:1.9s">So he made the truth into a shoe.</span>
+    <span class="manifest-line accent" style="transition-delay:2.4s">A real heart selects its witness.</span>
+    <span class="manifest-line brand" style="transition-delay:2.7s">HEEL THE WORLD by David H. Dudek</span>
+  </div>
+</section>
 
-  <!-- ═══ 4. MATERIAL ═══ -->
-  <section id="material">
-    <div class="material-bg-parallax" id="parallax-bg"></div>
-    <div class="material-inner">
-      <div class="reveal">
-        <p class="section-label">The material</p>
-        <h2 class="section-title">No animal dies<br>for HEEL THE WORLD.</h2>
-      </div>
+<!-- CONFIGURATOR -->
+<section class="configurator">
+  <div class="configurator-header">
+    <span class="section-label">Begin your pair</span>
+    <h2 class="section-title" style="font-size: clamp(2rem, 5vw, 4rem);">Your shoe.<br><em>Your decision.</em></h2>
+  </div>
 
-      <div class="material-grid reveal">
-        <div class="mat-item">
-          <p class="mat-num">01</p>
-          <h3 class="mat-name">Salmon</h3>
-          <div class="mat-divider"></div>
-          <p class="mat-desc">A fish scale. A food industry byproduct. The most extraordinary leather in the world.</p>
-        </div>
-        <div class="mat-item">
-          <p class="mat-num">02</p>
-          <h3 class="mat-name">Tilapia</h3>
-          <div class="mat-divider"></div>
-          <p class="mat-desc">Raised for food. Its skin, discarded by the industry — rescued by the atelier.</p>
-        </div>
-        <div class="mat-item">
-          <p class="mat-num">03</p>
-          <h3 class="mat-name">Monitor lizard</h3>
-          <div class="mat-divider"></div>
-          <p class="mat-desc">Farm-certified. Every scale placed with intention. Architecture disguised as leather.</p>
-        </div>
-        <div class="mat-item">
-          <p class="mat-num">04</p>
-          <h3 class="mat-name">Ostrich</h3>
-          <div class="mat-divider"></div>
-          <p class="mat-desc">The softest exotic. Feather follicles pressed into the surface — a texture that breathes.</p>
-        </div>
-        <div class="mat-item">
-          <p class="mat-num">05</p>
-          <h3 class="mat-name">Stingray</h3>
-          <div class="mat-divider"></div>
-          <p class="mat-desc">Its surface cannot be scratched. Pearled granules under light — a material that ages into beauty.</p>
-        </div>
-      </div>
+  <div class="config-question" style="transition-delay:0.1s">
+    <span class="config-label">For whom?</span>
+    <div class="config-options">
+      <button class="config-btn" onclick="this.classList.toggle('active')">For me</button>
+      <button class="config-btn" onclick="this.classList.toggle('active')">For my label</button>
+      <button class="config-btn" onclick="this.classList.toggle('active')">For my agency</button>
     </div>
-  </section>
+  </div>
 
-  <!-- ═══ 5. INSTAGRAM ═══ -->
-  <section id="instagram">
-    <div class="reveal">
-      <p class="section-label">The atelier</p>
-      <h2 class="section-title">Latest from<br>the archive.</h2>
+  <div class="config-question" style="transition-delay:0.2s">
+    <span class="config-label">What occasion?</span>
+    <div class="config-options">
+      <button class="config-btn" onclick="this.classList.toggle('active')">Business</button>
+      <button class="config-btn" onclick="this.classList.toggle('active')">Gala</button>
+      <button class="config-btn" onclick="this.classList.toggle('active')">Every day</button>
+      <button class="config-btn" onclick="this.classList.toggle('active')">Bridal</button>
     </div>
+  </div>
 
-    <div class="ig-grid reveal">
-      <!-- Placeholder tiles — replace with Instagram Graph API output -->
-      <a class="ig-placeholder" href="https://instagram.com/heeltheworld" target="_blank" rel="noopener">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-          <rect x="2" y="2" width="20" height="20" rx="5"/>
-          <circle cx="12" cy="12" r="5"/>
-          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-        </svg>
-        <span>@heeltheworld</span>
-      </a>
-      <a class="ig-placeholder" href="https://instagram.com/heeltheworld" target="_blank" rel="noopener">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-          <rect x="2" y="2" width="20" height="20" rx="5"/>
-          <circle cx="12" cy="12" r="5"/>
-          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-        </svg>
-        <span>@heeltheworld</span>
-      </a>
-      <a class="ig-placeholder" href="https://instagram.com/heeltheworld" target="_blank" rel="noopener">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-          <rect x="2" y="2" width="20" height="20" rx="5"/>
-          <circle cx="12" cy="12" r="5"/>
-          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-        </svg>
-        <span>@heeltheworld</span>
-      </a>
+  <div class="config-question" style="transition-delay:0.3s">
+    <span class="config-label">Which material?</span>
+    <div class="config-options">
+      <button class="config-btn" onclick="this.classList.toggle('active')">Salmon</button>
+      <button class="config-btn" onclick="this.classList.toggle('active')">Ostrich</button>
+      <button class="config-btn" onclick="this.classList.toggle('active')">Stingray</button>
+      <button class="config-btn" onclick="this.classList.toggle('active')">Monitor Lizard</button>
     </div>
-    <div class="ig-handle reveal">
-      <a href="https://instagram.com/heeltheworld" target="_blank" rel="noopener">@heeltheworld ↗</a>
+  </div>
+
+  <div class="config-cta">
+    <a href="mailto:david@heeltheworld.ch" class="btn-primary">Request your commission</a>
+  </div>
+</section>
+
+<!-- LABEL SECTION -->
+<section class="label-section">
+  <span class="section-label">For the label founder</span>
+  <h2 class="section-title" style="font-size: clamp(2rem, 5vw, 4rem);">You dream it.<br><em>We build it.</em><br>You wear the crown.</h2>
+  <div class="label-steps">
+    <div class="label-step" style="transition-delay:0.1s">
+      <span class="step-num">01</span>
+      <h4 class="step-title">Vision</h4>
+      <p class="step-desc">Your idea. Your aesthetic. Your name.</p>
     </div>
-  </section>
-
-  <!-- ═══ 6. SOCIAL PROOF ═══ -->
-  <section id="proof">
-    <div class="proof-inner">
-      <div class="proof-names reveal">
-        <span class="proof-name">Wolfgang Joop</span>
-        <span class="proof-separator">·</span>
-        <span class="proof-name">Guido Maria Kretschmer</span>
-        <span class="proof-separator">·</span>
-        <span class="proof-name">Mousse T</span>
-      </div>
-      <div class="proof-awards reveal">
-        <p class="proof-award">Mercedes Benz Fashion Week Berlin</p>
-        <p class="proof-award">
-          <strong>Green Product Award</strong>
-          &nbsp;— Top 5 of 12,000 entries · 64 countries
-        </p>
-        <p class="proof-award">Pro7 &nbsp;·&nbsp; TU Berlin &nbsp;·&nbsp; Hotel Adlon Kempinski</p>
-      </div>
+    <div class="label-step" style="transition-delay:0.2s">
+      <span class="step-num">02</span>
+      <h4 class="step-title">Sketch</h4>
+      <p class="step-desc">David draws it the night you describe it.</p>
     </div>
-  </section>
-
-  <!-- ═══ 7. FOUNDER ═══ -->
-  <section id="founder">
-    <div class="founder-portrait">
-      <img src="images/founder.jpg" alt="David H. Dudek — Founder HEEL THE WORLD" loading="lazy">
+    <div class="label-step" style="transition-delay:0.3s">
+      <span class="step-num">03</span>
+      <h4 class="step-title">Sample</h4>
+      <p class="step-desc">European manufactory. Your approval.</p>
     </div>
-    <div class="founder-manifest">
-      <div class="manifest-inner reveal">
-        <p class="manifest-label">The founder</p>
-        <div class="manifest-text">
-          <p>Few walls. Always both sides.<br>That's how he learned.</p>
-          <p>The cold front. The warm front.<br>The factory floor. The flagship store.<br>Silesia. Paris. Zürich.<br>He saw the lie between them.<br>He could no longer look away.</p>
-          <p>So he made the truth into a shoe.</p>
-          <p>A real heart selects its witness.</p>
-          <p>HEEL THE WORLD &nbsp;by David H. Dudek</p>
-        </div>
-      </div>
+    <div class="label-step" style="transition-delay:0.4s">
+      <span class="step-num">04</span>
+      <h4 class="step-title">Launch</h4>
+      <p class="step-desc">Your label. Your collection. Your world.</p>
     </div>
-  </section>
+  </div>
+  <div style="margin-top:6vh; text-align:center;">
+    <a href="mailto:david@heeltheworld.ch" class="btn-primary">Book a discovery call</a>
+  </div>
+</section>
 
-  <!-- ═══ 8. LABEL ═══ -->
-  <section id="label">
-    <div class="label-inner">
-      <h2 class="label-headline reveal">
-        You dream it.<br>We build it.<br>You wear the crown.
-      </h2>
-      <div class="label-steps">
-        <div class="label-step reveal">
-          <p class="label-step-num">01</p>
-          <div class="label-step-divider"></div>
-          <h3 class="label-step-title">Vision</h3>
-          <p class="label-step-desc">A conversation. Your aesthetic, your woman, your market. We listen before we sketch.</p>
-        </div>
-        <div class="label-step reveal">
-          <p class="label-step-num">02</p>
-          <div class="label-step-divider"></div>
-          <h3 class="label-step-title">Sketch</h3>
-          <p class="label-step-desc">David draws. Ink on paper. The shoe before the foot. Refined until it is exactly yours.</p>
-        </div>
-        <div class="label-step reveal">
-          <p class="label-step-num">03</p>
-          <div class="label-step-divider"></div>
-          <h3 class="label-step-title">Sample</h3>
-          <p class="label-step-desc">Master cobblers in DACH and Italy build the first pair. You approve every detail.</p>
-        </div>
-        <div class="label-step reveal">
-          <p class="label-step-num">04</p>
-          <div class="label-step-divider"></div>
-          <h3 class="label-step-title">Launch</h3>
-          <p class="label-step-desc">Your name. Your label. HEEL THE WORLD stays silent — or credited. Your choice.</p>
-        </div>
-      </div>
-      <div class="label-cta reveal">
-        <a href="mailto:david@heeltheworld.ch?subject=Discovery Call — Label" class="btn-primary">Book a discovery call</a>
-      </div>
+<!-- CONTACT -->
+<section class="contact">
+  <span class="section-label">Begin the conversation</span>
+  <h2 class="section-title" style="font-size: clamp(2rem, 5vw, 4rem);">One conversation.<br><em>One sketch.</em></h2>
+  <form class="contact-form" action="mailto:david@heeltheworld.ch" method="post">
+    <div class="form-field">
+      <label>Your name</label>
+      <input type="text" placeholder="">
     </div>
-  </section>
-
-  <!-- ═══ 9. CONTACT ═══ -->
-  <section id="contact">
-    <div class="contact-inner">
-      <div class="reveal">
-        <h2 class="contact-headline">Begin the<br>conversation.</h2>
-        <p class="contact-sub">Every commission starts here. David responds within 48 hours.</p>
-      </div>
-
-      <form name="commission" method="POST" netlify netlify-honeypot="bot-field"
-            id="commission-form" class="reveal" onsubmit="handleFormSubmit(event)">
-        <input type="hidden" name="form-name" value="commission">
-        <input type="hidden" name="bot-field" style="display:none">
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="fname">Name</label>
-            <input class="form-input" type="text" id="fname" name="name" required placeholder="Your name">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="femail">Email</label>
-            <input class="form-input" type="email" id="femail" name="email" required placeholder="your@email.com">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="foccasion">Occasion</label>
-            <select class="form-select" id="foccasion" name="occasion">
-              <option value="">Select —</option>
-              <option>Business</option>
-              <option>Gala</option>
-              <option>Every day</option>
-              <option>Bridal</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="fsize">Shoe size (EU)</label>
-            <input class="form-input" type="text" id="fsize" name="size" placeholder="e.g. 38">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="fvision">Your vision</label>
-          <textarea class="form-textarea" id="fvision" name="vision" placeholder="Describe the shoe you imagine. Material, colour, heel height, the occasion you wear it for…"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="fmessage">Anything else</label>
-          <input class="form-input" type="text" id="fmessage" name="message" placeholder="Questions, references, links…">
-        </div>
-
-        <div class="form-submit-row">
-          <button type="submit" class="btn-primary">Send</button>
-          <span class="form-note">80% deposit · CHF 3,200 · secures your slot</span>
-        </div>
-      </form>
-
-      <div class="form-success" id="form-success">
-        <p>Thank you.</p>
-        <small>David will be in touch within 48 hours.</small>
-      </div>
+    <div class="form-field">
+      <label>Occasion</label>
+      <select>
+        <option value="">Select</option>
+        <option>Business</option>
+        <option>Gala</option>
+        <option>Every day</option>
+        <option>Bridal</option>
+        <option>My own label</option>
+      </select>
     </div>
-  </section>
+    <div class="form-field">
+      <label>Your vision</label>
+      <textarea placeholder="Describe your dream shoe..."></textarea>
+    </div>
+    <div class="form-field">
+      <label>Shoe size (EU)</label>
+      <input type="text" placeholder="">
+    </div>
+    <button type="submit" class="btn-primary" style="align-self:flex-start; border:none;">Send</button>
+  </form>
+</section>
 
-  <!-- ═══ 10. FOOTER ═══ -->
-  <footer>
-    <p class="footer-line">
-      Zürich
-      <span class="footer-dot">·</span>
-      Commission from CHF 4,000
-      <span class="footer-dot">·</span>
-      <a href="mailto:david@heeltheworld.ch">david@heeltheworld.ch</a>
-      <span class="footer-dot">·</span>
-      <a href="https://instagram.com/heeltheworld" target="_blank" rel="noopener">@heeltheworld</a>
-      <span class="footer-dot">·</span>
-      <a href="/">Version 2 ↗</a>
-    </p>
-  </footer>
+<!-- FOOTER -->
+<footer>
+  <span class="footer-brand">HEEL THE WORLD by David H. Dudek</span>
+  <div class="footer-info">
+    <span>Zürich</span>
+    <span>Commission from CHF 4,000</span>
+    <a href="mailto:david@heeltheworld.ch">david@heeltheworld.ch</a>
+    <a href="https://instagram.com/heeltheworld" target="_blank">@heeltheworld</a>
+  </div>
+</footer>
 
-  <!-- VERSION BADGE -->
-  <a href="/" class="version-badge">← V2</a>
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
 
-  <!-- ═══════════════════════════════════════════
-       JAVASCRIPT
-  ═══════════════════════════════════════════ -->
-  <script>
-    // ── NAV scroll ──────────────────────────────
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 60);
-    }, { passive: true });
-
-    // ── Mobile nav ──────────────────────────────
-    function toggleMobileNav() {
-      const mn = document.getElementById('mobile-nav');
-      mn.style.display = mn.style.display === 'flex' ? 'none' : 'flex';
-    }
-
-    // ── Configurator ────────────────────────────
-    let cfgState = { who: '', occasion: '', material: '' };
-
-    function selectOption(step, value, btn) {
-      // Remove selected from siblings
-      btn.closest('.cfg-options').querySelectorAll('.cfg-option').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-
-      if (step === 1) cfgState.who = value;
-      if (step === 2) cfgState.occasion = value;
-      if (step === 3) cfgState.material = value;
-
-      setTimeout(() => goToStep(step + 1), 380);
-    }
-
-    function goToStep(step) {
-      document.querySelectorAll('.cfg-step').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.cfg-dot').forEach((d, i) => {
-        d.classList.toggle('done', i < step - 1);
-        d.classList.toggle('active', i === step - 1);
-      });
-
-      if (step <= 3) {
-        document.getElementById('step-' + step).classList.add('active');
-      } else {
-        showResult();
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
       }
-    }
-
-    function showResult() {
-      document.getElementById('cfg-material-out').textContent = cfgState.material;
-      document.getElementById('cfg-occasion-out').textContent = cfgState.occasion.toLowerCase();
-
-      // Pre-fill contact form
-      const occ = document.getElementById('foccasion');
-      if (occ) {
-        for (let i = 0; i < occ.options.length; i++) {
-          if (occ.options[i].text === cfgState.occasion) { occ.selectedIndex = i; break; }
-        }
-      }
-
-      document.getElementById('step-result').classList.add('active');
-      document.querySelectorAll('.cfg-dot').forEach(d => d.classList.remove('active'));
-    }
-
-    function resetConfigurator() {
-      cfgState = { who: '', occasion: '', material: '' };
-      document.querySelectorAll('.cfg-step').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.cfg-dot').forEach((d, i) => {
-        d.classList.remove('done');
-        d.classList.toggle('active', i === 0);
-      });
-      document.querySelectorAll('.cfg-option').forEach(b => b.classList.remove('selected'));
-      document.getElementById('step-1').classList.add('active');
-    }
-
-    // ── Form submit ─────────────────────────────
-    async function handleFormSubmit(e) {
-      e.preventDefault();
-      const form = e.target;
-      const btn = form.querySelector('button[type="submit"]');
-      btn.textContent = 'Sending…';
-      btn.disabled = true;
-
-      try {
-        const data = new FormData(form);
-        const res = await fetch('/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(data).toString()
-        });
-
-        if (res.ok) {
-          form.style.display = 'none';
-          document.getElementById('form-success').style.display = 'block';
-
-          // Also fire to Brevo function if available
-          const payload = {
-            name: data.get('name'),
-            email: data.get('email'),
-            source: 'htw-v3-commission'
-          };
-          fetch('/.netlify/functions/lead', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          }).catch(() => {});
-        } else {
-          throw new Error('Submit failed');
-        }
-      } catch {
-        btn.textContent = 'Send';
-        btn.disabled = false;
-        alert('Something went wrong. Please email david@heeltheworld.ch directly.');
-      }
-    }
-
-    // ── Parallax ────────────────────────────────
-    const parallaxEl = document.getElementById('parallax-bg');
-    if (parallaxEl) {
-      window.addEventListener('scroll', () => {
-        const rect = parallaxEl.closest('section').getBoundingClientRect();
-        const offset = rect.top * 0.15;
-        parallaxEl.style.transform = `translateY(${offset}px)`;
-      }, { passive: true });
-    }
-
-    // ── Scroll reveal ───────────────────────────
-    const revealEls = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-    revealEls.forEach(el => observer.observe(el));
-
-    // ── Stagger child reveals ───────────────────
-    document.querySelectorAll('.label-steps, .material-grid').forEach(grid => {
-      grid.querySelectorAll('.reveal').forEach((child, i) => {
-        child.style.transitionDelay = (i * 0.12) + 's';
-      });
     });
-  </script>
+  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
 
+  const animElements = document.querySelectorAll(
+    '.statement-word, .collection-header, .model-slide, .materials-header, ' +
+    '.material-item, .manifest-line, .configurator-header, .config-question, ' +
+    '.config-cta, .proof-name, .label-step, .ig-item'
+  );
+
+  animElements.forEach(el => observer.observe(el));
+
+  // Stagger proof names
+  document.querySelectorAll('.proof-name').forEach((el, i) => {
+    el.style.transitionDelay = (i * 0.1) + 's';
+  });
+</script>
 </body>
 </html>
