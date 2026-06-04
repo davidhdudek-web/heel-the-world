@@ -17,3 +17,6 @@ images/grok-video1.mov
 Thumbs.db
 node_modules/
 *.log
+
+# Local Netlify folder
+.netlify
