@@ -365,11 +365,13 @@ nav {
   grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr 1fr;
   gap: 2px;
+  overflow-y: auto;
 }
 .ho-images.single { grid-template-rows: 1fr; grid-template-columns: 1fr; }
 .ho-images.two   { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr; }
 .ho-images.three { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
 .ho-images.three .ho-img:first-child { grid-column: 1 / -1; }
+.ho-images.many  { grid-template-rows: none; grid-auto-rows: minmax(220px, 1fr); grid-template-columns: 1fr 1fr; }
 
 .ho-img {
   overflow: hidden;
@@ -1180,7 +1182,7 @@ const HERITAGE = [
     title: 'MBFW Guerilla',
     desc: 'No showroom. No appointment. HTW appeared directly in the streets of Berlin Fashion Week — heels on the pavement, not on a pedestal. Guerilla as brand language.',
     folder: '1Jd99duOMcCANCvDKrnY9jn_H0ceAzL24',
-    images: ['/img/heritage-02-mbfw-guerilla.jpg']
+    images: ['/img/heritage-02-mbfw-guerilla.jpg', '/img/heritage-02-mbfw-guerilla-2.jpg', '/img/heritage-02-mbfw-guerilla-3.jpg', '/img/heritage-02-mbfw-guerilla-4.jpg', '/img/heritage-02-mbfw-guerilla-5.jpg']
   },
   {
     label: 'Berlin · Asphalt Club · 2012',
@@ -1188,7 +1190,7 @@ const HERITAGE = [
     title: 'Fashion Week Shooting',
     desc: 'Editorial shooting during Berlin Fashion Week at the Asphalt Club. Night, leather, light. HTW as part of the underground luxury vernacular of the city.',
     folder: '19u9-hTngTLRxvw8jTXV8ALHh6vJwEULi',
-    images: ['/img/heritage-03-asphalt-club.jpg']
+    images: ['/img/heritage-03-asphalt-club.jpg', '/img/heritage-03-asphalt-club-2.jpg']
   },
   {
     label: 'Berlin · Voguing · 2012–2015',
@@ -1350,8 +1352,8 @@ function renderOverlay(idx) {
     imgBox.innerHTML = '';
 
     if (d.images && d.images.length > 0) {
-      const count = Math.min(d.images.length, 4);
-      imgBox.className = 'ho-images ' + ['single','two','three',''][Math.min(count,4)-1];
+      const count = d.images.length;
+      imgBox.className = 'ho-images ' + (count === 1 ? 'single' : count === 2 ? 'two' : count === 3 ? 'three' : 'many');
       for (let i = 0; i < count; i++) {
         const div = document.createElement('div');
         div.className = 'ho-img';
