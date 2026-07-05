@@ -332,27 +332,6 @@ nav {
   transform: translateY(16px);
   transition: opacity 0.6s ease 0.45s, transform 0.6s ease 0.45s;
 }
-.ho-folder-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 2.5rem;
-  font-family: var(--sans);
-  font-size: 0.5rem;
-  font-weight: 600;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--mint);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(0,229,176,0.25);
-  padding-bottom: 0.35rem;
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.5s ease 0.55s, transform 0.5s ease 0.55s, border-color 0.3s;
-}
-.ho-folder-link:hover { border-color: var(--mint); }
-.ho-folder-link svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
-
 .ho-right {
   position: relative;
   overflow: hidden;
@@ -481,8 +460,7 @@ nav {
 .heritage-overlay.active .ho-label,
 .heritage-overlay.active .ho-year,
 .heritage-overlay.active .ho-title,
-.heritage-overlay.active .ho-desc,
-.heritage-overlay.active .ho-folder-link {
+.heritage-overlay.active .ho-desc {
   opacity: 1;
   transform: translateY(0);
 }
@@ -1089,12 +1067,6 @@ footer {
       <div class="ho-year" id="hoYear"></div>
       <div class="ho-title" id="hoTitle"></div>
       <div class="ho-desc" id="hoDesc"></div>
-      <a href="#" class="ho-folder-link" id="hoFolderLink" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" stroke-width="1.5">
-          <path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
-        </svg>
-        View archive
-      </a>
     </div>
     <div class="ho-right">
       <div class="ho-images" id="hoImages"></div>
@@ -1415,9 +1387,6 @@ function renderOverlay(idx) {
     document.getElementById('hoTitle').textContent = d.title;
     document.getElementById('hoDesc').textContent = d.desc;
     document.getElementById('hoCounter').textContent = `${idx + 1} / ${HERITAGE.length}`;
-
-    const link = document.getElementById('hoFolderLink');
-    link.href = `https://drive.google.com/drive/folders/${d.folder}`;
 
     // images
     const imgBox = document.getElementById('hoImages');
