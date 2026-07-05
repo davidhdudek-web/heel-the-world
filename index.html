@@ -371,7 +371,79 @@ nav {
 .ho-images.two   { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr; }
 .ho-images.three { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
 .ho-images.three .ho-img:first-child { grid-column: 1 / -1; }
-.ho-images.many  { grid-template-rows: none; grid-auto-rows: minmax(220px, 1fr); grid-template-columns: 1fr 1fr; }
+
+/* gallery mode — 4+ photos: a single quiet stage, crossfade between frames */
+.ho-images.gallery {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+.ho-images.gallery .ho-img {
+  position: absolute;
+  inset: 0;
+  transform: none;
+  transition: opacity 0.9s ease;
+  transition-delay: 0s;
+}
+.ho-images.gallery .ho-img:not(.is-active) { opacity: 0; }
+.ho-images.gallery .ho-img.is-active { opacity: 1; z-index: 2; }
+
+.ho-gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.32);
+  transition: color 0.3s;
+}
+.ho-gallery-arrow:hover { color: var(--mint); }
+.ho-gallery-arrow svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.2; }
+.ho-gallery-arrow.prev { left: 0.25rem; }
+.ho-gallery-arrow.next { right: 0.25rem; }
+
+.ho-gallery-index {
+  position: absolute;
+  bottom: 1.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+}
+.ho-gallery-index-item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.32);
+  padding: 0.4rem 0 0.6rem;
+  position: relative;
+  transition: color 0.3s;
+}
+.ho-gallery-index-item::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: var(--mint);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s ease;
+}
+.ho-gallery-index-item.is-active { color: var(--text); }
+.ho-gallery-index-item.is-active::after { transform: scaleX(1); }
 
 .ho-img {
   overflow: hidden;
@@ -1157,13 +1229,13 @@ footer {
   <div class="footer-inner">
     <div class="footer-brand">HEEL · THE · WORLD</div>
     <div class="footer-contact">
-      <a href="mailto:david@heeltheworld.ch">david@heeltheworld.ch</a>
+      <a href="/cdn-cgi/l/email-protection#88ece9fee1ecc8e0edede4fce0edffe7fae4eca6ebe0"><span class="__cf_email__" data-cfemail="375356415e53775f52525b435f524058455b5319545f">[email&#160;protected]</span></a>
       <a href="https://instagram.com/heeltheworld" target="_blank">@heeltheworld</a>
     </div>
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ─── HERITAGE DATA ───
 // images: array of Google Drive file IDs
 // folder: Drive folder ID for archive link
@@ -1353,16 +1425,71 @@ function renderOverlay(idx) {
 
     if (d.images && d.images.length > 0) {
       const count = d.images.length;
-      imgBox.className = 'ho-images ' + (count === 1 ? 'single' : count === 2 ? 'two' : count === 3 ? 'three' : 'many');
-      for (let i = 0; i < count; i++) {
-        const div = document.createElement('div');
-        div.className = 'ho-img';
-        const img = document.createElement('img');
-        img.src = driveImg(d.images[i]);
-        img.alt = d.title;
-        img.loading = 'lazy';
-        div.appendChild(img);
-        imgBox.appendChild(div);
+
+      if (count <= 3) {
+        imgBox.className = 'ho-images ' + (count === 1 ? 'single' : count === 2 ? 'two' : 'three');
+        for (let i = 0; i < count; i++) {
+          const div = document.createElement('div');
+          div.className = 'ho-img';
+          const img = document.createElement('img');
+          img.src = driveImg(d.images[i]);
+          img.alt = d.title;
+          img.loading = 'lazy';
+          div.appendChild(img);
+          imgBox.appendChild(div);
+        }
+      } else {
+        // 4+ photos: one quiet stage, crossfade between frames —
+        // numbered index to jump directly, arrows to step. No motion, no chrome.
+        imgBox.className = 'ho-images gallery';
+        const frames = [];
+        const dots = [];
+        let galleryIdx = 0;
+
+        for (let i = 0; i < count; i++) {
+          const div = document.createElement('div');
+          div.className = 'ho-img' + (i === 0 ? ' is-active' : '');
+          const img = document.createElement('img');
+          img.src = driveImg(d.images[i]);
+          img.alt = d.title;
+          img.loading = 'lazy';
+          div.appendChild(img);
+          imgBox.appendChild(div);
+          frames.push(div);
+        }
+
+        function setGalleryFrame(i) {
+          galleryIdx = (i + count) % count;
+          frames.forEach((f, fi) => f.classList.toggle('is-active', fi === galleryIdx));
+          dots.forEach((dd, di) => dd.classList.toggle('is-active', di === galleryIdx));
+        }
+
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'ho-gallery-arrow prev';
+        prevBtn.setAttribute('aria-label', 'Previous photo');
+        prevBtn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"></polyline></svg>';
+        prevBtn.addEventListener('click', () => setGalleryFrame(galleryIdx - 1));
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'ho-gallery-arrow next';
+        nextBtn.setAttribute('aria-label', 'Next photo');
+        nextBtn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>';
+        nextBtn.addEventListener('click', () => setGalleryFrame(galleryIdx + 1));
+
+        const index = document.createElement('div');
+        index.className = 'ho-gallery-index';
+        for (let i = 0; i < count; i++) {
+          const b = document.createElement('button');
+          b.className = 'ho-gallery-index-item' + (i === 0 ? ' is-active' : '');
+          b.textContent = String(i + 1).padStart(2, '0');
+          b.addEventListener('click', () => setGalleryFrame(i));
+          index.appendChild(b);
+          dots.push(b);
+        }
+
+        imgBox.appendChild(prevBtn);
+        imgBox.appendChild(nextBtn);
+        imgBox.appendChild(index);
       }
     } else {
       imgBox.className = 'ho-images single';
