@@ -528,6 +528,139 @@ nav {
   color: rgba(255,255,255,0.18);
 }
 
+/* ─── SKETCHPAD ─── */
+.sketch-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 800;
+  background: var(--dark);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  display: flex;
+  flex-direction: column;
+}
+.sketch-overlay.active { opacity: 1; pointer-events: all; }
+
+.sketch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.sketch-title {
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.sketch-templates {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.sketch-template-btn {
+  font-family: var(--sans);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.sketch-template-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.sketch-template-btn.active { color: var(--dark); background: var(--mint); border-color: var(--mint); }
+
+.sketch-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.sketch-tool-btn {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.sketch-tool-btn.active, .sketch-tool-btn:hover { color: var(--text); border-color: var(--mint); }
+.sketch-tool-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+
+.sketch-close {
+  background: none; border: none; cursor: pointer; padding: 0.4rem; color: var(--text-muted);
+}
+.sketch-close svg { width: 22px; height: 22px; stroke: currentColor; fill: none; }
+.sketch-close:hover { color: var(--text); }
+
+.sketch-canvas-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #f5f2ec;
+  touch-action: none;
+}
+#sketchTemplateImg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0.35;
+}
+#sketchCanvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.sketch-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 2rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.sketch-hint {
+  font-family: var(--serif);
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--text-muted);
+}
+.sketch-send-btn {
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dark);
+  background: var(--mint);
+  border: 1px solid var(--mint);
+  padding: 0.8rem 1.8rem;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.sketch-send-btn:hover { background: var(--mint-hover); border-color: var(--mint-hover); }
+
+@media (max-width: 700px) {
+  .sketch-header, .sketch-footer { padding: 1rem; }
+  .sketch-templates { order: 3; width: 100%; }
+}
+
 /* ─── PATHS ─── */
 .paths {
   padding: 8rem 3rem;
@@ -1095,7 +1228,10 @@ footer {
           <div class="path-title">Individual Creation</div>
           <div class="path-desc">You come with an idea. Or you give free rein. We create your shoe from zero. Your leather. Your heel height. Your sole. A piece that has never existed and never will again.</div>
         </div>
-        <a href="#commission" class="path-cta">Begin your commission</a>
+        <div style="display:flex; flex-direction:column; gap:0.8rem; align-items:flex-start;">
+          <a href="#" class="path-cta" id="openSketchpad">Sketch your idea</a>
+          <a href="#commission" class="path-cta">Begin your commission</a>
+        </div>
       </div>
 
       <div class="path-card reveal">
@@ -1152,6 +1288,42 @@ footer {
 </section>
 
 <!-- COMMISSION -->
+<!-- SKETCHPAD -->
+<div class="sketch-overlay" id="sketchOverlay">
+  <div class="sketch-header">
+    <div class="sketch-title">Sketch your idea</div>
+    <div class="sketch-templates">
+      <button class="sketch-template-btn active" data-template="blank">Blank Page</button>
+      <button class="sketch-template-btn" data-template="highheel">High Heel</button>
+      <button class="sketch-template-btn" data-template="kittenheel">Kitten Heel</button>
+      <button class="sketch-template-btn" data-template="anklestrap">Ankle-Strap</button>
+    </div>
+    <div class="sketch-tools">
+      <button class="sketch-tool-btn active" id="sketchToolPen" title="Pen">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </button>
+      <button class="sketch-tool-btn" id="sketchToolEraser" title="Eraser">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M20 20H8l-6-6a2 2 0 010-2.8l9-9a2 2 0 012.8 0l6 6a2 2 0 010 2.8L13 18"/></svg>
+      </button>
+      <button class="sketch-tool-btn" id="sketchUndo" title="Undo">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 1015-6.7L3 13"/></svg>
+      </button>
+      <button class="sketch-tool-btn" id="sketchClear" title="Clear">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+      </button>
+    </div>
+    <button class="sketch-close" id="sketchClose"><svg viewBox="0 0 24 24" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="sketch-canvas-wrap">
+    <img id="sketchTemplateImg" src="" alt="" style="display:none;">
+    <canvas id="sketchCanvas"></canvas>
+  </div>
+  <div class="sketch-footer">
+    <div class="sketch-hint">Draw with your finger, mouse, or Apple Pencil. Your sketch will be attached to your commission inquiry.</div>
+    <button class="sketch-send-btn" id="sketchAttach">Attach to my inquiry →</button>
+  </div>
+</div>
+
 <section class="commission" id="commission">
   <div class="commission-inner">
     <span class="section-label reveal">Begin</span>
@@ -1159,6 +1331,10 @@ footer {
     <p class="commission-sub reveal">Eight weeks from conversation to completion. We begin when you are ready.</p>
 
     <form id="commissionForm" class="reveal">
+      <input type="hidden" name="sketchImage" id="sketchImageField" value="">
+      <div class="form-group" id="sketchAttachedNotice" style="display:none; background:rgba(0,229,176,0.08); border:1px solid rgba(0,229,176,0.25); padding:0.8rem 1rem; text-align:left;">
+        <span style="font-family:var(--sans); font-size:0.55rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--mint);">✓ Sketch attached to this inquiry</span>
+      </div>
       <div class="form-group">
         <label>Name</label>
         <input type="text" name="name" required placeholder="Your name">
@@ -1521,6 +1697,174 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 reveals.forEach(el => observer.observe(el));
+
+// ─── SKETCHPAD ───
+(function() {
+  const overlay = document.getElementById('sketchOverlay');
+  const openBtn = document.getElementById('openSketchpad');
+  const closeBtn = document.getElementById('sketchClose');
+  const canvas = document.getElementById('sketchCanvas');
+  const ctx = canvas.getContext('2d');
+  const templateImg = document.getElementById('sketchTemplateImg');
+  const templateBtns = document.querySelectorAll('.sketch-template-btn');
+  const penBtn = document.getElementById('sketchToolPen');
+  const eraserBtn = document.getElementById('sketchToolEraser');
+  const undoBtn = document.getElementById('sketchUndo');
+  const clearBtn = document.getElementById('sketchClear');
+  const attachBtn = document.getElementById('sketchAttach');
+
+  let tool = 'pen';
+  let drawing = false;
+  let strokes = [];
+  let currentStroke = null;
+
+  const TEMPLATES = {
+    blank: null,
+    highheel: 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+        <g fill="none" stroke="#111" stroke-width="2.5">
+          <path d="M60 300 C60 280 90 260 150 255 C220 248 260 235 285 210 C300 195 305 175 300 150 C297 135 288 128 278 132 C270 135 268 145 270 158 C273 178 260 195 235 205 C190 222 130 225 95 245 C75 257 62 275 60 300 Z"/>
+          <path d="M285 210 L305 90 C307 78 300 72 292 78 L275 130"/>
+          <path d="M60 300 L45 300 C40 300 38 305 42 309 C55 320 90 322 150 320 L285 320 C295 320 298 312 292 306 L268 285"/>
+        </g>
+      </svg>`),
+    kittenheel: 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+        <g fill="none" stroke="#111" stroke-width="2.5">
+          <path d="M60 290 C60 272 90 258 145 253 C210 247 250 238 275 222 C288 213 292 200 288 188 C286 180 279 176 273 181 C268 185 267 193 269 202 C271 214 260 224 238 231 C195 245 130 246 95 262 C75 272 62 278 60 290 Z"/>
+          <path d="M275 222 L282 165 C283 158 278 155 274 159 L262 195"/>
+          <path d="M60 290 L45 290 C40 290 38 295 42 299 C55 310 90 312 145 310 L275 310 C285 310 288 302 282 297 L262 280"/>
+        </g>
+      </svg>`),
+    anklestrap: 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+        <g fill="none" stroke="#111" stroke-width="2.5">
+          <path d="M60 300 C60 280 90 260 150 255 C220 248 260 235 285 210 C300 195 305 175 300 150 C297 135 288 128 278 132 C270 135 268 145 270 158 C273 178 260 195 235 205 C190 222 130 225 95 245 C75 257 62 275 60 300 Z"/>
+          <path d="M285 210 L305 90 C307 78 300 72 292 78 L275 130"/>
+          <path d="M60 300 L45 300 C40 300 38 305 42 309 C55 320 90 322 150 320 L285 320 C295 320 298 312 292 306 L268 285"/>
+          <path d="M110 250 C130 210 160 180 175 150" stroke-dasharray="6,5"/>
+          <path d="M95 260 C118 222 150 190 168 158" stroke-dasharray="6,5"/>
+        </g>
+      </svg>`)
+  };
+
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const prev = canvas.toDataURL();
+    canvas.width = rect.width * devicePixelRatio;
+    canvas.height = rect.height * devicePixelRatio;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+    redraw();
+  }
+
+  function redraw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    strokes.forEach(s => {
+      ctx.strokeStyle = s.tool === 'eraser' ? '#f5f2ec' : '#111';
+      ctx.lineWidth = s.tool === 'eraser' ? 18 : 2.2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      s.points.forEach((p, i) => {
+        ctx.lineWidth = s.tool === 'eraser' ? 18 : Math.max(1, 2.2 * (p.pressure || 1));
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+      ctx.stroke();
+    });
+  }
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+      pressure: e.pressure && e.pressure > 0 ? e.pressure * 1.8 : 1
+    };
+  }
+
+  canvas.addEventListener('pointerdown', (e) => {
+    drawing = true;
+    currentStroke = { tool, points: [getPos(e)] };
+    canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!drawing) return;
+    currentStroke.points.push(getPos(e));
+    redraw();
+    // draw current stroke live on top
+    ctx.strokeStyle = currentStroke.tool === 'eraser' ? '#f5f2ec' : '#111';
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    currentStroke.points.forEach((p, i) => {
+      ctx.lineWidth = currentStroke.tool === 'eraser' ? 18 : Math.max(1, 2.2 * (p.pressure || 1));
+      if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    });
+    ctx.stroke();
+  });
+  function endStroke() {
+    if (!drawing) return;
+    drawing = false;
+    if (currentStroke && currentStroke.points.length > 1) strokes.push(currentStroke);
+    currentStroke = null;
+    redraw();
+  }
+  canvas.addEventListener('pointerup', endStroke);
+  canvas.addEventListener('pointercancel', endStroke);
+  canvas.addEventListener('pointerleave', endStroke);
+
+  penBtn.addEventListener('click', () => {
+    tool = 'pen';
+    penBtn.classList.add('active'); eraserBtn.classList.remove('active');
+  });
+  eraserBtn.addEventListener('click', () => {
+    tool = 'eraser';
+    eraserBtn.classList.add('active'); penBtn.classList.remove('active');
+  });
+  undoBtn.addEventListener('click', () => { strokes.pop(); redraw(); });
+  clearBtn.addEventListener('click', () => { strokes = []; redraw(); });
+
+  templateBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      templateBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const key = btn.dataset.template;
+      if (TEMPLATES[key]) {
+        templateImg.src = TEMPLATES[key];
+        templateImg.style.display = 'block';
+      } else {
+        templateImg.style.display = 'none';
+      }
+    });
+  });
+
+  if (openBtn) {
+    openBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      setTimeout(resizeCanvas, 50);
+    });
+  }
+  closeBtn.addEventListener('click', () => {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  });
+  window.addEventListener('resize', () => { if (overlay.classList.contains('active')) resizeCanvas(); });
+
+  attachBtn.addEventListener('click', () => {
+    const dataUrl = canvas.toDataURL('image/png');
+    document.getElementById('sketchImageField').value = strokes.length > 0 ? dataUrl : '';
+    if (strokes.length > 0) {
+      document.getElementById('sketchAttachedNotice').style.display = 'block';
+    }
+    const pathSelect = document.querySelector('select[name="path"]');
+    if (pathSelect) pathSelect.value = 'individual';
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+    document.getElementById('commission').scrollIntoView({ behavior: 'smooth' });
+  });
+})();
 
 // ─── FORM ───
 document.getElementById('commissionForm').addEventListener('submit', async (e) => {
