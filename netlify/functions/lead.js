@@ -37,7 +37,7 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
 
-  const { name = '', email, phone = '', path = 'general', message = '' } = body;
+  const { name = '', email, phone = '', path = 'general', message = '', sketchImage = '' } = body;
 
   if (!email || !email.includes('@')) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email required' }) };
@@ -49,6 +49,15 @@ exports.handler = async (event) => {
   }
 
   const pathLabel = PATH_LABELS[path] || path;
+
+  // extract raw base64 from a data URL like "data:image/png;base64,AAAA..."
+  let sketchAttachment = null;
+  if (sketchImage && sketchImage.startsWith('data:image')) {
+    const match = sketchImage.match(/^data:image\/(\w+);base64,(.+)$/);
+    if (match) {
+      sketchAttachment = { name: `sketch-${Date.now()}.${match[1]}`, content: match[2] };
+    }
+  }
 
   try {
     // 1. Create/update contact in Brevo
@@ -84,17 +93,21 @@ exports.handler = async (event) => {
     const welcomeData = await welcomeRes.json().catch(() => ({}));
 
     // 3. Notification email to David
+    const notifyPayload = {
+      sender: SENDER,
+      to: [{ email: NOTIFY_EMAIL, name: 'David' }],
+      replyTo: { email, name: name || email },
+      subject: `Neue HTW-Anfrage: ${name || email} (${pathLabel})`,
+      htmlContent: getNotifyEmail({ name, email, phone, pathLabel, message, hasSketch: !!sketchAttachment }),
+      tags: ['htw-commission', 'internal-notify']
+    };
+    if (sketchAttachment) {
+      notifyPayload.attachment = [sketchAttachment];
+    }
     const notifyRes = await fetch(`${BREVO_API}/smtp/email`, {
       method: 'POST',
       headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sender: SENDER,
-        to: [{ email: NOTIFY_EMAIL, name: 'David' }],
-        replyTo: { email, name: name || email },
-        subject: `Neue HTW-Anfrage: ${name || email} (${pathLabel})`,
-        htmlContent: getNotifyEmail({ name, email, phone, pathLabel, message }),
-        tags: ['htw-commission', 'internal-notify']
-      })
+      body: JSON.stringify(notifyPayload)
     });
     const notifyData = await notifyRes.json().catch(() => ({}));
 
@@ -123,7 +136,7 @@ ${greeting ? `<p>Dear ${greeting},</p>` : '<p>Dear,</p>'}
 </body></html>`;
 }
 
-function getNotifyEmail({ name, email, phone, pathLabel, message }) {
+function getNotifyEmail({ name, email, phone, pathLabel, message, hasSketch }) {
   return `<!DOCTYPE html><html><body style="font-family:-apple-system,Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#111;">
 <h2 style="margin-bottom:16px;">Neue HTW-Anfrage</h2>
 <table style="width:100%;border-collapse:collapse;font-size:14px;">
@@ -134,6 +147,7 @@ function getNotifyEmail({ name, email, phone, pathLabel, message }) {
 </table>
 <p style="margin-top:16px;color:#888;">Nachricht:</p>
 <p style="white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:6px;">${escapeHtml(message) || '(keine)'}</p>
+${hasSketch ? '<p style="margin-top:16px;padding:10px 14px;background:#e8fbf5;border:1px solid #00e5b0;border-radius:6px;font-size:13px;">✎ Diese Anfrage enthält eine handgezeichnete Skizze — siehe Anhang dieser E-Mail.</p>' : ''}
 <p style="margin-top:24px;font-size:12px;color:#aaa;">Automatisch von heeltheworld.ch — Kontakt wurde in Brevo Liste 14 (HTW Commission Leads) angelegt und hat eine Willkommensmail erhalten.</p>
 </body></html>`;
 }
@@ -143,3 +157,4 @@ function escapeHtml(str) {
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[c]));
 }
+
