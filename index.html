@@ -277,6 +277,7 @@ nav {
   display: grid;
   grid-template-columns: 1fr 1fr;
   overflow-y: auto;
+  padding-bottom: 4.5rem;
 }
 
 .ho-left {
@@ -506,38 +507,46 @@ nav {
 /* nav indicator */
 .ho-nav {
   position: fixed;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 600;
   display: flex;
   align-items: center;
-  gap: 2rem;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
+  background: rgba(10,10,10,0.85);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255,255,255,0.08);
   opacity: 0;
   transition: opacity 0.4s ease 0.7s;
 }
 .heritage-overlay.active .ho-nav { opacity: 1; }
 .ho-nav-btn {
-  background: none;
-  border: 1px solid rgba(255,255,255,0.12);
-  color: var(--text-muted);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: var(--text);
   font-family: var(--sans);
-  font-size: 0.45rem;
-  letter-spacing: 0.25em;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  padding: 0.6rem 1.4rem;
+  padding: 0.85rem 1.6rem;
+  min-height: 44px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.25s;
 }
-.ho-nav-btn:hover {
+.ho-nav-btn:hover, .ho-nav-btn:active {
   border-color: var(--mint);
   color: var(--mint);
+  background: rgba(0,229,176,0.08);
 }
 .ho-nav-counter {
   font-family: var(--sans);
-  font-size: 0.45rem;
+  font-size: 0.55rem;
   letter-spacing: 0.3em;
-  color: rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.4);
 }
 
 /* ─── SKETCHPAD ─── */
