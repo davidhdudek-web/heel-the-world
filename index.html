@@ -336,10 +336,24 @@ nav {
   position: relative;
   overflow: hidden;
   background: var(--dark-3);
+  display: flex;
+  flex-direction: column;
 }
+.ho-gallery-index-bar {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 1.3rem;
+  padding: 1rem 1rem 0.8rem;
+  background: var(--dark-3);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+.ho-gallery-index-bar.visible { display: flex; }
 .ho-images {
   width: 100%;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr 1fr;
@@ -391,11 +405,6 @@ nav {
 .ho-gallery-arrow.next { right: 0.8rem; }
 
 .ho-gallery-index {
-  position: absolute;
-  bottom: 1.6rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 4;
   display: flex;
   align-items: center;
   gap: 1.3rem;
@@ -1205,6 +1214,7 @@ footer {
       <div class="ho-desc" id="hoDesc"></div>
     </div>
     <div class="ho-right">
+      <div class="ho-gallery-index-bar" id="hoGalleryIndexBar"></div>
       <div class="ho-images" id="hoImages"></div>
     </div>
   </div>
@@ -1569,7 +1579,10 @@ function renderOverlay(idx) {
 
     // images
     const imgBox = document.getElementById('hoImages');
+    const indexBar = document.getElementById('hoGalleryIndexBar');
     imgBox.innerHTML = '';
+    indexBar.innerHTML = '';
+    indexBar.classList.remove('visible');
 
     if (d.images && d.images.length > 0) {
       const count = d.images.length;
@@ -1637,7 +1650,8 @@ function renderOverlay(idx) {
 
         imgBox.appendChild(prevBtn);
         imgBox.appendChild(nextBtn);
-        imgBox.appendChild(index);
+        indexBar.appendChild(index);
+        indexBar.classList.add('visible');
 
         // swipe support for touch/pencil
         let swipeStartX = null;
