@@ -356,6 +356,7 @@ nav {
   position: relative;
   display: block;
   overflow: hidden;
+  touch-action: pan-y;
 }
 .ho-images.gallery .ho-img {
   position: absolute;
@@ -372,21 +373,22 @@ nav {
   top: 50%;
   transform: translateY(-50%);
   z-index: 4;
-  background: none;
-  border: none;
+  background: rgba(10,10,10,0.45);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 50%;
   cursor: pointer;
-  width: 3rem;
-  height: 3rem;
+  width: 3.4rem;
+  height: 3.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255,255,255,0.32);
-  transition: color 0.3s;
+  color: rgba(255,255,255,0.85);
+  transition: color 0.3s, border-color 0.3s, background 0.3s;
 }
-.ho-gallery-arrow:hover { color: var(--mint); }
-.ho-gallery-arrow svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.2; }
-.ho-gallery-arrow.prev { left: 0.25rem; }
-.ho-gallery-arrow.next { right: 0.25rem; }
+.ho-gallery-arrow:hover, .ho-gallery-arrow:active { color: var(--dark); background: var(--mint); border-color: var(--mint); }
+.ho-gallery-arrow svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.ho-gallery-arrow.prev { left: 0.8rem; }
+.ho-gallery-arrow.next { right: 0.8rem; }
 
 .ho-gallery-index {
   position: absolute;
@@ -403,11 +405,12 @@ nav {
   border: none;
   cursor: pointer;
   font-family: var(--sans);
-  font-size: 0.5rem;
+  font-size: 0.55rem;
   font-weight: 600;
   letter-spacing: 0.2em;
-  color: rgba(255,255,255,0.32);
-  padding: 0.4rem 0 0.6rem;
+  color: rgba(255,255,255,0.45);
+  padding: 0.9rem 0.5rem 0.7rem;
+  min-width: 2.2rem;
   position: relative;
   transition: color 0.3s;
 }
@@ -1635,6 +1638,23 @@ function renderOverlay(idx) {
         imgBox.appendChild(prevBtn);
         imgBox.appendChild(nextBtn);
         imgBox.appendChild(index);
+
+        // swipe support for touch/pencil
+        let swipeStartX = null;
+        let swipeStartY = null;
+        imgBox.addEventListener('pointerdown', (e) => {
+          swipeStartX = e.clientX;
+          swipeStartY = e.clientY;
+        });
+        imgBox.addEventListener('pointerup', (e) => {
+          if (swipeStartX === null) return;
+          const dx = e.clientX - swipeStartX;
+          const dy = e.clientY - swipeStartY;
+          swipeStartX = null;
+          if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+            setGalleryFrame(galleryIdx + (dx < 0 ? 1 : -1));
+          }
+        });
       }
     } else {
       imgBox.className = 'ho-images single';
