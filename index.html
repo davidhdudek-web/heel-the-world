@@ -1307,9 +1307,13 @@ footer {
     <div class="sketch-title">Sketch your idea</div>
     <div class="sketch-templates">
       <button class="sketch-template-btn active" data-template="blank">Blank Page</button>
-      <button class="sketch-template-btn" data-template="highheel">High Heel</button>
-      <button class="sketch-template-btn" data-template="kittenheel">Kitten Heel</button>
-      <button class="sketch-template-btn" data-template="anklestrap">Ankle-Strap</button>
+      <button class="sketch-template-btn" data-template="anklewrap">Ankle-Wrap Pump</button>
+      <button class="sketch-template-btn" data-template="platform">Platform Peep-Toe</button>
+      <button class="sketch-template-btn" data-template="anklestrap">Ankle-Strap Sandal</button>
+      <button class="sketch-template-btn" data-template="cutout">Cutout Bootie</button>
+      <button class="sketch-template-btn" data-template="gladiator">Gladiator Heel</button>
+      <button class="sketch-template-btn" data-template="classic">Classic Pump</button>
+      <button class="sketch-template-btn" data-template="silhouette">Pump Silhouette</button>
     </div>
     <div class="sketch-tools">
       <button class="sketch-tool-btn active" id="sketchToolPen" title="Pen">
@@ -1754,32 +1758,13 @@ reveals.forEach(el => observer.observe(el));
 
   const TEMPLATES = {
     blank: null,
-    highheel: 'data:image/svg+xml;utf8,' + encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
-        <g fill="none" stroke="#111" stroke-width="2.5">
-          <path d="M60 300 C60 280 90 260 150 255 C220 248 260 235 285 210 C300 195 305 175 300 150 C297 135 288 128 278 132 C270 135 268 145 270 158 C273 178 260 195 235 205 C190 222 130 225 95 245 C75 257 62 275 60 300 Z"/>
-          <path d="M285 210 L305 90 C307 78 300 72 292 78 L275 130"/>
-          <path d="M60 300 L45 300 C40 300 38 305 42 309 C55 320 90 322 150 320 L285 320 C295 320 298 312 292 306 L268 285"/>
-        </g>
-      </svg>`),
-    kittenheel: 'data:image/svg+xml;utf8,' + encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
-        <g fill="none" stroke="#111" stroke-width="2.5">
-          <path d="M60 290 C60 272 90 258 145 253 C210 247 250 238 275 222 C288 213 292 200 288 188 C286 180 279 176 273 181 C268 185 267 193 269 202 C271 214 260 224 238 231 C195 245 130 246 95 262 C75 272 62 278 60 290 Z"/>
-          <path d="M275 222 L282 165 C283 158 278 155 274 159 L262 195"/>
-          <path d="M60 290 L45 290 C40 290 38 295 42 299 C55 310 90 312 145 310 L275 310 C285 310 288 302 282 297 L262 280"/>
-        </g>
-      </svg>`),
-    anklestrap: 'data:image/svg+xml;utf8,' + encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
-        <g fill="none" stroke="#111" stroke-width="2.5">
-          <path d="M60 300 C60 280 90 260 150 255 C220 248 260 235 285 210 C300 195 305 175 300 150 C297 135 288 128 278 132 C270 135 268 145 270 158 C273 178 260 195 235 205 C190 222 130 225 95 245 C75 257 62 275 60 300 Z"/>
-          <path d="M285 210 L305 90 C307 78 300 72 292 78 L275 130"/>
-          <path d="M60 300 L45 300 C40 300 38 305 42 309 C55 320 90 322 150 320 L285 320 C295 320 298 312 292 306 L268 285"/>
-          <path d="M110 250 C130 210 160 180 175 150" stroke-dasharray="6,5"/>
-          <path d="M95 260 C118 222 150 190 168 158" stroke-dasharray="6,5"/>
-        </g>
-      </svg>`)
+    anklewrap: '/img/sketch/ankle-wrap-pump.png',
+    platform: '/img/sketch/platform-peeptoe.png',
+    anklestrap: '/img/sketch/ankle-strap-sandal.png',
+    cutout: '/img/sketch/cutout-bootie.png',
+    gladiator: '/img/sketch/gladiator-heel.png',
+    classic: '/img/sketch/classic-pump.png',
+    silhouette: '/img/sketch/pump-silhouette.png'
   };
 
   function resizeCanvas() {
