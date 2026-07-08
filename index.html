@@ -256,6 +256,7 @@ nav {
   z-index: 500;
   pointer-events: none;
   opacity: 0;
+  touch-action: none;
   transition: opacity 0.6s ease;
 }
 .heritage-overlay.active {
@@ -277,6 +278,7 @@ nav {
   display: grid;
   grid-template-columns: 1fr 1fr;
   overflow-y: auto;
+  touch-action: none;
   padding-bottom: 4.5rem;
 }
 
@@ -296,7 +298,7 @@ nav {
   margin-bottom: 0.8rem;
   opacity: 0;
   transform: translateY(12px);
-  transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+  transition: opacity 0.3s ease 0.06s, transform 0.3s ease 0.06s;
 }
 .ho-year {
   font-family: var(--sans);
@@ -308,7 +310,7 @@ nav {
   margin-bottom: 2rem;
   opacity: 0;
   transform: translateY(12px);
-  transition: opacity 0.5s ease 0.3s, transform 0.5s ease 0.3s;
+  transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
 }
 .ho-title {
   font-family: var(--serif);
@@ -320,7 +322,7 @@ nav {
   margin-bottom: 2.5rem;
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 0.6s ease 0.35s, transform 0.6s ease 0.35s;
+  transition: opacity 0.35s ease 0.14s, transform 0.35s ease 0.14s;
 }
 .ho-desc {
   font-family: var(--serif);
@@ -331,7 +333,7 @@ nav {
   max-width: 480px;
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 0.6s ease 0.45s, transform 0.6s ease 0.45s;
+  transition: opacity 0.35s ease 0.18s, transform 0.35s ease 0.18s;
 }
 .ho-right {
   position: relative;
@@ -371,7 +373,7 @@ nav {
   position: relative;
   display: block;
   overflow: hidden;
-  touch-action: pan-y;
+  touch-action: none;
 }
 .ho-images.gallery .ho-img {
   position: absolute;
@@ -419,13 +421,13 @@ nav {
   overflow: hidden;
   opacity: 0;
   transform: scale(1.04);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition: opacity 0.45s ease, transform 0.45s ease;
   background: var(--dark-3);
 }
-.ho-img:nth-child(1) { transition-delay: 0.3s; }
-.ho-img:nth-child(2) { transition-delay: 0.45s; }
-.ho-img:nth-child(3) { transition-delay: 0.55s; }
-.ho-img:nth-child(4) { transition-delay: 0.65s; }
+.ho-img:nth-child(1) { transition-delay: 0.08s; }
+.ho-img:nth-child(2) { transition-delay: 0.14s; }
+.ho-img:nth-child(3) { transition-delay: 0.2s; }
+.ho-img:nth-child(4) { transition-delay: 0.26s; }
 .ho-img img {
   width: 100%;
   height: 100%;
@@ -447,15 +449,15 @@ nav {
   text-transform: uppercase;
 }
 
-/* animate in when overlay is active */
-.heritage-overlay.active .ho-label,
-.heritage-overlay.active .ho-year,
-.heritage-overlay.active .ho-title,
-.heritage-overlay.active .ho-desc {
+/* animate in per-station, independent of overlay open/close */
+.heritage-overlay.content-ready .ho-label,
+.heritage-overlay.content-ready .ho-year,
+.heritage-overlay.content-ready .ho-title,
+.heritage-overlay.content-ready .ho-desc {
   opacity: 1;
   transform: translateY(0);
 }
-.heritage-overlay.active .ho-img {
+.heritage-overlay.content-ready .ho-img {
   opacity: 1;
   transform: scale(1);
 }
@@ -1537,9 +1539,9 @@ function renderOverlay(idx) {
   const d = HERITAGE[idx];
   currentIdx = idx;
 
-  // reset animations
+  // reset per-station content animation only (overlay itself stays visible)
   const overlay = document.getElementById('heritageOverlay');
-  overlay.classList.remove('active');
+  overlay.classList.remove('content-ready');
 
   setTimeout(() => {
     document.getElementById('hoLabel').textContent = d.label;
@@ -1638,11 +1640,14 @@ function renderOverlay(idx) {
 
     document.body.style.overflow = 'hidden';
     overlay.classList.add('active');
+    overlay.classList.add('content-ready');
   }, 50);
 }
 
 function closeOverlay() {
-  document.getElementById('heritageOverlay').classList.remove('active');
+  const overlay = document.getElementById('heritageOverlay');
+  overlay.classList.remove('active');
+  overlay.classList.remove('content-ready');
   document.body.style.overflow = '';
 }
 
