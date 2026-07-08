@@ -383,28 +383,6 @@ nav {
 .ho-images.gallery .ho-img:not(.is-active) { opacity: 0; }
 .ho-images.gallery .ho-img.is-active { opacity: 1; z-index: 2; }
 
-.ho-gallery-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 4;
-  background: rgba(10,10,10,0.45);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 50%;
-  cursor: pointer;
-  width: 3.4rem;
-  height: 3.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255,255,255,0.85);
-  transition: color 0.3s, border-color 0.3s, background 0.3s;
-}
-.ho-gallery-arrow:hover, .ho-gallery-arrow:active { color: var(--dark); background: var(--mint); border-color: var(--mint); }
-.ho-gallery-arrow svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; }
-.ho-gallery-arrow.prev { left: 0.8rem; }
-.ho-gallery-arrow.next { right: 0.8rem; }
-
 .ho-gallery-index {
   display: flex;
   align-items: center;
@@ -413,7 +391,7 @@ nav {
 .ho-gallery-index-item {
   background: none;
   border: none;
-  cursor: pointer;
+  pointer-events: none;
   font-family: var(--sans);
   font-size: 0.55rem;
   font-weight: 600;
@@ -504,8 +482,8 @@ nav {
 }
 .ho-close:hover svg { stroke: var(--text); }
 
-/* nav indicator */
-.ho-nav {
+/* swipe hint (replaces button nav) */
+.ho-swipe-hint {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -514,40 +492,20 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
-  padding: 1rem 1.5rem calc(1rem + env(safe-area-inset-bottom));
-  background: rgba(10,10,10,0.85);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255,255,255,0.08);
+  gap: 0.6rem;
+  padding: 0.9rem 1.5rem calc(0.9rem + env(safe-area-inset-bottom));
+  pointer-events: none;
   opacity: 0;
   transition: opacity 0.4s ease 0.7s;
-}
-.heritage-overlay.active .ho-nav { opacity: 1; }
-.ho-nav-btn {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: var(--text);
   font-family: var(--sans);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
+  font-size: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  padding: 0.85rem 1.6rem;
-  min-height: 44px;
-  cursor: pointer;
-  transition: all 0.25s;
+  color: rgba(255,255,255,0.35);
 }
-.ho-nav-btn:hover, .ho-nav-btn:active {
-  border-color: var(--mint);
-  color: var(--mint);
-  background: rgba(0,229,176,0.08);
-}
-.ho-nav-counter {
-  font-family: var(--sans);
-  font-size: 0.55rem;
-  letter-spacing: 0.3em;
-  color: rgba(255,255,255,0.4);
-}
+.heritage-overlay.active .ho-swipe-hint { opacity: 1; }
+.ho-swipe-hint-sep { color: rgba(255,255,255,0.15); }
 
 /* ─── SKETCHPAD ─── */
 .sketch-overlay {
@@ -1228,10 +1186,10 @@ footer {
     </div>
   </div>
 
-  <div class="ho-nav">
-    <button class="ho-nav-btn" id="hoPrev">← Prev</button>
-    <span class="ho-nav-counter" id="hoCounter"></span>
-    <button class="ho-nav-btn" id="hoNext">Next →</button>
+  <div class="ho-swipe-hint" id="hoSwipeHint">
+    <span class="ho-swipe-hint-item">↑↓ swipe for stories</span>
+    <span class="ho-swipe-hint-sep">·</span>
+    <span class="ho-swipe-hint-item">← → swipe for photos</span>
   </div>
 </div>
 
@@ -1588,7 +1546,7 @@ function renderOverlay(idx) {
     document.getElementById('hoYear').textContent = d.year;
     document.getElementById('hoTitle').textContent = d.title;
     document.getElementById('hoDesc').textContent = d.desc;
-    document.getElementById('hoCounter').textContent = `${idx + 1} / ${HERITAGE.length}`;
+    // (counter removed — position shown via swipe hint / gallery index instead)
 
     // images
     const imgBox = document.getElementById('hoImages');
@@ -1638,31 +1596,16 @@ function renderOverlay(idx) {
           dots.forEach((dd, di) => dd.classList.toggle('is-active', di === galleryIdx));
         }
 
-        const prevBtn = document.createElement('button');
-        prevBtn.className = 'ho-gallery-arrow prev';
-        prevBtn.setAttribute('aria-label', 'Previous photo');
-        prevBtn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"></polyline></svg>';
-        prevBtn.addEventListener('click', () => setGalleryFrame(galleryIdx - 1));
-
-        const nextBtn = document.createElement('button');
-        nextBtn.className = 'ho-gallery-arrow next';
-        nextBtn.setAttribute('aria-label', 'Next photo');
-        nextBtn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>';
-        nextBtn.addEventListener('click', () => setGalleryFrame(galleryIdx + 1));
-
         const index = document.createElement('div');
         index.className = 'ho-gallery-index';
         for (let i = 0; i < count; i++) {
-          const b = document.createElement('button');
+          const b = document.createElement('span');
           b.className = 'ho-gallery-index-item' + (i === 0 ? ' is-active' : '');
           b.textContent = String(i + 1).padStart(2, '0');
-          b.addEventListener('click', () => setGalleryFrame(i));
           index.appendChild(b);
           dots.push(b);
         }
 
-        imgBox.appendChild(prevBtn);
-        imgBox.appendChild(nextBtn);
         indexBar.appendChild(index);
         indexBar.classList.add('visible');
 
@@ -1728,13 +1671,24 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// prev / next
-document.getElementById('hoPrev').addEventListener('click', () => {
-  renderOverlay((currentIdx - 1 + HERITAGE.length) % HERITAGE.length);
-});
-document.getElementById('hoNext').addEventListener('click', () => {
-  renderOverlay((currentIdx + 1) % HERITAGE.length);
-});
+// vertical swipe = next/prev heritage station (IG Stories style)
+(function() {
+  const overlayEl = document.getElementById('heritageOverlay');
+  let startX = null, startY = null;
+  overlayEl.addEventListener('pointerdown', (e) => {
+    startX = e.clientX; startY = e.clientY;
+  });
+  overlayEl.addEventListener('pointerup', (e) => {
+    if (startX === null) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    startX = null;
+    if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(dx)) {
+      if (dy < 0) renderOverlay((currentIdx + 1) % HERITAGE.length);   // swipe up → next
+      else renderOverlay((currentIdx - 1 + HERITAGE.length) % HERITAGE.length); // swipe down → prev
+    }
+  });
+})();
 
 // ─── SCROLL REVEAL ───
 const reveals = document.querySelectorAll('.reveal');
