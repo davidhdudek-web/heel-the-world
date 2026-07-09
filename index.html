@@ -603,6 +603,32 @@ nav {
   accent-color: var(--mint);
   cursor: pointer;
 }
+.sketch-hue-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right,
+    hsl(0,80%,50%), hsl(60,80%,50%), hsl(120,80%,50%),
+    hsl(180,80%,50%), hsl(240,80%,50%), hsl(300,80%,50%), hsl(360,80%,50%));
+}
+.sketch-hue-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+.sketch-hue-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid rgba(0,0,0,0.3);
+  cursor: pointer;
+}
 
 .sketch-tools {
   display: flex;
@@ -1328,9 +1354,9 @@ footer {
       <button class="sketch-template-btn" data-template="silhouette">Pump Silhouette</button>
     </div>
     <div class="sketch-leather-colors" id="sketchLeatherColors">
-      <button class="sketch-leather-swatch active" data-leather="ink" title="Ink"></button>
-      <button class="sketch-leather-swatch" data-leather="black" title="Black Fish Leather" style="background-image:url('/img/leather/black.jpg')"></button>
-      <button class="sketch-leather-swatch" data-leather="red" title="Red Fish Leather" style="background-image:url('/img/leather/red.jpg')"></button>
+      <button class="sketch-leather-swatch active" data-material="glossy" title="Glossy Leather"></button>
+      <button class="sketch-leather-swatch" data-material="rough" title="Rough Leather"></button>
+      <button class="sketch-leather-swatch" data-material="fish" title="Fish Leather"></button>
     </div>
     <div class="sketch-brush-controls">
       <label class="sketch-slider-label">
@@ -1340,6 +1366,10 @@ footer {
       <label class="sketch-slider-label">
         Opacity
         <input type="range" id="sketchOpacity" min="10" max="100" step="5" value="100">
+      </label>
+      <label class="sketch-slider-label">
+        Color
+        <input type="range" id="sketchHue" class="sketch-hue-slider" min="0" max="360" step="1" value="355">
       </label>
     </div>
     <div class="sketch-tools">
@@ -1767,28 +1797,79 @@ reveals.forEach(el => observer.observe(el));
   let drawing = false;
   let strokes = [];
   let currentStroke = null;
-  let currentLeather = 'ink';
+  let currentMaterial = 'glossy';
+  let currentHue = 355;
   let currentWidth = 2.2;
   let currentOpacity = 1;
 
-  const LEATHER_SOURCES = {
-    black: '/img/leather/black.jpg',
-    red: '/img/leather/red.jpg'
-  };
-  const leatherPatterns = {}; // filled in once images load + ctx is ready
+  // grayscale base textures per material — tinted live via the hue slider
+  const materialBases = {}; // key -> canvas (grayscale)
+  const patternCache = {};  // "material:hue" -> CanvasPattern
 
-  function preloadLeatherPatterns() {
-    Object.entries(LEATHER_SOURCES).forEach(([key, src]) => {
+  function makeGlossyBase(size) {
+    const c = document.createElement('canvas'); c.width = size; c.height = size;
+    const g = c.getContext('2d');
+    const grad = g.createLinearGradient(0, 0, size, size);
+    grad.addColorStop(0, '#7a7a7a');
+    grad.addColorStop(0.42, '#e8e8e8');
+    grad.addColorStop(0.5, '#fafafa');
+    grad.addColorStop(0.58, '#e8e8e8');
+    grad.addColorStop(1, '#707070');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, size, size);
+    return c;
+  }
+
+  function makeRoughBase(size) {
+    const c = document.createElement('canvas'); c.width = size; c.height = size;
+    const g = c.getContext('2d');
+    g.fillStyle = '#8f8f8f';
+    g.fillRect(0, 0, size, size);
+    const imgData = g.getImageData(0, 0, size, size);
+    for (let i = 0; i < imgData.data.length; i += 4) {
+      const n = 110 + Math.random() * 80;
+      imgData.data[i] = n; imgData.data[i + 1] = n; imgData.data[i + 2] = n;
+    }
+    g.putImageData(imgData, 0, 0);
+    return c;
+  }
+
+  function loadFishBase(size) {
+    return new Promise((resolve) => {
       const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => { leatherPatterns[key] = ctx.createPattern(img, 'repeat'); };
-      img.src = src;
+      img.onload = () => {
+        const c = document.createElement('canvas'); c.width = size; c.height = size;
+        c.getContext('2d').drawImage(img, 0, 0, size, size);
+        resolve(c);
+      };
+      img.src = '/img/leather/black.jpg'; // already-grayscale fish leather scale texture
     });
   }
-  preloadLeatherPatterns();
 
-  function strokeStyleFor(leatherKey) {
-    return leatherPatterns[leatherKey] || '#111';
+  const BASE_SIZE = 220;
+  materialBases.glossy = makeGlossyBase(BASE_SIZE);
+  materialBases.rough = makeRoughBase(BASE_SIZE);
+  loadFishBase(BASE_SIZE).then(c => { materialBases.fish = c; });
+
+  function getTintedPattern(material, hue) {
+    const base = materialBases[material];
+    if (!base) return '#111'; // not loaded yet (fish base still fetching)
+    const cacheKey = material + ':' + Math.round(hue / 3) * 3;
+    if (patternCache[cacheKey]) return patternCache[cacheKey];
+    const c = document.createElement('canvas'); c.width = base.width; c.height = base.height;
+    const g = c.getContext('2d');
+    g.drawImage(base, 0, 0);
+    g.globalCompositeOperation = 'color';
+    g.fillStyle = `hsl(${hue}, 78%, 42%)`;
+    g.fillRect(0, 0, c.width, c.height);
+    g.globalCompositeOperation = 'source-over';
+    const pattern = ctx.createPattern(c, 'repeat');
+    patternCache[cacheKey] = pattern;
+    return pattern;
+  }
+
+  function strokeStyleFor(material, hue) {
+    return getTintedPattern(material, hue);
   }
 
   const TEMPLATES = {
@@ -1814,7 +1895,7 @@ reveals.forEach(el => observer.observe(el));
   function redraw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     strokes.forEach(s => {
-      ctx.strokeStyle = s.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(s.leather || 'ink');
+      ctx.strokeStyle = s.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(s.material || 'glossy', s.hue ?? 355);
       ctx.globalAlpha = s.tool === 'eraser' ? 1 : (s.opacity ?? 1);
       const baseWidth = s.tool === 'eraser' ? 18 : (s.width || 2.2);
       ctx.lineCap = 'round';
@@ -1841,7 +1922,7 @@ reveals.forEach(el => observer.observe(el));
 
   canvas.addEventListener('pointerdown', (e) => {
     drawing = true;
-    currentStroke = { tool, leather: currentLeather, width: currentWidth, opacity: currentOpacity, points: [getPos(e)] };
+    currentStroke = { tool, material: currentMaterial, hue: currentHue, width: currentWidth, opacity: currentOpacity, points: [getPos(e)] };
     canvas.setPointerCapture(e.pointerId);
   });
   canvas.addEventListener('pointermove', (e) => {
@@ -1849,7 +1930,7 @@ reveals.forEach(el => observer.observe(el));
     currentStroke.points.push(getPos(e));
     redraw();
     // draw current stroke live on top
-    ctx.strokeStyle = currentStroke.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(currentStroke.leather);
+    ctx.strokeStyle = currentStroke.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(currentStroke.material, currentStroke.hue);
     ctx.globalAlpha = currentStroke.tool === 'eraser' ? 1 : currentStroke.opacity;
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.beginPath();
@@ -1890,17 +1971,41 @@ reveals.forEach(el => observer.observe(el));
     currentOpacity = parseFloat(e.target.value) / 100;
   });
 
+  function refreshSwatchPreviews() {
+    document.querySelectorAll('.sketch-leather-swatch').forEach(sw => {
+      const mat = sw.dataset.material;
+      const pattern = getTintedPattern(mat, currentHue);
+      if (typeof pattern === 'object') {
+        // draw a small preview snapshot for this swatch's background
+        const preview = document.createElement('canvas');
+        preview.width = 40; preview.height = 40;
+        const pctx = preview.getContext('2d');
+        pctx.fillStyle = pattern;
+        pctx.fillRect(0, 0, 40, 40);
+        sw.style.backgroundImage = `url(${preview.toDataURL()})`;
+      }
+    });
+  }
+
+  document.getElementById('sketchHue').addEventListener('input', (e) => {
+    currentHue = parseFloat(e.target.value);
+    refreshSwatchPreviews();
+  });
+
   const leatherSwatches = document.querySelectorAll('.sketch-leather-swatch');
   leatherSwatches.forEach(sw => {
     sw.addEventListener('click', () => {
-      currentLeather = sw.dataset.leather;
+      currentMaterial = sw.dataset.material;
       leatherSwatches.forEach(s2 => s2.classList.remove('active'));
       sw.classList.add('active');
-      // picking a color implies you want to draw with it
       tool = 'pen';
       penBtn.classList.add('active'); eraserBtn.classList.remove('active');
     });
   });
+
+  // initial swatch previews once fish base finishes loading (glossy/rough are instant)
+  refreshSwatchPreviews();
+  setTimeout(refreshSwatchPreviews, 400); // catch up once the fish photo has loaded
 
   templateBtns.forEach(btn => {
     btn.addEventListener('click', () => {
