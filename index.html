@@ -562,6 +562,26 @@ nav {
 .sketch-template-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
 .sketch-template-btn.active { color: var(--dark); background: var(--mint); border-color: var(--mint); }
 
+.sketch-leather-colors {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.sketch-leather-swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.12);
+  background-color: #1a1a1a;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.25s, transform 0.2s;
+}
+.sketch-leather-swatch:hover { transform: scale(1.08); }
+.sketch-leather-swatch.active { border-color: var(--mint); }
+
 .sketch-tools {
   display: flex;
   align-items: center;
@@ -1285,6 +1305,10 @@ footer {
       <button class="sketch-template-btn" data-template="classic">Classic Pump</button>
       <button class="sketch-template-btn" data-template="silhouette">Pump Silhouette</button>
     </div>
+    <div class="sketch-leather-colors" id="sketchLeatherColors">
+      <button class="sketch-leather-swatch active" data-leather="ink" title="Ink"></button>
+      <button class="sketch-leather-swatch" data-leather="red" title="Red Fish Leather" style="background-image:url('/img/leather/red.jpg')"></button>
+    </div>
     <div class="sketch-tools">
       <button class="sketch-tool-btn active" id="sketchToolPen" title="Pen">
         <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -1710,6 +1734,26 @@ reveals.forEach(el => observer.observe(el));
   let drawing = false;
   let strokes = [];
   let currentStroke = null;
+  let currentLeather = 'ink';
+
+  const LEATHER_SOURCES = {
+    red: '/img/leather/red.jpg'
+  };
+  const leatherPatterns = {}; // filled in once images load + ctx is ready
+
+  function preloadLeatherPatterns() {
+    Object.entries(LEATHER_SOURCES).forEach(([key, src]) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => { leatherPatterns[key] = ctx.createPattern(img, 'repeat'); };
+      img.src = src;
+    });
+  }
+  preloadLeatherPatterns();
+
+  function strokeStyleFor(leatherKey) {
+    return leatherPatterns[leatherKey] || '#111';
+  }
 
   const TEMPLATES = {
     blank: null,
@@ -1734,7 +1778,7 @@ reveals.forEach(el => observer.observe(el));
   function redraw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     strokes.forEach(s => {
-      ctx.strokeStyle = s.tool === 'eraser' ? '#f5f2ec' : '#111';
+      ctx.strokeStyle = s.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(s.leather || 'ink');
       ctx.lineWidth = s.tool === 'eraser' ? 18 : 2.2;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -1759,7 +1803,7 @@ reveals.forEach(el => observer.observe(el));
 
   canvas.addEventListener('pointerdown', (e) => {
     drawing = true;
-    currentStroke = { tool, points: [getPos(e)] };
+    currentStroke = { tool, leather: currentLeather, points: [getPos(e)] };
     canvas.setPointerCapture(e.pointerId);
   });
   canvas.addEventListener('pointermove', (e) => {
@@ -1767,7 +1811,7 @@ reveals.forEach(el => observer.observe(el));
     currentStroke.points.push(getPos(e));
     redraw();
     // draw current stroke live on top
-    ctx.strokeStyle = currentStroke.tool === 'eraser' ? '#f5f2ec' : '#111';
+    ctx.strokeStyle = currentStroke.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(currentStroke.leather);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.beginPath();
     currentStroke.points.forEach((p, i) => {
@@ -1797,6 +1841,18 @@ reveals.forEach(el => observer.observe(el));
   });
   undoBtn.addEventListener('click', () => { strokes.pop(); redraw(); });
   clearBtn.addEventListener('click', () => { strokes = []; redraw(); });
+
+  const leatherSwatches = document.querySelectorAll('.sketch-leather-swatch');
+  leatherSwatches.forEach(sw => {
+    sw.addEventListener('click', () => {
+      currentLeather = sw.dataset.leather;
+      leatherSwatches.forEach(s2 => s2.classList.remove('active'));
+      sw.classList.add('active');
+      // picking a color implies you want to draw with it
+      tool = 'pen';
+      penBtn.classList.add('active'); eraserBtn.classList.remove('active');
+    });
+  });
 
   templateBtns.forEach(btn => {
     btn.addEventListener('click', () => {
