@@ -362,6 +362,7 @@ nav {
   grid-template-columns: 1fr 1fr;
   gap: 2px;
   overflow-y: auto;
+  touch-action: none;
 }
 .ho-images.single { grid-template-rows: 1fr; grid-template-columns: 1fr; }
 .ho-images.two   { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr; }
@@ -1675,8 +1676,8 @@ document.addEventListener('keydown', e => {
     // a slightly-more-horizontal-than-vertical swipe still counts here
     // whenever there was no gallery to claim it above.
     if (Math.abs(dy) > 60) {
-      if (dy > 0) renderOverlay((currentIdx + 1) % HERITAGE.length);   // swipe down → next
-      else renderOverlay((currentIdx - 1 + HERITAGE.length) % HERITAGE.length); // swipe up → prev
+      if (dy < 0) renderOverlay((currentIdx + 1) % HERITAGE.length);   // swipe up → next
+      else renderOverlay((currentIdx - 1 + HERITAGE.length) % HERITAGE.length); // swipe down → prev
     }
   });
 })();
