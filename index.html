@@ -582,6 +582,28 @@ nav {
 .sketch-leather-swatch:hover { transform: scale(1.08); }
 .sketch-leather-swatch.active { border-color: var(--mint); }
 
+.sketch-brush-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.sketch-slider-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--sans);
+  font-size: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.sketch-slider-label input[type="range"] {
+  width: 80px;
+  accent-color: var(--mint);
+  cursor: pointer;
+}
+
 .sketch-tools {
   display: flex;
   align-items: center;
@@ -1307,7 +1329,18 @@ footer {
     </div>
     <div class="sketch-leather-colors" id="sketchLeatherColors">
       <button class="sketch-leather-swatch active" data-leather="ink" title="Ink"></button>
+      <button class="sketch-leather-swatch" data-leather="black" title="Black Fish Leather" style="background-image:url('/img/leather/black.jpg')"></button>
       <button class="sketch-leather-swatch" data-leather="red" title="Red Fish Leather" style="background-image:url('/img/leather/red.jpg')"></button>
+    </div>
+    <div class="sketch-brush-controls">
+      <label class="sketch-slider-label">
+        Width
+        <input type="range" id="sketchWidth" min="1" max="14" step="0.5" value="2.2">
+      </label>
+      <label class="sketch-slider-label">
+        Opacity
+        <input type="range" id="sketchOpacity" min="10" max="100" step="5" value="100">
+      </label>
     </div>
     <div class="sketch-tools">
       <button class="sketch-tool-btn active" id="sketchToolPen" title="Pen">
@@ -1735,8 +1768,11 @@ reveals.forEach(el => observer.observe(el));
   let strokes = [];
   let currentStroke = null;
   let currentLeather = 'ink';
+  let currentWidth = 2.2;
+  let currentOpacity = 1;
 
   const LEATHER_SOURCES = {
+    black: '/img/leather/black.jpg',
     red: '/img/leather/red.jpg'
   };
   const leatherPatterns = {}; // filled in once images load + ctx is ready
@@ -1779,17 +1815,19 @@ reveals.forEach(el => observer.observe(el));
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     strokes.forEach(s => {
       ctx.strokeStyle = s.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(s.leather || 'ink');
-      ctx.lineWidth = s.tool === 'eraser' ? 18 : 2.2;
+      ctx.globalAlpha = s.tool === 'eraser' ? 1 : (s.opacity ?? 1);
+      const baseWidth = s.tool === 'eraser' ? 18 : (s.width || 2.2);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.beginPath();
       s.points.forEach((p, i) => {
-        ctx.lineWidth = s.tool === 'eraser' ? 18 : Math.max(1, 2.2 * (p.pressure || 1));
+        ctx.lineWidth = s.tool === 'eraser' ? 18 : Math.max(1, baseWidth * (p.pressure || 1));
         if (i === 0) ctx.moveTo(p.x, p.y);
         else ctx.lineTo(p.x, p.y);
       });
       ctx.stroke();
     });
+    ctx.globalAlpha = 1;
   }
 
   function getPos(e) {
@@ -1803,7 +1841,7 @@ reveals.forEach(el => observer.observe(el));
 
   canvas.addEventListener('pointerdown', (e) => {
     drawing = true;
-    currentStroke = { tool, leather: currentLeather, points: [getPos(e)] };
+    currentStroke = { tool, leather: currentLeather, width: currentWidth, opacity: currentOpacity, points: [getPos(e)] };
     canvas.setPointerCapture(e.pointerId);
   });
   canvas.addEventListener('pointermove', (e) => {
@@ -1812,13 +1850,16 @@ reveals.forEach(el => observer.observe(el));
     redraw();
     // draw current stroke live on top
     ctx.strokeStyle = currentStroke.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(currentStroke.leather);
+    ctx.globalAlpha = currentStroke.tool === 'eraser' ? 1 : currentStroke.opacity;
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.beginPath();
     currentStroke.points.forEach((p, i) => {
-      ctx.lineWidth = currentStroke.tool === 'eraser' ? 18 : Math.max(1, 2.2 * (p.pressure || 1));
+      const baseWidth = currentStroke.tool === 'eraser' ? 18 : currentStroke.width;
+      ctx.lineWidth = currentStroke.tool === 'eraser' ? 18 : Math.max(1, baseWidth * (p.pressure || 1));
       if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
     });
     ctx.stroke();
+    ctx.globalAlpha = 1;
   });
   function endStroke() {
     if (!drawing) return;
@@ -1841,6 +1882,13 @@ reveals.forEach(el => observer.observe(el));
   });
   undoBtn.addEventListener('click', () => { strokes.pop(); redraw(); });
   clearBtn.addEventListener('click', () => { strokes = []; redraw(); });
+
+  document.getElementById('sketchWidth').addEventListener('input', (e) => {
+    currentWidth = parseFloat(e.target.value);
+  });
+  document.getElementById('sketchOpacity').addEventListener('input', (e) => {
+    currentOpacity = parseFloat(e.target.value) / 100;
+  });
 
   const leatherSwatches = document.querySelectorAll('.sketch-leather-swatch');
   leatherSwatches.forEach(sw => {
