@@ -789,6 +789,79 @@ nav {
 }
 .path-cta:hover { border-color: var(--mint); }
 
+/* ─── COLLECTION LIGHTBOX ─── */
+.cl-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 700;
+  opacity: 0;
+  pointer-events: none;
+  touch-action: none;
+  transition: opacity 0.4s ease;
+}
+.cl-overlay.active { opacity: 1; pointer-events: all; }
+.cl-backdrop {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(5,5,5,0.97);
+  backdrop-filter: blur(4px);
+}
+.cl-stage {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+.cl-frame {
+  position: absolute;
+  max-width: 88vw;
+  max-height: 78vh;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.cl-frame.is-active { opacity: 1; }
+.cl-frame img {
+  max-width: 88vw;
+  max-height: 78vh;
+  object-fit: contain;
+  display: block;
+}
+.cl-index {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 0; right: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.3rem;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.2s;
+}
+.cl-overlay.active .cl-index { opacity: 1; }
+.cl-index-item {
+  font-family: var(--sans);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.4);
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+.cl-index-item.is-active { color: var(--text); }
+.cl-index-item.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: var(--mint);
+}
+.collection-card { cursor: pointer; }
+
 /* ─── COLLECTION ─── */
 .collection {
   padding: 8rem 3rem;
@@ -1314,21 +1387,21 @@ footer {
   </div>
 
   <div class="collection-grid" style="grid-template-columns:repeat(3,1fr);">
-    <div class="collection-card reveal">
+    <div class="collection-card reveal" data-model="eve">
       <img src="/img/eve.jpg" alt="Eve" loading="lazy">
       <div class="collection-card-info">
         <div class="collection-card-name">Eve</div>
         <div class="collection-card-material">Exotic Leather</div>
       </div>
     </div>
-    <div class="collection-card reveal">
+    <div class="collection-card reveal" data-model="tyra">
       <img src="/img/tyra.jpg" alt="Tyra" loading="lazy">
       <div class="collection-card-info">
         <div class="collection-card-name">Tyra</div>
         <div class="collection-card-material">Exotic Leather</div>
       </div>
     </div>
-    <div class="collection-card reveal">
+    <div class="collection-card reveal" data-model="ira">
       <img src="/img/ira.jpg" alt="Ira" loading="lazy">
       <div class="collection-card-info">
         <div class="collection-card-name">Ira</div>
@@ -1337,6 +1410,19 @@ footer {
     </div>
   </div>
 </section>
+
+<!-- COLLECTION LIGHTBOX -->
+<div class="cl-overlay" id="collectionLightbox">
+  <div class="cl-backdrop" id="clBackdrop"></div>
+  <button class="ho-close" id="clClose" aria-label="Close">
+    <svg viewBox="0 0 24 24" stroke-width="1.2">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+  <div class="cl-stage" id="clStage"></div>
+  <div class="cl-index" id="clIndex"></div>
+</div>
 
 <!-- COMMISSION -->
 <!-- SKETCHPAD -->
@@ -2046,6 +2132,88 @@ reveals.forEach(el => observer.observe(el));
     overlay.classList.remove('active');
     document.body.style.overflow = '';
     document.getElementById('commission').scrollIntoView({ behavior: 'smooth' });
+  });
+})();
+
+// ─── COLLECTION LIGHTBOX ───
+(function() {
+  const COLLECTION_IMAGES = {
+    eve: ['/img/eve.jpg', '/img/eve-detail-1.jpg', '/img/eve-detail-2.jpg'],
+    tyra: ['/img/tyra.jpg'],
+    ira: ['/img/ira.jpg']
+  };
+
+  const overlay = document.getElementById('collectionLightbox');
+  const stage = document.getElementById('clStage');
+  const indexBar = document.getElementById('clIndex');
+  const closeBtn = document.getElementById('clClose');
+  const backdrop = document.getElementById('clBackdrop');
+
+  let clIdx = 0;
+  let clImages = [];
+
+  function renderStage() {
+    stage.innerHTML = '';
+    indexBar.innerHTML = '';
+    clImages.forEach((src, i) => {
+      const frame = document.createElement('div');
+      frame.className = 'cl-frame' + (i === clIdx ? ' is-active' : '');
+      const img = document.createElement('img');
+      img.src = src;
+      img.loading = 'lazy';
+      frame.appendChild(img);
+      stage.appendChild(frame);
+    });
+    if (clImages.length > 1) {
+      clImages.forEach((_, i) => {
+        const dot = document.createElement('span');
+        dot.className = 'cl-index-item' + (i === clIdx ? ' is-active' : '');
+        dot.textContent = String(i + 1).padStart(2, '0');
+        indexBar.appendChild(dot);
+      });
+    }
+  }
+
+  function setFrame(i) {
+    clIdx = (i + clImages.length) % clImages.length;
+    stage.querySelectorAll('.cl-frame').forEach((f, fi) => f.classList.toggle('is-active', fi === clIdx));
+    indexBar.querySelectorAll('.cl-index-item').forEach((d, di) => d.classList.toggle('is-active', di === clIdx));
+  }
+
+  function open(model) {
+    clImages = COLLECTION_IMAGES[model] || [];
+    if (clImages.length === 0) return;
+    clIdx = 0;
+    renderStage();
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.collection-card').forEach(card => {
+    card.addEventListener('click', () => open(card.dataset.model));
+  });
+  closeBtn.addEventListener('click', close);
+  backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', e => {
+    if (!overlay.classList.contains('active')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowRight') setFrame(clIdx + 1);
+    if (e.key === 'ArrowLeft') setFrame(clIdx - 1);
+  });
+
+  // horizontal swipe between this model's photos
+  let sx = null, sy = null;
+  stage.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; });
+  stage.addEventListener('pointerup', (e) => {
+    if (sx === null || clImages.length <= 1) { sx = null; return; }
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    sx = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) >= Math.abs(dy)) setFrame(clIdx + (dx < 0 ? 1 : -1));
   });
 })();
 
