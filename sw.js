@@ -1,4 +1,4 @@
-const CACHE = 'htw-v2';
+const CACHE = 'htw-v3';
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./kalender.html'])));
@@ -15,7 +15,12 @@ self.addEventListener('activate', e => {
 
 // Network-first: always prefer the live version when online.
 // Only fall back to cache if the network request fails (offline).
+// Never intercept range requests or video files — caching partial
+// (206) responses is invalid and breaks video streaming/autoplay.
 self.addEventListener('fetch', e => {
+  if (e.request.headers.has('range') || e.request.url.match(/\.(mp4|mov|webm)(\?|$)/)) {
+    return; // let the browser handle this natively, untouched
+  }
   e.respondWith(
     fetch(e.request)
       .then(res => {
