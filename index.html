@@ -476,7 +476,7 @@ nav {
   opacity: 0;
   transition: opacity 0.4s ease 0.6s;
 }
-.heritage-overlay.active .ho-close { opacity: 1; }
+.heritage-overlay.active .ho-close, .cl-overlay.active .ho-close { opacity: 1; }
 .ho-close svg {
   width: 22px; height: 22px;
   stroke: var(--text-muted);
@@ -2199,6 +2199,7 @@ reveals.forEach(el => observer.observe(el));
   });
   closeBtn.addEventListener('click', close);
   backdrop.addEventListener('click', close);
+  stage.addEventListener('click', (e) => { if (e.target === stage) close(); });
   document.addEventListener('keydown', e => {
     if (!overlay.classList.contains('active')) return;
     if (e.key === 'Escape') close();
