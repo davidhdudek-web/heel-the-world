@@ -1544,6 +1544,14 @@ footer {
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// Always start at the top on load/reload — don't restore the browser's
+// remembered scroll position from the last visit.
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+window.scrollTo(0, 0);
+window.addEventListener('pageshow', () => window.scrollTo(0, 0));
+
 // ─── HERITAGE DATA ───
 // images: array of Google Drive file IDs
 // folder: Drive folder ID for archive link
