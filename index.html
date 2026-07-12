@@ -1906,7 +1906,7 @@ reveals.forEach(el => observer.observe(el));
   const BASE_SIZE = 220;
   materialBases.rough = loadRough(BASE_SIZE);
   loadPhotoBase('/img/leather/glossy.jpg', BASE_SIZE).then(c => { materialBases.glossy = c; refreshSwatchPreviews(); });
-  loadPhotoBase('/img/leather/black.jpg', BASE_SIZE).then(c => { materialBases.fish = c; refreshSwatchPreviews(); });
+  loadPhotoBase('/img/leather/fish2.jpg', BASE_SIZE).then(c => { materialBases.fish = c; refreshSwatchPreviews(); });
 
   function getTintedPattern(material, hex) {
     const base = materialBases[material];
