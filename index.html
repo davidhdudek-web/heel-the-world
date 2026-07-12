@@ -1428,7 +1428,7 @@ footer {
 <!-- SKETCHPAD -->
 <div class="sketch-overlay" id="sketchOverlay">
   <div class="sketch-header">
-    <div class="sketch-title">Sketch your idea</div>
+    <div class="sketch-title">Design your idea</div>
     <div class="sketch-templates">
       <button class="sketch-template-btn active" data-template="blank">Blank Page</button>
       <button class="sketch-template-btn" data-template="anklewrap">Ankle-Wrap Pump</button>
@@ -1446,23 +1446,15 @@ footer {
     </div>
     <div class="sketch-brush-controls">
       <label class="sketch-slider-label">
-        Width
-        <input type="range" id="sketchWidth" min="1" max="14" step="0.5" value="2.2">
-      </label>
-      <label class="sketch-slider-label">
-        Opacity
-        <input type="range" id="sketchOpacity" min="10" max="100" step="5" value="100">
-      </label>
-      <label class="sketch-slider-label">
         Color
         <input type="range" id="sketchHue" class="sketch-hue-slider" min="0" max="360" step="1" value="355">
       </label>
     </div>
     <div class="sketch-tools">
-      <button class="sketch-tool-btn active" id="sketchToolPen" title="Pen">
-        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <button class="sketch-tool-btn active" id="sketchToolFill" title="Fill">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M19 11l-8-8-8.5 8.5a2 2 0 000 2.8L9 21l10-10z"/><path d="M5 13l7 7"/><circle cx="19" cy="18" r="2.5"/></svg>
       </button>
-      <button class="sketch-tool-btn" id="sketchToolEraser" title="Eraser">
+      <button class="sketch-tool-btn" id="sketchToolEraser" title="Clear a filled area">
         <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M20 20H8l-6-6a2 2 0 010-2.8l9-9a2 2 0 012.8 0l6 6a2 2 0 010 2.8L13 18"/></svg>
       </button>
       <button class="sketch-tool-btn" id="sketchUndo" title="Undo">
@@ -1475,11 +1467,10 @@ footer {
     <button class="sketch-close" id="sketchClose"><svg viewBox="0 0 24 24" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
   <div class="sketch-canvas-wrap">
-    <img id="sketchTemplateImg" src="" alt="" style="display:none;">
     <canvas id="sketchCanvas"></canvas>
   </div>
   <div class="sketch-footer">
-    <div class="sketch-hint">Draw with your finger, mouse, or Apple Pencil. Your sketch will be attached to your commission inquiry.</div>
+    <div class="sketch-hint">Choose a leather, pick a color, then tap an area to fill it in. Your design will be attached to your commission inquiry.</div>
     <button class="sketch-send-btn" id="sketchAttach">Attach to my inquiry →</button>
   </div>
 </div>
@@ -1879,22 +1870,19 @@ reveals.forEach(el => observer.observe(el));
   const closeBtn = document.getElementById('sketchClose');
   const canvas = document.getElementById('sketchCanvas');
   const ctx = canvas.getContext('2d');
-  const templateImg = document.getElementById('sketchTemplateImg');
   const templateBtns = document.querySelectorAll('.sketch-template-btn');
-  const penBtn = document.getElementById('sketchToolPen');
+  const fillBtn = document.getElementById('sketchToolFill');
   const eraserBtn = document.getElementById('sketchToolEraser');
   const undoBtn = document.getElementById('sketchUndo');
   const clearBtn = document.getElementById('sketchClear');
   const attachBtn = document.getElementById('sketchAttach');
 
-  let tool = 'pen';
-  let drawing = false;
-  let strokes = [];
-  let currentStroke = null;
+  let tool = 'fill';
   let currentMaterial = 'glossy';
   let currentHue = 355;
-  let currentWidth = 2.2;
-  let currentOpacity = 1;
+  let hasContent = false;
+  let currentTemplateKey = 'blank';
+  let undoStack = [];
 
   // grayscale base textures per material — tinted live via the hue slider
   const materialBases = {}; // key -> canvas (grayscale)
@@ -1943,11 +1931,11 @@ reveals.forEach(el => observer.observe(el));
   const BASE_SIZE = 220;
   materialBases.glossy = makeGlossyBase(BASE_SIZE);
   materialBases.rough = makeRoughBase(BASE_SIZE);
-  loadFishBase(BASE_SIZE).then(c => { materialBases.fish = c; });
+  loadFishBase(BASE_SIZE).then(c => { materialBases.fish = c; refreshSwatchPreviews(); });
 
   function getTintedPattern(material, hue) {
     const base = materialBases[material];
-    if (!base) return '#111'; // not loaded yet (fish base still fetching)
+    if (!base) return '#cccccc'; // not loaded yet (fish base still fetching)
     const cacheKey = material + ':' + Math.round(hue / 3) * 3;
     if (patternCache[cacheKey]) return patternCache[cacheKey];
     const c = document.createElement('canvas'); c.width = base.width; c.height = base.height;
@@ -1962,10 +1950,6 @@ reveals.forEach(el => observer.observe(el));
     return pattern;
   }
 
-  function strokeStyleFor(material, hue) {
-    return getTintedPattern(material, hue);
-  }
-
   const TEMPLATES = {
     blank: null,
     anklewrap: '/img/sketch/ankle-wrap-pump.png',
@@ -1977,105 +1961,142 @@ reveals.forEach(el => observer.observe(el));
     silhouette: '/img/sketch/pump-silhouette.png'
   };
 
+  // preload every outline once so switching templates is instant
+  const templateImageCache = {};
+  Object.entries(TEMPLATES).forEach(([key, src]) => {
+    if (!src) return;
+    const img = new Image();
+    img.onload = () => {
+      templateImageCache[key] = img;
+      if (currentTemplateKey === key) drawTemplateOutline();
+    };
+    img.src = src;
+  });
+
+  const CANVAS_BG = '#f5f2ec';
+
+  function drawTemplateOutline() {
+    const cssW = canvas.width / devicePixelRatio;
+    const cssH = canvas.height / devicePixelRatio;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+    ctx.fillStyle = CANVAS_BG;
+    ctx.fillRect(0, 0, cssW, cssH);
+
+    const img = templateImageCache[currentTemplateKey];
+    if (img) {
+      const scale = Math.min(cssW / img.width, cssH / img.height) * 0.82;
+      const dw = img.width * scale, dh = img.height * scale;
+      const dx = (cssW - dw) / 2, dy = (cssH - dh) / 2;
+      ctx.drawImage(img, dx, dy, dw, dh);
+    }
+    undoStack = [];
+    hasContent = false;
+  }
+
   function resizeCanvas() {
     const rect = canvas.parentElement.getBoundingClientRect();
-    const prev = canvas.toDataURL();
     canvas.width = rect.width * devicePixelRatio;
     canvas.height = rect.height * devicePixelRatio;
-    ctx.scale(devicePixelRatio, devicePixelRatio);
-    redraw();
+    drawTemplateOutline();
   }
 
-  function redraw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    strokes.forEach(s => {
-      ctx.strokeStyle = s.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(s.material || 'glossy', s.hue ?? 355);
-      ctx.globalAlpha = s.tool === 'eraser' ? 1 : (s.opacity ?? 1);
-      const baseWidth = s.tool === 'eraser' ? 18 : (s.width || 2.2);
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      // draw each segment separately so lineWidth actually varies along the stroke —
-      // a single path with one stroke() call only honors the LAST lineWidth set.
-      for (let i = 1; i < s.points.length; i++) {
-        const p = s.points[i];
-        ctx.lineWidth = s.tool === 'eraser' ? 18 : Math.max(baseWidth * 0.7, baseWidth * (p.pressure || 1));
-        ctx.beginPath();
-        ctx.moveTo(s.points[i - 1].x, s.points[i - 1].y);
-        ctx.lineTo(p.x, p.y);
-        ctx.stroke();
-      }
-    });
-    ctx.globalAlpha = 1;
+  function pushUndo() {
+    undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    if (undoStack.length > 15) undoStack.shift();
   }
 
-  function getPos(e) {
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-      pressure: e.pressure && e.pressure > 0 ? e.pressure * 1.8 : 1
-    };
-  }
+  // scanline flood fill — fills the connected region under (startX, startY)
+  // that matches the tapped pixel's color, stopping at the outline's dark lines.
+  function floodFill(startX, startY, fillStyleValue) {
+    const w = canvas.width, h = canvas.height;
+    const sx = Math.floor(startX), sy = Math.floor(startY);
+    if (sx < 0 || sx >= w || sy < 0 || sy >= h) return false;
 
-  canvas.addEventListener('pointerdown', (e) => {
-    drawing = true;
-    currentStroke = { tool, material: currentMaterial, hue: currentHue, width: currentWidth, opacity: currentOpacity, points: [getPos(e)] };
-    canvas.setPointerCapture(e.pointerId);
-  });
-  canvas.addEventListener('pointermove', (e) => {
-    if (!drawing) return;
-    currentStroke.points.push(getPos(e));
-    redraw();
-    // draw current in-progress stroke live on top — same per-segment approach
-    ctx.strokeStyle = currentStroke.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(currentStroke.material, currentStroke.hue);
-    ctx.globalAlpha = currentStroke.tool === 'eraser' ? 1 : currentStroke.opacity;
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    const baseWidth = currentStroke.tool === 'eraser' ? 18 : currentStroke.width;
-    for (let i = 1; i < currentStroke.points.length; i++) {
-      const p = currentStroke.points[i];
-      ctx.lineWidth = currentStroke.tool === 'eraser' ? 18 : Math.max(baseWidth * 0.7, baseWidth * (p.pressure || 1));
-      ctx.beginPath();
-      ctx.moveTo(currentStroke.points[i - 1].x, currentStroke.points[i - 1].y);
-      ctx.lineTo(p.x, p.y);
-      ctx.stroke();
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const data = imgData.data;
+    const idxOf = (x, y) => (y * w + x) * 4;
+
+    const si = idxOf(sx, sy);
+    const sr = data[si], sg = data[si + 1], sb = data[si + 2], sa = data[si + 3];
+    if ((sr + sg + sb) / 3 < 140 && sa > 40) return false; // tapped directly on a line
+
+    const tol = 30;
+    function matches(i) {
+      return Math.abs(data[i] - sr) <= tol && Math.abs(data[i + 1] - sg) <= tol &&
+             Math.abs(data[i + 2] - sb) <= tol && Math.abs(data[i + 3] - sa) <= tol;
     }
-    ctx.globalAlpha = 1;
-  });
-  function endStroke() {
-    if (!drawing) return;
-    drawing = false;
-    if (currentStroke && currentStroke.points.length > 1) strokes.push(currentStroke);
-    currentStroke = null;
-    redraw();
-  }
-  canvas.addEventListener('pointerup', endStroke);
-  canvas.addEventListener('pointercancel', endStroke);
-  canvas.addEventListener('pointerleave', endStroke);
 
-  penBtn.addEventListener('click', () => {
-    tool = 'pen';
-    penBtn.classList.add('active'); eraserBtn.classList.remove('active');
+    const fillCanvas = document.createElement('canvas');
+    fillCanvas.width = w; fillCanvas.height = h;
+    const fctx = fillCanvas.getContext('2d');
+    fctx.fillStyle = fillStyleValue;
+    fctx.fillRect(0, 0, w, h);
+    const fillData = fctx.getImageData(0, 0, w, h).data;
+
+    const visited = new Uint8Array(w * h);
+    const stack = [[sx, sy]];
+    while (stack.length) {
+      let [x, yy] = stack.pop();
+      while (x >= 0 && matches(idxOf(x, yy)) && !visited[yy * w + x]) x--;
+      x++;
+      let spanUp = false, spanDown = false;
+      while (x < w && matches(idxOf(x, yy)) && !visited[yy * w + x]) {
+        const vi = yy * w + x;
+        visited[vi] = 1;
+        const di = vi * 4;
+        data[di] = fillData[di]; data[di + 1] = fillData[di + 1]; data[di + 2] = fillData[di + 2]; data[di + 3] = 255;
+
+        if (yy > 0) {
+          const up = idxOf(x, yy - 1);
+          const upMatch = matches(up) && !visited[(yy - 1) * w + x];
+          if (upMatch && !spanUp) { stack.push([x, yy - 1]); spanUp = true; }
+          else if (!upMatch) spanUp = false;
+        }
+        if (yy < h - 1) {
+          const down = idxOf(x, yy + 1);
+          const downMatch = matches(down) && !visited[(yy + 1) * w + x];
+          if (downMatch && !spanDown) { stack.push([x, yy + 1]); spanDown = true; }
+          else if (!downMatch) spanDown = false;
+        }
+        x++;
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    return true;
+  }
+
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    pushUndo();
+    const fillValue = tool === 'erase' ? CANVAS_BG : getTintedPattern(currentMaterial, currentHue);
+    const filled = floodFill(x, y, fillValue);
+    if (filled) { hasContent = true; }
+    else { undoStack.pop(); } // tapped a line — nothing changed, drop the useless snapshot
+  });
+
+  fillBtn.addEventListener('click', () => {
+    tool = 'fill';
+    fillBtn.classList.add('active'); eraserBtn.classList.remove('active');
   });
   eraserBtn.addEventListener('click', () => {
-    tool = 'eraser';
-    eraserBtn.classList.add('active'); penBtn.classList.remove('active');
+    tool = 'erase';
+    eraserBtn.classList.add('active'); fillBtn.classList.remove('active');
   });
-  undoBtn.addEventListener('click', () => { strokes.pop(); redraw(); });
-  clearBtn.addEventListener('click', () => { strokes = []; redraw(); });
-
-  document.getElementById('sketchWidth').addEventListener('input', (e) => {
-    currentWidth = parseFloat(e.target.value);
+  undoBtn.addEventListener('click', () => {
+    if (!undoStack.length) return;
+    ctx.putImageData(undoStack.pop(), 0, 0);
   });
-  document.getElementById('sketchOpacity').addEventListener('input', (e) => {
-    currentOpacity = parseFloat(e.target.value) / 100;
-  });
+  clearBtn.addEventListener('click', () => { drawTemplateOutline(); });
 
   function refreshSwatchPreviews() {
     document.querySelectorAll('.sketch-leather-swatch').forEach(sw => {
       const mat = sw.dataset.material;
       const pattern = getTintedPattern(mat, currentHue);
       if (typeof pattern === 'object') {
-        // draw a small preview snapshot for this swatch's background
         const preview = document.createElement('canvas');
         preview.width = 40; preview.height = 40;
         const pctx = preview.getContext('2d');
@@ -2097,26 +2118,19 @@ reveals.forEach(el => observer.observe(el));
       currentMaterial = sw.dataset.material;
       leatherSwatches.forEach(s2 => s2.classList.remove('active'));
       sw.classList.add('active');
-      tool = 'pen';
-      penBtn.classList.add('active'); eraserBtn.classList.remove('active');
+      tool = 'fill';
+      fillBtn.classList.add('active'); eraserBtn.classList.remove('active');
     });
   });
 
-  // initial swatch previews once fish base finishes loading (glossy/rough are instant)
   refreshSwatchPreviews();
-  setTimeout(refreshSwatchPreviews, 400); // catch up once the fish photo has loaded
 
   templateBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       templateBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const key = btn.dataset.template;
-      if (TEMPLATES[key]) {
-        templateImg.src = TEMPLATES[key];
-        templateImg.style.display = 'block';
-      } else {
-        templateImg.style.display = 'none';
-      }
+      currentTemplateKey = btn.dataset.template;
+      drawTemplateOutline();
     });
   });
 
@@ -2136,8 +2150,8 @@ reveals.forEach(el => observer.observe(el));
 
   attachBtn.addEventListener('click', () => {
     const dataUrl = canvas.toDataURL('image/png');
-    document.getElementById('sketchImageField').value = strokes.length > 0 ? dataUrl : '';
-    if (strokes.length > 0) {
+    document.getElementById('sketchImageField').value = hasContent ? dataUrl : '';
+    if (hasContent) {
       document.getElementById('sketchAttachedNotice').style.display = 'block';
     }
     const pathSelect = document.querySelector('select[name="path"]');
