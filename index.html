@@ -582,53 +582,25 @@ nav {
 .sketch-leather-swatch:hover { transform: scale(1.08); }
 .sketch-leather-swatch.active { border-color: var(--mint); }
 
-.sketch-brush-controls {
+.sketch-nanai-colors {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  max-width: 380px;
 }
-.sketch-slider-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--sans);
-  font-size: 0.5rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-.sketch-slider-label input[type="range"] {
-  width: 80px;
-  accent-color: var(--mint);
-  cursor: pointer;
-}
-.sketch-hue-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 8px;
-  border-radius: 4px;
-  background: linear-gradient(to right,
-    hsl(0,80%,50%), hsl(60,80%,50%), hsl(120,80%,50%),
-    hsl(180,80%,50%), hsl(240,80%,50%), hsl(300,80%,50%), hsl(360,80%,50%));
-}
-.sketch-hue-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
+.sketch-color-swatch {
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: #fff;
-  border: 2px solid rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.15);
   cursor: pointer;
+  padding: 0;
+  transition: border-color 0.2s, transform 0.15s;
+  flex-shrink: 0;
 }
-.sketch-hue-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #fff;
-  border: 2px solid rgba(0,0,0,0.3);
-  cursor: pointer;
-}
+.sketch-color-swatch:hover { transform: scale(1.15); }
+.sketch-color-swatch.active { border-color: var(--mint); transform: scale(1.15); }
 
 .sketch-tools {
   display: flex;
@@ -1444,11 +1416,28 @@ footer {
       <button class="sketch-leather-swatch" data-material="rough" title="Rough Leather"></button>
       <button class="sketch-leather-swatch" data-material="fish" title="Fish Leather"></button>
     </div>
-    <div class="sketch-brush-controls">
-      <label class="sketch-slider-label">
-        Color
-        <input type="range" id="sketchHue" class="sketch-hue-slider" min="0" max="360" step="1" value="355">
-      </label>
+    <div class="sketch-nanai-colors" id="sketchNanaiColors">
+      <button class="sketch-color-swatch active" data-hex="#c3b8b0" title="Nature"></button>
+      <button class="sketch-color-swatch" data-hex="#b48c4a" title="Camel"></button>
+      <button class="sketch-color-swatch" data-hex="#f5d31f" title="Lemon"></button>
+      <button class="sketch-color-swatch" data-hex="#bc6b0a" title="Pumpkin"></button>
+      <button class="sketch-color-swatch" data-hex="#7c896d" title="Reed"></button>
+      <button class="sketch-color-swatch" data-hex="#8ac569" title="Lime"></button>
+      <button class="sketch-color-swatch" data-hex="#414a2a" title="Olive"></button>
+      <button class="sketch-color-swatch" data-hex="#98745d" title="Chestnut"></button>
+      <button class="sketch-color-swatch" data-hex="#dd4540" title="Strawberry"></button>
+      <button class="sketch-color-swatch" data-hex="#cc4a3e" title="Cherry"></button>
+      <button class="sketch-color-swatch" data-hex="#9b4146" title="Bordeaux"></button>
+      <button class="sketch-color-swatch" data-hex="#83611f" title="Cognac"></button>
+      <button class="sketch-color-swatch" data-hex="#543b1d" title="Hazelnut"></button>
+      <button class="sketch-color-swatch" data-hex="#35271c" title="Chocolate"></button>
+      <button class="sketch-color-swatch" data-hex="#ad9a92" title="Mimosa"></button>
+      <button class="sketch-color-swatch" data-hex="#918397" title="Lavender"></button>
+      <button class="sketch-color-swatch" data-hex="#757bab" title="Ice"></button>
+      <button class="sketch-color-swatch" data-hex="#2a2d3d" title="Marine"></button>
+      <button class="sketch-color-swatch" data-hex="#534f4f" title="Platin"></button>
+      <button class="sketch-color-swatch" data-hex="#757a74" title="Grey"></button>
+      <button class="sketch-color-swatch" data-hex="#201929" title="Black"></button>
     </div>
     <div class="sketch-tools">
       <button class="sketch-tool-btn active" id="sketchToolFill" title="Fill">
@@ -1879,7 +1868,7 @@ reveals.forEach(el => observer.observe(el));
 
   let tool = 'fill';
   let currentMaterial = 'glossy';
-  let currentHue = 355;
+  let currentColorHex = '#c3b8b0'; // Nature, default
   let hasContent = false;
   let currentTemplateKey = 'blank';
   let undoStack = [];
@@ -1933,16 +1922,16 @@ reveals.forEach(el => observer.observe(el));
   materialBases.rough = makeRoughBase(BASE_SIZE);
   loadFishBase(BASE_SIZE).then(c => { materialBases.fish = c; refreshSwatchPreviews(); });
 
-  function getTintedPattern(material, hue) {
+  function getTintedPattern(material, hex) {
     const base = materialBases[material];
     if (!base) return '#cccccc'; // not loaded yet (fish base still fetching)
-    const cacheKey = material + ':' + Math.round(hue / 3) * 3;
+    const cacheKey = material + ':' + hex;
     if (patternCache[cacheKey]) return patternCache[cacheKey];
     const c = document.createElement('canvas'); c.width = base.width; c.height = base.height;
     const g = c.getContext('2d');
     g.drawImage(base, 0, 0);
     g.globalCompositeOperation = 'color';
-    g.fillStyle = `hsl(${hue}, 78%, 42%)`;
+    g.fillStyle = hex;
     g.fillRect(0, 0, c.width, c.height);
     g.globalCompositeOperation = 'source-over';
     const pattern = ctx.createPattern(c, 'repeat');
@@ -2072,7 +2061,7 @@ reveals.forEach(el => observer.observe(el));
     const x = (e.clientX - rect.left) * (canvas.width / rect.width);
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
     pushUndo();
-    const fillValue = tool === 'erase' ? CANVAS_BG : getTintedPattern(currentMaterial, currentHue);
+    const fillValue = tool === 'erase' ? CANVAS_BG : getTintedPattern(currentMaterial, currentColorHex);
     const filled = floodFill(x, y, fillValue);
     if (filled) { hasContent = true; }
     else { undoStack.pop(); } // tapped a line — nothing changed, drop the useless snapshot
@@ -2095,7 +2084,7 @@ reveals.forEach(el => observer.observe(el));
   function refreshSwatchPreviews() {
     document.querySelectorAll('.sketch-leather-swatch').forEach(sw => {
       const mat = sw.dataset.material;
-      const pattern = getTintedPattern(mat, currentHue);
+      const pattern = getTintedPattern(mat, currentColorHex);
       if (typeof pattern === 'object') {
         const preview = document.createElement('canvas');
         preview.width = 40; preview.height = 40;
@@ -2107,9 +2096,16 @@ reveals.forEach(el => observer.observe(el));
     });
   }
 
-  document.getElementById('sketchHue').addEventListener('input', (e) => {
-    currentHue = parseFloat(e.target.value);
-    refreshSwatchPreviews();
+  // paint each Nanai color swatch its own real color, and wire up selection
+  const colorSwatches = document.querySelectorAll('.sketch-color-swatch');
+  colorSwatches.forEach(sw => {
+    sw.style.backgroundColor = sw.dataset.hex;
+    sw.addEventListener('click', () => {
+      currentColorHex = sw.dataset.hex;
+      colorSwatches.forEach(s2 => s2.classList.remove('active'));
+      sw.classList.add('active');
+      refreshSwatchPreviews();
+    });
   });
 
   const leatherSwatches = document.querySelectorAll('.sketch-leather-swatch');
