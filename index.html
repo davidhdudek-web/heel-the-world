@@ -1998,7 +1998,7 @@ reveals.forEach(el => observer.observe(el));
       // a single path with one stroke() call only honors the LAST lineWidth set.
       for (let i = 1; i < s.points.length; i++) {
         const p = s.points[i];
-        ctx.lineWidth = s.tool === 'eraser' ? 18 : Math.max(1, baseWidth * (p.pressure || 1));
+        ctx.lineWidth = s.tool === 'eraser' ? 18 : Math.max(baseWidth * 0.7, baseWidth * (p.pressure || 1));
         ctx.beginPath();
         ctx.moveTo(s.points[i - 1].x, s.points[i - 1].y);
         ctx.lineTo(p.x, p.y);
@@ -2033,7 +2033,7 @@ reveals.forEach(el => observer.observe(el));
     const baseWidth = currentStroke.tool === 'eraser' ? 18 : currentStroke.width;
     for (let i = 1; i < currentStroke.points.length; i++) {
       const p = currentStroke.points[i];
-      ctx.lineWidth = currentStroke.tool === 'eraser' ? 18 : Math.max(1, baseWidth * (p.pressure || 1));
+      ctx.lineWidth = currentStroke.tool === 'eraser' ? 18 : Math.max(baseWidth * 0.7, baseWidth * (p.pressure || 1));
       ctx.beginPath();
       ctx.moveTo(currentStroke.points[i - 1].x, currentStroke.points[i - 1].y);
       ctx.lineTo(p.x, p.y);
