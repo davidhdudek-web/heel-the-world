@@ -1877,21 +1877,7 @@ reveals.forEach(el => observer.observe(el));
   const materialBases = {}; // key -> canvas (grayscale)
   const patternCache = {};  // "material:hue" -> CanvasPattern
 
-  function makeGlossyBase(size) {
-    const c = document.createElement('canvas'); c.width = size; c.height = size;
-    const g = c.getContext('2d');
-    const grad = g.createLinearGradient(0, 0, size, size);
-    grad.addColorStop(0, '#7a7a7a');
-    grad.addColorStop(0.42, '#e8e8e8');
-    grad.addColorStop(0.5, '#fafafa');
-    grad.addColorStop(0.58, '#e8e8e8');
-    grad.addColorStop(1, '#707070');
-    g.fillStyle = grad;
-    g.fillRect(0, 0, size, size);
-    return c;
-  }
-
-  function makeRoughBase(size) {
+  function loadRough(size) {
     const c = document.createElement('canvas'); c.width = size; c.height = size;
     const g = c.getContext('2d');
     g.fillStyle = '#8f8f8f';
@@ -1905,7 +1891,7 @@ reveals.forEach(el => observer.observe(el));
     return c;
   }
 
-  function loadFishBase(size) {
+  function loadPhotoBase(src, size) {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
@@ -1913,14 +1899,14 @@ reveals.forEach(el => observer.observe(el));
         c.getContext('2d').drawImage(img, 0, 0, size, size);
         resolve(c);
       };
-      img.src = '/img/leather/black.jpg'; // already-grayscale fish leather scale texture
+      img.src = src;
     });
   }
 
   const BASE_SIZE = 220;
-  materialBases.glossy = makeGlossyBase(BASE_SIZE);
-  materialBases.rough = makeRoughBase(BASE_SIZE);
-  loadFishBase(BASE_SIZE).then(c => { materialBases.fish = c; refreshSwatchPreviews(); });
+  materialBases.rough = loadRough(BASE_SIZE);
+  loadPhotoBase('/img/leather/glossy.jpg', BASE_SIZE).then(c => { materialBases.glossy = c; refreshSwatchPreviews(); });
+  loadPhotoBase('/img/leather/black.jpg', BASE_SIZE).then(c => { materialBases.fish = c; refreshSwatchPreviews(); });
 
   function getTintedPattern(material, hex) {
     const base = materialBases[material];
