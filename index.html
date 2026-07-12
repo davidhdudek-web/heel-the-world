@@ -1994,13 +1994,16 @@ reveals.forEach(el => observer.observe(el));
       const baseWidth = s.tool === 'eraser' ? 18 : (s.width || 2.2);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.beginPath();
-      s.points.forEach((p, i) => {
+      // draw each segment separately so lineWidth actually varies along the stroke —
+      // a single path with one stroke() call only honors the LAST lineWidth set.
+      for (let i = 1; i < s.points.length; i++) {
+        const p = s.points[i];
         ctx.lineWidth = s.tool === 'eraser' ? 18 : Math.max(1, baseWidth * (p.pressure || 1));
-        if (i === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
-      });
-      ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(s.points[i - 1].x, s.points[i - 1].y);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      }
     });
     ctx.globalAlpha = 1;
   }
@@ -2023,17 +2026,19 @@ reveals.forEach(el => observer.observe(el));
     if (!drawing) return;
     currentStroke.points.push(getPos(e));
     redraw();
-    // draw current stroke live on top
+    // draw current in-progress stroke live on top — same per-segment approach
     ctx.strokeStyle = currentStroke.tool === 'eraser' ? '#f5f2ec' : strokeStyleFor(currentStroke.material, currentStroke.hue);
     ctx.globalAlpha = currentStroke.tool === 'eraser' ? 1 : currentStroke.opacity;
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.beginPath();
-    currentStroke.points.forEach((p, i) => {
-      const baseWidth = currentStroke.tool === 'eraser' ? 18 : currentStroke.width;
+    const baseWidth = currentStroke.tool === 'eraser' ? 18 : currentStroke.width;
+    for (let i = 1; i < currentStroke.points.length; i++) {
+      const p = currentStroke.points[i];
       ctx.lineWidth = currentStroke.tool === 'eraser' ? 18 : Math.max(1, baseWidth * (p.pressure || 1));
-      if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
-    });
-    ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(currentStroke.points[i - 1].x, currentStroke.points[i - 1].y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    }
     ctx.globalAlpha = 1;
   });
   function endStroke() {
