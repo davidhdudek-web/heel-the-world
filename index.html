@@ -1908,14 +1908,29 @@ reveals.forEach(el => observer.observe(el));
   loadPhotoBase('/img/leather/glossy.jpg', BASE_SIZE).then(c => { materialBases.glossy = c; refreshSwatchPreviews(); });
   loadPhotoBase('/img/leather/fish2.jpg', BASE_SIZE).then(c => { materialBases.fish = c; refreshSwatchPreviews(); });
 
+  function makeSeamlessTile(base) {
+    // mirror the base into a 2x2 grid (original / flip-x / flip-y / flip-both) —
+    // guarantees matching pixels at every tile edge, so repeating it never shows a seam,
+    // regardless of what the source photo looks like.
+    const bw = base.width, bh = base.height;
+    const c = document.createElement('canvas'); c.width = bw * 2; c.height = bh * 2;
+    const g = c.getContext('2d');
+    g.drawImage(base, 0, 0);
+    g.save(); g.translate(bw * 2, 0); g.scale(-1, 1); g.drawImage(base, 0, 0); g.restore();
+    g.save(); g.translate(0, bh * 2); g.scale(1, -1); g.drawImage(base, 0, 0); g.restore();
+    g.save(); g.translate(bw * 2, bh * 2); g.scale(-1, -1); g.drawImage(base, 0, 0); g.restore();
+    return c;
+  }
+
   function getTintedPattern(material, hex) {
     const base = materialBases[material];
     if (!base) return '#cccccc'; // not loaded yet (fish base still fetching)
     const cacheKey = material + ':' + hex;
     if (patternCache[cacheKey]) return patternCache[cacheKey];
-    const c = document.createElement('canvas'); c.width = base.width; c.height = base.height;
+    const tile = makeSeamlessTile(base);
+    const c = document.createElement('canvas'); c.width = tile.width; c.height = tile.height;
     const g = c.getContext('2d');
-    g.drawImage(base, 0, 0);
+    g.drawImage(tile, 0, 0);
     g.globalCompositeOperation = 'color';
     g.fillStyle = hex;
     g.fillRect(0, 0, c.width, c.height);
