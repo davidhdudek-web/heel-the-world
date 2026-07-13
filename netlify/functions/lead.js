@@ -138,7 +138,7 @@ exports.handler = async (event) => {
 
 // ---------------------------------------------------------------------------
 // Welcome email — HTW CI, path-specific
-// Dark #0a0a0a · Mint #00e5b0 · Serif body (Cormorant fallback Georgia)
+// Dark #0a0a0a · HTW Grün #74A573 (Jade + 15% Apfelgrün) · Serif body (Cormorant fallback Georgia)
 // Table-based, inline styles only. No product image — the type carries it.
 // Note: Gmail may recalculate the dark palette to a light one; both renderings
 // are intentional. Do not fight the inversion with hacks.
@@ -148,7 +148,7 @@ function getWelcomeEmail(name, path, pathLabel) {
   const pl = escapeHtml(pathLabel);
 
   const label = (text) =>
-    `<p style="font-family:Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:4px;color:#00e5b0;margin:0 0 10px;">${text}</p>`;
+    `<p style="font-family:Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:4px;color:#74A573;margin:0 0 10px;">${text}</p>`;
 
   const serif = (text, extra = '') =>
     `<p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;line-height:1.75;color:#f0ece4;margin:0 0 8px;${extra}">${text}</p>`;
@@ -167,7 +167,7 @@ function getWelcomeEmail(name, path, pathLabel) {
       </table>
     </td></tr>`;
 
-  const commissionIntro = serif(`I&rsquo;ve received your inquiry &mdash; <span style="color:#00e5b0;">${pl}</span>. This is how a commission unfolds.`);
+  const commissionIntro = serif(`I&rsquo;ve received your inquiry &mdash; <span style="color:#74A573;">${pl}</span>. This is how a commission unfolds.`);
 
   const VARIANTS = {
     commission: {
@@ -182,7 +182,7 @@ function getWelcomeEmail(name, path, pathLabel) {
     },
     label: {
       preheader: 'Your name on the box. Let us talk about it.',
-      intro: serif(`I&rsquo;ve received your inquiry &mdash; <span style="color:#00e5b0;">${pl}</span>. That is a longer conversation, and my favorite one.`),
+      intro: serif(`I&rsquo;ve received your inquiry &mdash; <span style="color:#74A573;">${pl}</span>. That is a longer conversation, and my favorite one.`),
       sections:
         section('THE&nbsp;IDEA', 'Your name, your signature, your customer. We begin with what your label should say &mdash; before any leather is chosen.') +
         section('THE&nbsp;FOUNDATION', 'Lasts, materials, construction, workshop &mdash; set up for your label, in Germany, Switzerland or Italy.') +
@@ -191,7 +191,7 @@ function getWelcomeEmail(name, path, pathLabel) {
     },
     press: {
       preheader: 'Images, background, interviews — I respond personally.',
-      intro: serif(`Thank you for your interest in Heel the World &mdash; <span style="color:#00e5b0;">${pl}</span>.`),
+      intro: serif(`Thank you for your interest in Heel the World &mdash; <span style="color:#74A573;">${pl}</span>.`),
       sections:
         section('THE&nbsp;STORY', 'Refugee, electrician, soldier, carpenter. Husband and father. And since 2009 &mdash; a builder of heels: Berlin runways, theatre stages, television. Based in Switzerland. The whole story takes longer than a paragraph.') +
         section('THE&nbsp;MATERIAL', 'Nanai salmon leather and other unusual hides. The palette is public &mdash; the process is not.'),
@@ -199,14 +199,14 @@ function getWelcomeEmail(name, path, pathLabel) {
     },
     speaking: {
       preheader: 'Craft and brand — keynote, panel, or conversation.',
-      intro: serif(`Thank you for your inquiry &mdash; <span style="color:#00e5b0;">${pl}</span>.`),
+      intro: serif(`Thank you for your inquiry &mdash; <span style="color:#74A573;">${pl}</span>.`),
       sections:
         section('THE&nbsp;SUBJECT', 'The road between two workshops &mdash; carpentry and couture. What building things by hand teaches about building brands. Keynote, panel, or conversation.'),
       close: 'Reply with your occasion and your date. I respond personally.'
     },
     collaboration: {
       preheader: 'Stages, stories, brands — tell me what you have in mind.',
-      intro: serif(`Thank you for your inquiry &mdash; <span style="color:#00e5b0;">${pl}</span>.`),
+      intro: serif(`Thank you for your inquiry &mdash; <span style="color:#74A573;">${pl}</span>.`),
       sections:
         section('THE&nbsp;COMPANY&nbsp;WE&nbsp;KEEP', 'Heel the World has grown through collaboration &mdash; theatre stages, television, runways, ballrooms. If you have a stage, a story or a brand in mind, I want to hear it.'),
       close: 'Simply reply to this email. I respond personally.'
@@ -253,7 +253,7 @@ function getWelcomeEmail(name, path, pathLabel) {
     <!-- Mint hairline -->
     <tr><td align="center" style="padding:14px 26px 42px;">
       <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-        <td width="34" height="1" bgcolor="#00e5b0" style="background-color:#00e5b0;font-size:0;line-height:1px;">&nbsp;</td>
+        <td width="34" height="1" bgcolor="#74A573" style="background-color:#74A573;font-size:0;line-height:1px;">&nbsp;</td>
       </tr></table>
     </td></tr>
 
@@ -298,7 +298,7 @@ function getNotifyEmail({ name, email, phone, pathLabel, message, hasSketch }) {
 </table>
 <p style="margin-top:16px;color:#888;">Nachricht:</p>
 <p style="white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:6px;">${escapeHtml(message) || '(keine)'}</p>
-${hasSketch ? '<p style="margin-top:16px;padding:10px 14px;background:#e8fbf5;border:1px solid #00e5b0;border-radius:6px;font-size:13px;">&#9998; Diese Anfrage enth&auml;lt eine handgezeichnete Skizze &mdash; siehe Anhang dieser E-Mail.</p>' : ''}
+${hasSketch ? '<p style="margin-top:16px;padding:10px 14px;background:#e8fbf5;border:1px solid #74A573;border-radius:6px;font-size:13px;">&#9998; Diese Anfrage enth&auml;lt eine handgezeichnete Skizze &mdash; siehe Anhang dieser E-Mail.</p>' : ''}
 <p style="margin-top:24px;font-size:12px;color:#aaa;">Automatisch von heeltheworld.ch &mdash; Kontakt wurde in Brevo Liste 14 (HTW Commission Leads) angelegt und hat eine Willkommensmail erhalten.</p>
 </body></html>`;
 }
