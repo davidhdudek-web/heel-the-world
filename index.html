@@ -961,7 +961,7 @@ nav {
 }
 .fit-diagram {
   width: 100%;
-  max-width: 220px;
+  max-width: 360px;
   display: block;
   margin: 0 auto 1.8rem;
 }
@@ -1530,28 +1530,41 @@ footer {
         <div class="fit-card-title">Standard Measurement</div>
         <div class="fit-card-desc">The classic method — the same principle standard sizing has always used, just done properly and sent directly to us. No kit to wait for, no mixing, done in five minutes with paper and a tape measure.</div>
 
-        <svg class="fit-diagram" viewBox="0 0 300 440" xmlns="http://www.w3.org/2000/svg">
-          <!-- foot outline, top-down, right foot: heel at bottom, big toe upper-left -->
-          <path d="M150,415 C 161.0,414.5 180.3,411.2 188.0,402.0 C 195.7,392.8 195.7,376.2 196.0,360.0 C 196.3,343.8 192.3,323.3 190.0,305.0 C 187.7,286.7 184.5,266.7 182.0,250.0 C 179.5,233.3 177.0,219.2 175.0,205.0 C 173.0,190.8 172.5,177.5 170.0,165.0 C 167.5,152.5 163.7,139.5 160.0,130.0 C 156.3,120.5 152.0,113.5 148.0,108.0 C 144.0,102.5 140.3,102.7 136.0,97.0 C 131.7,91.3 127.3,82.8 122.0,74.0 C 116.7,65.2 110.0,51.3 104.0,44.0 C 98.0,36.7 91.7,29.3 86.0,30.0 C 80.3,30.7 72.3,38.3 70.0,48.0 C 67.7,57.7 71.0,73.0 72.0,88.0 C 73.0,103.0 74.7,121.3 76.0,138.0 C 77.3,154.7 78.7,170.7 80.0,188.0 C 81.3,205.3 82.7,223.3 84.0,242.0 C 85.3,260.7 85.3,279.5 88.0,300.0 C 90.7,320.5 94.3,347.5 100.0,365.0 C 105.7,382.5 113.7,396.7 122.0,405.0 C 130.3,413.3 139.0,415.5 150.0,415.0 Z"
-                fill="none" stroke="rgba(245,240,235,0.6)" stroke-width="2" stroke-linejoin="round"/>
+        <svg class="fit-diagram" viewBox="0 0 460 260" xmlns="http://www.w3.org/2000/svg">
+          <!-- foot profile, side view: heel/ankle at left, toes at right -->
+          <path d="M30,195
+                   C 30,205 50,215 90,218
+                   C 150,220 250,218 320,208
+                   C 360,202 395,188 415,165
+                   C 425,150 428,135 420,118
+                   C 408,100 385,88 355,80
+                   C 310,68 260,62 210,58
+                   C 160,54 110,52 75,48
+                   C 62,46 55,42 52,35
+                   C 48,55 40,90 35,130
+                   C 32,155 30,175 30,195 Z"
+                fill="none" stroke="rgba(245,240,235,0.65)" stroke-width="2.5" stroke-linejoin="round"/>
 
-          <!-- length: heel to longest toe -->
-          <line x1="150" y1="415" x2="150" y2="30" stroke="#00e5b0" stroke-width="1" stroke-dasharray="4,4"/>
-          <line x1="136" y1="415" x2="164" y2="415" stroke="#00e5b0" stroke-width="1.4"/>
-          <line x1="76" y1="30" x2="104" y2="30" stroke="#00e5b0" stroke-width="1.4"/>
-          <text x="205" y="220" fill="#00e5b0" font-family="Syne, sans-serif" font-size="12" letter-spacing="1">LENGTH</text>
-          <line x1="200" y1="216" x2="152" y2="200" stroke="#00e5b0" stroke-width="0.75"/>
+          <!-- Ball circumference band -->
+          <ellipse cx="392" cy="140" rx="16" ry="58" transform="rotate(-10 392 140)" fill="none" stroke="#00e5b0" stroke-width="1.6"/>
+          <line x1="392" y1="82" x2="392" y2="94" stroke="#00e5b0" stroke-width="1.2"/>
+          <text x="405" y="75" fill="#00e5b0" font-family="Syne, sans-serif" font-size="11" letter-spacing="0.5">BALL</text>
 
-          <!-- width: at the ball, the widest part of the foot -->
-          <line x1="76" y1="188" x2="180" y2="188" stroke="#00e5b0" stroke-width="1" stroke-dasharray="4,4"/>
-          <line x1="76" y1="175" x2="76" y2="201" stroke="#00e5b0" stroke-width="1.4"/>
-          <line x1="180" y1="175" x2="180" y2="201" stroke="#00e5b0" stroke-width="1.4"/>
-          <text x="20" y="292" fill="#00e5b0" font-family="Syne, sans-serif" font-size="12" letter-spacing="1">WIDTH</text>
-          <line x1="55" y1="286" x2="82" y2="220" stroke="#00e5b0" stroke-width="0.75"/>
+          <!-- Instep circumference band -->
+          <ellipse cx="192" cy="138" rx="15" ry="84" transform="rotate(-4 192 138)" fill="none" stroke="#00e5b0" stroke-width="1.6"/>
+          <line x1="192" y1="54" x2="192" y2="66" stroke="#00e5b0" stroke-width="1.2"/>
+          <text x="205" y="47" fill="#00e5b0" font-family="Syne, sans-serif" font-size="11" letter-spacing="0.5">INSTEP</text>
 
-          <!-- ball circumference: band around the ball of the foot -->
-          <path d="M70,145 C 100,120 155,120 182,148" fill="none" stroke="#00e5b0" stroke-width="1.6"/>
-          <text x="30" y="105" fill="#00e5b0" font-family="Syne, sans-serif" font-size="12" letter-spacing="1">BALL CIRCUMFERENCE</text>
+          <!-- Ankle circumference band -->
+          <ellipse cx="58" cy="108" rx="18" ry="72" transform="rotate(18 58 108)" fill="none" stroke="#00e5b0" stroke-width="1.6"/>
+          <line x1="48" y1="38" x2="58" y2="48" stroke="#00e5b0" stroke-width="1.2"/>
+          <text x="15" y="28" fill="#00e5b0" font-family="Syne, sans-serif" font-size="11" letter-spacing="0.5">ANKLE</text>
+
+          <!-- Length -->
+          <line x1="30" y1="235" x2="425" y2="235" stroke="#00e5b0" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="30" y1="228" x2="30" y2="242" stroke="#00e5b0" stroke-width="1.4"/>
+          <line x1="425" y1="228" x2="425" y2="242" stroke="#00e5b0" stroke-width="1.4"/>
+          <text x="195" y="252" fill="#00e5b0" font-family="Syne, sans-serif" font-size="11" letter-spacing="0.5">LENGTH</text>
         </svg>
 
         <ul class="fit-steps">
