@@ -1,7 +1,7 @@
 // HTW Commission Lead Handler
 // Receives: { name, email, phone, path, message }
 // → Adds contact to Brevo HTW list (14)
-// → Sends welcome email to the customer (HTW CI dark template)
+// → Sends path-specific welcome email to the customer (HTW CI)
 // → Sends notification email to David with full lead details
 
 const BREVO_API = 'https://api.brevo.com/v3';
@@ -21,6 +21,16 @@ const PATH_LABELS = {
   collaboration: 'Collaboration',
   speaking: 'Speaking / Appearance',
   general: 'General Inquiry'
+};
+
+const SUBJECTS = {
+  individual: 'Your Heel the World Commission.',
+  collection: 'Your Heel the World Commission.',
+  label: 'Your Own Label — Heel the World.',
+  press: 'Your Heel the World Inquiry.',
+  collaboration: 'Your Heel the World Inquiry.',
+  speaking: 'Your Heel the World Inquiry.',
+  general: 'Your Heel the World Inquiry.'
 };
 
 exports.handler = async (event) => {
@@ -82,16 +92,16 @@ exports.handler = async (event) => {
     });
     const contactData = await contactRes.json().catch(() => ({}));
 
-    // 2. Welcome email to the customer
+    // 2. Welcome email to the customer (path-specific)
     const welcomeRes = await fetch(`${BREVO_API}/smtp/email`, {
       method: 'POST',
       headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         sender: SENDER,
         to: [{ email, name: name || email }],
-        subject: 'Your Heel the World Commission.',
-        htmlContent: getWelcomeEmail(name, pathLabel),
-        tags: ['htw-commission', 'welcome']
+        subject: SUBJECTS[path] || SUBJECTS.general,
+        htmlContent: getWelcomeEmail(name, path, pathLabel),
+        tags: ['htw-commission', 'welcome', `path-${path}`]
       })
     });
     const welcomeData = await welcomeRes.json().catch(() => ({}));
@@ -127,19 +137,92 @@ exports.handler = async (event) => {
 };
 
 // ---------------------------------------------------------------------------
-// Welcome email — HTW CI
+// Welcome email — HTW CI, path-specific
 // Dark #0a0a0a · Mint #00e5b0 · Serif body (Cormorant fallback Georgia)
-// Table-based, inline styles only — safe for Gmail/Outlook/Apple Mail.
+// Table-based, inline styles only. No product image — the type carries it.
+// Note: Gmail may recalculate the dark palette to a light one; both renderings
+// are intentional. Do not fight the inversion with hacks.
 // ---------------------------------------------------------------------------
-function getWelcomeEmail(name, pathLabel) {
+function getWelcomeEmail(name, path, pathLabel) {
   const greeting = name ? escapeHtml(name.split(' ')[0]) : null;
-  const path = escapeHtml(pathLabel);
+  const pl = escapeHtml(pathLabel);
 
   const label = (text) =>
     `<p style="font-family:Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:4px;color:#00e5b0;margin:0 0 10px;">${text}</p>`;
 
   const serif = (text, extra = '') =>
     `<p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;line-height:1.75;color:#f0ece4;margin:0 0 8px;${extra}">${text}</p>`;
+
+  const section = (lbl, text) =>
+    `<tr><td style="padding:0 26px 26px;">${label(lbl)}${serif(text)}</td></tr>`;
+
+  const priceBlock = `
+    <tr><td style="padding:8px 26px 34px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr><td height="1" bgcolor="#2a2a28" style="background-color:#2a2a28;font-size:0;line-height:1px;">&nbsp;</td></tr>
+        <tr><td align="center" style="padding:22px 0;">
+          <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;line-height:1.6;color:#f0ece4;">CHF&nbsp;2&rsquo;600 &mdash; a deposit secures your pair before the first cut is made.</span>
+        </td></tr>
+        <tr><td height="1" bgcolor="#2a2a28" style="background-color:#2a2a28;font-size:0;line-height:1px;">&nbsp;</td></tr>
+      </table>
+    </td></tr>`;
+
+  const commissionIntro = serif(`I&rsquo;ve received your inquiry &mdash; <span style="color:#00e5b0;">${pl}</span>. This is how a commission unfolds.`);
+
+  const VARIANTS = {
+    commission: {
+      preheader: 'A conversation. A workshop. A box. We begin when you are ready.',
+      intro: commissionIntro,
+      sections:
+        section('THE&nbsp;CONVERSATION', 'Approximately thirty minutes. We speak about your foot, your occasion, your material preference &mdash; or I propose something, if you prefer to leave the choice to me.') +
+        section('THE&nbsp;WORKSHOP', 'Three to six weeks in Germany, Switzerland or Italy. Second generation. Fair wages.') +
+        section('THE&nbsp;BOX', 'Unbleached cardboard, metal rivets, satin lining &mdash; and a leather charm cut from the same hide as your heel.') +
+        priceBlock,
+      close: 'Simply reply to this email. I respond personally.'
+    },
+    label: {
+      preheader: 'Your name on the box. Let us talk about it.',
+      intro: serif(`I&rsquo;ve received your inquiry &mdash; <span style="color:#00e5b0;">${pl}</span>. That is a longer conversation, and my favorite one.`),
+      sections:
+        section('THE&nbsp;IDEA', 'Your name, your signature, your customer. We begin with what your label should say &mdash; before any leather is chosen.') +
+        section('THE&nbsp;FOUNDATION', 'Lasts, materials, construction, workshop &mdash; set up for your label, in Germany, Switzerland or Italy.') +
+        section('THE&nbsp;FIRST&nbsp;COLLECTION', 'From first sketch to finished boxes. You present it. I build it.'),
+      close: 'Reply and tell me where you stand &mdash; an idea, a sketchbook, or a business plan. I respond personally.'
+    },
+    press: {
+      preheader: 'Images, background, interviews — I respond personally.',
+      intro: serif(`Thank you for your interest in Heel the World &mdash; <span style="color:#00e5b0;">${pl}</span>.`),
+      sections:
+        section('THE&nbsp;STORY', 'A carpenter&rsquo;s hands, building heels since 2009 &mdash; from Berlin runways, theatre stages and television to a workshop in Switzerland.') +
+        section('THE&nbsp;MATERIAL', 'Nanai salmon leather and other unusual hides. The palette is public &mdash; the process is not.'),
+      close: 'Images, background, interviews &mdash; simply reply to this email. I respond personally.'
+    },
+    speaking: {
+      preheader: 'Craft and brand — keynote, panel, or conversation.',
+      intro: serif(`Thank you for your inquiry &mdash; <span style="color:#00e5b0;">${pl}</span>.`),
+      sections:
+        section('THE&nbsp;SUBJECT', 'The road between two workshops &mdash; carpentry and couture. What building things by hand teaches about building brands. Keynote, panel, or conversation.'),
+      close: 'Reply with your occasion and your date. I respond personally.'
+    },
+    collaboration: {
+      preheader: 'Stages, stories, brands — tell me what you have in mind.',
+      intro: serif(`Thank you for your inquiry &mdash; <span style="color:#00e5b0;">${pl}</span>.`),
+      sections:
+        section('THE&nbsp;COMPANY&nbsp;WE&nbsp;KEEP', 'Heel the World has grown through collaboration &mdash; theatre stages, television, runways, ballrooms. If you have a stage, a story or a brand in mind, I want to hear it.'),
+      close: 'Simply reply to this email. I respond personally.'
+    },
+    general: {
+      preheader: 'Received. I respond personally.',
+      intro: serif('Thank you for reaching out.'),
+      sections:
+        section('WHERE&nbsp;IT&nbsp;BEGINS', 'Tell me what brings you to Heel the World &mdash; a pair of your own, a story, an idea. Whatever it is, it starts the same way: with a conversation.'),
+      close: 'Simply reply to this email. I respond personally.'
+    }
+  };
+
+  const variantKey = (path === 'individual' || path === 'collection') ? 'commission'
+    : VARIANTS[path] ? path : 'general';
+  const v = VARIANTS[variantKey];
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -148,11 +231,10 @@ function getWelcomeEmail(name, pathLabel) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta name="supported-color-schemes" content="dark">
-<title>Your Heel the World Commission.</title>
+<title>${escapeHtml(SUBJECTS[path] || SUBJECTS.general)}</title>
 </head>
 <body style="margin:0;padding:0;background:#0a0a0a;" bgcolor="#0a0a0a">
-<!-- Preheader (hidden preview text) -->
-<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">A conversation. A workshop. A box. We begin when you are ready.&nbsp;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;</div>
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${v.preheader}&nbsp;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;</div>
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#0a0a0a" style="background-color:#0a0a0a;">
 <tr><td align="center" style="padding:52px 14px 40px;">
@@ -169,57 +251,23 @@ function getWelcomeEmail(name, pathLabel) {
     </td></tr>
 
     <!-- Mint hairline -->
-    <tr><td align="center" style="padding:14px 26px 38px;">
+    <tr><td align="center" style="padding:14px 26px 42px;">
       <table role="presentation" cellpadding="0" cellspacing="0"><tr>
         <td width="34" height="1" bgcolor="#00e5b0" style="background-color:#00e5b0;font-size:0;line-height:1px;">&nbsp;</td>
       </tr></table>
     </td></tr>
 
-    <!-- Image -->
-    <tr><td style="padding:0 26px 38px;">
-      <a href="${SITE}#collection" style="text-decoration:none;">
-        <img src="${SITE}/img/tyra.jpg" width="548" alt="Tyra — Heel the World" style="display:block;width:100%;max-width:548px;height:auto;border:0;">
-      </a>
-    </td></tr>
-
     <!-- Greeting + intro -->
     <tr><td style="padding:0 26px 30px;">
       ${greeting ? serif(`Dear ${greeting},`, 'margin-bottom:20px;') : ''}
-      ${serif(`I&rsquo;ve received your inquiry &mdash; <span style="color:#00e5b0;">${path}</span>. This is how a commission unfolds.`)}
+      ${v.intro}
     </td></tr>
 
-    <!-- I · The conversation -->
-    <tr><td style="padding:0 26px 26px;">
-      ${label('THE&nbsp;CONVERSATION')}
-      ${serif('Approximately thirty minutes. We speak about your foot, your occasion, your material preference &mdash; or I propose something, if you prefer to leave the choice to me.')}
-    </td></tr>
-
-    <!-- II · The workshop -->
-    <tr><td style="padding:0 26px 26px;">
-      ${label('THE&nbsp;WORKSHOP')}
-      ${serif('Three to six weeks in Germany, Switzerland or Italy. Second generation. Fair wages.')}
-    </td></tr>
-
-    <!-- III · The box -->
-    <tr><td style="padding:0 26px 34px;">
-      ${label('THE&nbsp;BOX')}
-      ${serif('Unbleached cardboard, metal rivets, satin lining &mdash; and a leather charm cut from the same hide as your heel.')}
-    </td></tr>
-
-    <!-- Price, set between hairlines -->
-    <tr><td style="padding:0 26px 34px;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        <tr><td height="1" bgcolor="#2a2a28" style="background-color:#2a2a28;font-size:0;line-height:1px;">&nbsp;</td></tr>
-        <tr><td align="center" style="padding:22px 0;">
-          <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;line-height:1.6;color:#f0ece4;">CHF&nbsp;2&rsquo;600 &mdash; a deposit secures your pair before the first cut is made.</span>
-        </td></tr>
-        <tr><td height="1" bgcolor="#2a2a28" style="background-color:#2a2a28;font-size:0;line-height:1px;">&nbsp;</td></tr>
-      </table>
-    </td></tr>
+    ${v.sections}
 
     <!-- Close + signature -->
-    <tr><td style="padding:0 26px 44px;">
-      ${serif('Simply reply to this email. I respond personally.', 'margin-bottom:26px;')}
+    <tr><td style="padding:6px 26px 44px;">
+      ${serif(v.close, 'margin-bottom:26px;')}
       <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;color:#f0ece4;margin:0;">&mdash; David H. Dudek</p>
       <p style="font-family:Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:3px;color:#8a8378;margin:8px 0 0;">HEEL&nbsp;THE&nbsp;WORLD</p>
     </td></tr>
