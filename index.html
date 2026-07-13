@@ -896,6 +896,106 @@ nav {
   color: var(--text-muted);
 }
 
+/* ─── FIT ─── */
+.fit {
+  padding: 8rem 3rem;
+  background: var(--dark-2);
+}
+.fit-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.fit-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 4.5rem;
+}
+.fit-header h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+  margin-bottom: 1.2rem;
+}
+.fit-intro {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--warm);
+}
+.fit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(255,255,255,0.05);
+}
+.fit-card {
+  background: var(--dark);
+  padding: 3.5rem 3rem;
+}
+.fit-card-label {
+  font-family: var(--sans);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  color: var(--mint);
+  margin-bottom: 1.5rem;
+}
+.fit-card-title {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text);
+  margin-bottom: 1.2rem;
+}
+.fit-card-desc {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--warm);
+  margin-bottom: 1.8rem;
+}
+.fit-steps {
+  list-style: none;
+  margin-bottom: 1.8rem;
+}
+.fit-steps li {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  padding-left: 1.4rem;
+  position: relative;
+  margin-bottom: 0.7rem;
+}
+.fit-steps li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--mint);
+}
+.fit-card-note {
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.35);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 1.2rem;
+}
+@media (max-width: 900px) {
+  .fit { padding: 5rem 1.5rem; }
+  .fit-grid { grid-template-columns: 1fr; }
+  .fit-card { padding: 2.5rem 2rem; }
+}
+
 /* ─── COMMISSION ─── */
 .commission {
   padding: 8rem 3rem;
@@ -1395,6 +1495,47 @@ footer {
   <div class="cl-stage" id="clStage"></div>
   <div class="cl-index" id="clIndex"></div>
 </div>
+
+<!-- FIT -->
+<section class="fit" id="fit">
+  <div class="fit-inner">
+    <div class="fit-header reveal">
+      <span class="section-label">Before we begin</span>
+      <h2>Finding your fit.</h2>
+      <p class="fit-intro">Every pair is built around your foot, not the other way around. Two ways to get us there — choose the one that suits you.</p>
+    </div>
+
+    <div class="fit-grid">
+      <div class="fit-card reveal">
+        <div class="fit-card-label">Option 01</div>
+        <div class="fit-card-title">Precision Cast</div>
+        <div class="fit-card-desc">A full 3D impression of your foot, taken at home with an alginate casting kit — the same material used in prosthetics and film. Every contour, every arch, captured exactly. The most accurate foundation we can build a shoe on, especially for unusual foot shapes or very high heels.</div>
+        <ul class="fit-steps">
+          <li>We send you a casting kit with full instructions</li>
+          <li>Mix the alginate, submerge your foot, wait a few minutes</li>
+          <li>Send the finished cast back to us</li>
+          <li>We build your last directly from the impression</li>
+        </ul>
+        <div class="fit-card-note">Recommended for the most precise fit. Additional cost — ask us for current pricing.</div>
+      </div>
+
+      <div class="fit-card reveal">
+        <div class="fit-card-label">Option 02</div>
+        <div class="fit-card-title">Standard Measurement</div>
+        <div class="fit-card-desc">The classic method — the same principle standard sizing has always used, just done properly and sent directly to us. No kit to wait for, no mixing, done in five minutes with paper and a tape measure.</div>
+        <ul class="fit-steps">
+          <li>Measure in the evening — feet are at their largest then</li>
+          <li>Stand on a sheet of paper, weight even on both feet, and trace the outline</li>
+          <li>Mark the longest point (heel to longest toe) and the widest point</li>
+          <li>Wrap a tape measure around the ball of your foot for the circumference</li>
+          <li>Repeat for both feet — most people have a small difference between them</li>
+          <li>Photograph the tracing next to the tape measure and send both with your inquiry</li>
+        </ul>
+        <div class="fit-card-note">Included at no extra cost. The right choice for most commissions.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- COMMISSION -->
 <!-- SKETCHPAD -->
