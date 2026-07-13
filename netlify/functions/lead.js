@@ -193,7 +193,7 @@ function getWelcomeEmail(name, path, pathLabel) {
       preheader: 'Images, background, interviews — I respond personally.',
       intro: serif(`Thank you for your interest in Heel the World &mdash; <span style="color:#00e5b0;">${pl}</span>.`),
       sections:
-        section('THE&nbsp;STORY', 'A carpenter&rsquo;s hands, building heels since 2009 &mdash; from Berlin runways, theatre stages and television to a workshop in Switzerland.') +
+        section('THE&nbsp;STORY', 'Refugee, electrician, soldier, carpenter. Husband and father. And since 2009 &mdash; a builder of heels: Berlin runways, theatre stages, television. Based in Switzerland. The whole story takes longer than a paragraph.') +
         section('THE&nbsp;MATERIAL', 'Nanai salmon leather and other unusual hides. The palette is public &mdash; the process is not.'),
       close: 'Images, background, interviews &mdash; simply reply to this email. I respond personally.'
     },
