@@ -1,4 +1,4 @@
-const CACHE = 'htw-v3';
+const CACHE = 'htw-v4';
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./kalender.html'])));
