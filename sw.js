@@ -77,3 +77,5 @@ self.addEventListener('notificationclick', e => {
     e.waitUntil(clients.openWindow('./kalender.html'));
   }
 });
+
+// build-trigger 1784014881
