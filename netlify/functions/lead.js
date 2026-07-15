@@ -10,7 +10,7 @@ const NOTIFY_EMAIL = 'david@heeltheworld.ch';
 // TODO: Nach Verifizierung in Brevo (Senders & Domains) auf
 // { name: 'David H. Dudek — HEEL THE WORLD', email: 'david@heeltheworld.ch' } umstellen,
 // damit DKIM/DMARC der Domain greifen.
-const SENDER = { name: 'David H. Dudek — HEEL THE WORLD', email: 'davidhdudek@icloud.com' };
+const SENDER = { name: 'David H. Dudek — HEEL THE WORLD', email: 'david@heeltheworld.ch' };
 const SITE = 'https://heeltheworld.ch';
 
 const PATH_LABELS = {
