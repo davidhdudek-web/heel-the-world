@@ -1482,7 +1482,7 @@ footer {
           <div class="path-desc">You come with an idea. Or you give free rein. We create your shoe from zero. Your leather. Your heel height. Your sole. A piece that has never existed and never will again.</div>
         </div>
         <div style="display:flex; flex-direction:column; gap:0.8rem; align-items:flex-start;">
-          <a href="#" class="path-cta" id="openSketchpad">Sketch your idea</a>
+          <a href="#" class="path-cta" id="openSketchpad" style="display:none;">Sketch your idea</a>
           <a href="#commission" class="path-cta">Begin your commission</a>
         </div>
       </div>
@@ -1554,7 +1554,7 @@ footer {
 </div>
 
 <!-- FIT -->
-<section class="fit" id="fit">
+<section class="fit" id="fit" style="display:none;">
   <div class="fit-inner">
     <div class="fit-header reveal">
       <span class="section-label">Before we begin</span>
@@ -2024,6 +2024,18 @@ function closeOverlay() {
   document.body.style.overflow = '';
 }
 
+// ─── CAMPAIGN SLIM-DOWN 15.07.2026 ───
+// Geparkte Stationen sind ausgeblendet, nicht geloescht. Reaktivierung: IDs wieder in HERITAGE_LIVE aufnehmen.
+const HERITAGE_LIVE = [4, 6, 8, 11, 12, 18];
+function stepLive(idx, dir) {
+  const pos = HERITAGE_LIVE.indexOf(idx);
+  const base = pos === -1 ? 0 : pos;
+  return HERITAGE_LIVE[(base + dir + HERITAGE_LIVE.length) % HERITAGE_LIVE.length];
+}
+document.querySelectorAll('.ht-item').forEach(it => {
+  if (!HERITAGE_LIVE.includes(parseInt(it.dataset.id))) it.style.display = 'none';
+});
+
 // click items
 document.querySelectorAll('.ht-item').forEach(item => {
   item.addEventListener('click', () => {
@@ -2041,11 +2053,11 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeOverlay();
   if (e.key === 'ArrowRight') {
     const overlay = document.getElementById('heritageOverlay');
-    if (overlay.classList.contains('active')) renderOverlay((currentIdx + 1) % HERITAGE.length);
+    if (overlay.classList.contains('active')) renderOverlay(stepLive(currentIdx, 1));
   }
   if (e.key === 'ArrowLeft') {
     const overlay = document.getElementById('heritageOverlay');
-    if (overlay.classList.contains('active')) renderOverlay((currentIdx - 1 + HERITAGE.length) % HERITAGE.length);
+    if (overlay.classList.contains('active')) renderOverlay(stepLive(currentIdx, -1));
   }
 });
 
@@ -2073,8 +2085,8 @@ document.addEventListener('keydown', e => {
     // a slightly-more-horizontal-than-vertical swipe still counts here
     // whenever there was no gallery to claim it above.
     if (Math.abs(dy) > 60) {
-      if (dy < 0) renderOverlay((currentIdx + 1) % HERITAGE.length);   // swipe up → next
-      else renderOverlay((currentIdx - 1 + HERITAGE.length) % HERITAGE.length); // swipe down → prev
+      if (dy < 0) renderOverlay(stepLive(currentIdx, 1));   // swipe up → next
+      else renderOverlay(stepLive(currentIdx, -1)); // swipe down → prev
     }
   });
 })();
