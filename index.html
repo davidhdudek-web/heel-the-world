@@ -1190,6 +1190,15 @@ footer {
   max-width: 580px;
   margin: 0 auto 1.6rem;
 }
+.maker-refs {
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--mint);
+  opacity: 0.75;
+  margin-top: 2.8rem;
+}
 @media (max-width: 640px) {
   .maker { padding: 5rem 1.5rem; }
 }
@@ -1418,6 +1427,26 @@ footer {
       </div>
     </div>
 
+    <div class="ht-item reveal" data-id="19">
+      <div class="ht-meta">
+        <div class="ht-year">2015–24</div>
+        <div class="ht-location">In Private</div>
+      </div>
+      <div class="ht-body">
+        <div class="ht-title">The Big Houses · Quiet Pairs</div>
+      </div>
+    </div>
+
+    <div class="ht-item reveal" data-id="20">
+      <div class="ht-meta">
+        <div class="ht-year">2026</div>
+        <div class="ht-location">Lake Zurich</div>
+      </div>
+      <div class="ht-body">
+        <div class="ht-title">Return to the Drawing Board</div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1457,12 +1486,13 @@ footer {
 <section class="maker" id="maker">
   <div class="maker-inner">
     <div class="reveal">
-      <span class="section-label">The Maker</span>
-      <h2>Refugee. Electrician. Soldier.<br>Carpenter.</h2>
-      <p class="maker-lead">And since 2009 &mdash; a builder of heels.</p>
+      <span class="section-label">The Designer</span>
+      <h2>David H. Dudek</h2>
     </div>
-    <p class="maker-text reveal">David H. Dudek. A journeyman&rsquo;s certificate since 1997, and hands that built stages, roofs and runways before they built shoes. Berlin catwalks, theatre productions, television. Husband and father. Based in Switzerland.</p>
-    <p class="maker-text reveal">Every pair passes through these hands. The whole story takes longer than a paragraph &mdash; ask, when we speak.</p>
+    <p class="maker-text reveal">Nobody handed me the shoemaker&rsquo;s craft. I went and took it &mdash; through the women&rsquo;s shoe manufactories of Eastern Europe, bench by bench, until I understood how a high heel truly comes to be.</p>
+    <p class="maker-text reveal">Then the big houses called: Printemps, KaDeWe, Alsterhaus, Oberpollinger, BMW, CUPRA. I staged their brands and learned how an entrance is built.</p>
+    <p class="maker-text reveal">Both go into every pair: the craft from Eastern Europe, the eye from Paris. Designed by me. For you.</p>
+    <p class="maker-refs reveal">BMW Group &middot; CUPRA &middot; KaDeWe &middot; Printemps Paris</p>
   </div>
 </section>
 
@@ -1479,7 +1509,7 @@ footer {
         <div>
           <div class="path-number">PATH 01</div>
           <div class="path-title">Individual Creation</div>
-          <div class="path-desc">You come with an idea. Or you give free rein. We create your shoe from zero. Your leather. Your heel height. Your sole. A piece that has never existed and never will again.</div>
+          <div class="path-desc">You don&rsquo;t need to arrive with an answer. We begin with a conversation &mdash; about the evening, the room, the moment. The shoe follows from there. Every decision, made together. A piece that has never existed and never will again.</div>
         </div>
         <div style="display:flex; flex-direction:column; gap:0.8rem; align-items:flex-start;">
           <a href="#" class="path-cta" id="openSketchpad" style="display:none;">Sketch your idea</a>
@@ -1923,6 +1953,22 @@ const HERITAGE = [
     desc: 'High heels manufactured from Nintendo comic artwork for an Asian advertising campaign. The intersection of pop culture and handcraft — unique in every sense.',
     folder: '1FPV205L7aHXkjBWOJbVlzGY4wkmvEl-k',
     images: ['/img/heritage-19-nintendo.jpg']
+  },
+  {
+    label: 'In Private',
+    year: '2015–2024',
+    title: 'The Big Houses · Quiet Pairs',
+    desc: 'The big houses called — Printemps, KaDeWe, Alsterhaus, Oberpollinger, BMW, CUPRA. I staged their worlds. And kept designing, quietly, for a few.',
+    folder: '',
+    images: []
+  },
+  {
+    label: '2026 · Lake Zurich',
+    year: '2026',
+    title: 'Return to the Drawing Board',
+    desc: 'Enough of the world, for now. I sit by the lake and do what I love most: design.',
+    folder: '',
+    images: []
   }
 ];
 
@@ -2026,7 +2072,7 @@ function closeOverlay() {
 
 // ─── CAMPAIGN SLIM-DOWN 15.07.2026 ───
 // Geparkte Stationen sind ausgeblendet, nicht geloescht. Reaktivierung: IDs wieder in HERITAGE_LIVE aufnehmen.
-const HERITAGE_LIVE = [4, 6, 8, 11, 12, 18];
+const HERITAGE_LIVE = [4, 6, 8, 11, 12, 18, 19, 20];
 function stepLive(idx, dir) {
   const pos = HERITAGE_LIVE.indexOf(idx);
   const base = pos === -1 ? 0 : pos;
