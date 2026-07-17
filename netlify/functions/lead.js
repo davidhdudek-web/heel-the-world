@@ -171,11 +171,11 @@ function getWelcomeEmail(name, path, pathLabel) {
 
   const VARIANTS = {
     commission: {
-      preheader: 'A conversation. A workshop. A box. We begin when you are ready.',
+      preheader: 'A conversation. A pair. A box. We begin when you are ready.',
       intro: commissionIntro,
       sections:
         section('THE&nbsp;CONVERSATION', 'Approximately thirty minutes. We speak about your foot, your occasion, your material preference &mdash; or I propose something, if you prefer to leave the choice to me.') +
-        section('THE&nbsp;WORKSHOP', 'Three to six weeks in Germany, Switzerland or Italy. Second generation. Fair wages.') +
+        section('THE&nbsp;MANUFACTORY', 'Three to six weeks in Switzerland and Germany. Made by hand.') +
         section('THE&nbsp;BOX', 'Unbleached cardboard, metal rivets, satin lining &mdash; and a leather charm cut from the same hide as your heel.') +
         priceBlock,
       close: 'Simply reply to this email. I respond personally.'
@@ -185,7 +185,7 @@ function getWelcomeEmail(name, path, pathLabel) {
       intro: serif(`I&rsquo;ve received your inquiry &mdash; <span style="color:#74A573;">${pl}</span>. That is a longer conversation, and my favorite one.`),
       sections:
         section('THE&nbsp;IDEA', 'Your name, your signature, your customer. We begin with what your label should say &mdash; before any leather is chosen.') +
-        section('THE&nbsp;FOUNDATION', 'Lasts, materials, construction, workshop &mdash; set up for your label, in Germany, Switzerland or Italy.') +
+        section('THE&nbsp;FOUNDATION', 'Lasts, materials, construction, workshop &mdash; set up for your label, in Switzerland and Germany.') +
         section('THE&nbsp;FIRST&nbsp;COLLECTION', 'From first sketch to finished boxes. You present it. I build it.'),
       close: 'Reply and tell me where you stand &mdash; an idea, a sketchbook, or a business plan. I respond personally.'
     },
